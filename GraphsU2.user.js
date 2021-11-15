@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         AT-Zek-GraphsU2
+// @name         AT-Orkun-GraphsU2
 // @namespace    https://github.com/OrkunKocyigit/AutoTrimps
-// @version      3.0.0-Zek
+// @version      3.0.0-Orkun
 // @updateURL    https://github.com/OrkunKocyigit/AutoTrimps/GraphsU2.user.js
 // @description  Graphs Module (only for U2) from AutoTrimps
 // @author       zininzinin, spindrjr, belaith, ishakaru, genBTC, Zek

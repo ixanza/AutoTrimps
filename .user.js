@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         AutoTrimps-Zek
-// @version      1.0-Zek
+// @name         AutoTrimps-Orkun
+// @version      1.0-Orkun
 // @namespace    https://orkunkocyigit.github.io/AutoTrimps
 // @updateURL    https://orkunkocyigit.github.io/AutoTrimps/.user.js
 // @description  Automate all the trimps!
-// @author       zininzinin, spindrjr, Ishkaru, genBTC, Zeker0
+// @author       zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, OrkunKocyigit
 // @include      *trimps.github.io*
 // @include      *kongregate.com/games/GreenSatellite/trimps
 // @connect      *orkunkocyigit.github.io/AutoTrimps*

@@ -1,4 +1,4 @@
-var ATversion='Zek v4.5.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://orkunkocyigit.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
+var ATversion='Orkun v4.5.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://orkunkocyigit.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
 function ATscriptLoad(a,b){null==b&&debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');var c=document.createElement('script');null==a&&(a=''),c.src=basepath+a+b+'.js',c.id=b+'_MODULE',document.head.appendChild(c)}
 function ATscriptUnload(a){var b=document.getElementById(a+"_MODULE");b&&(document.head.removeChild(b),debug("Removing "+a+"_MODULE","other"))}
 ATscriptLoad(modulepath, 'utils');
@@ -11,7 +11,7 @@ function initializeAutoTrimps() {
     for (var m in ATmoduleList) {
         ATscriptLoad(modulepath, ATmoduleList[m]);
     }
-    debug('AutoTrimps - Zek Fork Loaded!', '*spinner3');
+    debug('AutoTrimps - Orkun Fork Loaded!', '*spinner3');
 }
 
 var changelogList = [];
@@ -35,7 +35,7 @@ function printChangelog() {
     }
     var footer =
         '<b>ZӘK Fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the dev: <b>Zek#0647</b> @ <a target="#" href="https://discord.gg/Ztcnfjr">Zeks Discord Channel</a>\
+        <br>Talk with the dev: <b>Pormos#2008</b> @ <a target="#" href="https://discord.gg/Ztcnfjr">Zeks Discord Channel</a>\
         <br>See <a target="#" href="https://github.com/OrkunKocyigit/AutoTrimps/blob/gh-pages/README.md">ReadMe</a> Or check <a target="#" href="https://github.com/OrkunKocyigit/AutoTrimps/commits/gh-pages" target="#">the commit history</a> (if you want).'
     ,   action = 'cancelTooltip()'
     ,   title = 'Script Update Notice<br>' + ATversion
@@ -151,7 +151,7 @@ function mainLoop() {
     if (game.global.universe == 1){
 
         //Offline Progress
-        if (!usingRealTimeOffline) { 
+        if (!usingRealTimeOffline) {
             setScienceNeeded();
             autoLevelEquipment();
         }
@@ -185,14 +185,14 @@ function mainLoop() {
         if (getPageSetting('BuyJobsNew') == 1) {
             workerRatios();
             buyJobs();
-        } 
+        }
         else if (getPageSetting('BuyJobsNew') == 2) buyJobs();
 
         //Portal
         if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();
         if (getPageSetting('AutoPortalDaily') > 0 && game.global.challengeActive == "Daily") dailyAutoPortal();
         if (getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && game.global.runningChallengeSquared && game.global.world > getPageSetting('c2runnerportal')) c2runnerportal();
-    
+
         //Combat
         if (getPageSetting('ForceAbandon') == true || getPageSetting('fuckanti') > 0) trimpcide();
         if (getPageSetting('trimpsnotdie') == true && game.global.world > 1) helptrimpsnotdie();
@@ -211,7 +211,7 @@ function mainLoop() {
         if (game.global.world > 5 && game.global.challengeActive == "Daily" && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
         if (getPageSetting('buywepsvoid') == true && ((getPageSetting('VoidMaps') == game.global.world && game.global.challengeActive != "Daily") || (getPageSetting('DailyVoidMod') == game.global.world && game.global.challengeActive == "Daily")) && game.global.mapsActive && getCurrentMapObject().location == "Void") buyWeps();
         if ((getPageSetting('darmormagic') > 0 && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) || (getPageSetting('carmormagic') > 0 && (game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))) armormagic();
-    
+
         //Stance
         if ((getPageSetting('UseScryerStance') == true) || (getPageSetting('scryvoidmaps') == true && game.global.challengeActive != "Daily") || (getPageSetting('dscryvoidmaps') == true && game.global.challengeActive == "Daily")) useScryerStance();
         else if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && game.global.challengeActive == "Daily")) windStance();
@@ -244,7 +244,7 @@ function mainLoop() {
         if (dagu && dagu != 'Off' && game.global.challengeActive == "Daily") autoGoldenUpgradesAT(dagu);
         if (cagu && cagu != 'Off' && game.global.runningChallengeSquared) autoGoldenUpgradesAT(cagu);
     }
-    
+
     //Logic for Universe 2
     if (game.global.universe == 2){
 
@@ -275,9 +275,9 @@ function mainLoop() {
 	}
 
         //RBuildings
-	    
+
 	//var smithybought = 0;
-	    
+
 	//if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([7, 10, 11, 12, 13, 20, 21, 22, 23].indexOf(questcheck()) >= 0))) {
             if (getPageSetting('RBuyBuildingsNew') == true) {
                 RbuyBuildings();
@@ -293,13 +293,13 @@ function mainLoop() {
 	        smithybought = 0;
             }
 	}*/
-        
+
         //RJobs
         if (!(game.global.challengeActive == "Quest" && game.global.world > 5) && getPageSetting('RBuyJobsNew') == 1) {
             RworkerRatios();
             RbuyJobs();
-        } 
-        else if (!(game.global.challengeActive == "Quest" && game.global.world > 5) && getPageSetting('RBuyJobsNew') == 2) { 
+        }
+        else if (!(game.global.challengeActive == "Quest" && game.global.world > 5) && getPageSetting('RBuyJobsNew') == 2) {
 	    RbuyJobs();
 	}
 	if (game.global.challengeActive == "Quest" && game.global.world > 5 && getPageSetting('RBuyJobsNew') > 0) {
@@ -314,7 +314,7 @@ function mainLoop() {
 	if (getPageSetting('Rarchon') == true && game.global.challengeActive == "Archaeology") {
 	    archstring();
 	}
-	
+
         //RCombat
 	if (getPageSetting('Requipon') == true && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([11, 12, 21, 22].indexOf(questcheck()) >= 0)))) RautoEquip();
         if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
@@ -328,7 +328,7 @@ function mainLoop() {
         }
         if ((getPageSetting('Rdarmormagic') > 0 && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) || (getPageSetting('Rcarmormagic') > 0 && (game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))) Rarmormagic();
 	if (getPageSetting('Rmanageequality') == true && game.global.fighting) Rmanageequality();
-    
+
         //RRaiding
         if ((getPageSetting('RPraidHarder') == true && getPageSetting('RPraidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('RdPraidHarder') == true && getPageSetting('RdPraidingzone').length > 0 && game.global.challengeActive == "Daily")) RPraidHarder();
         else {
@@ -340,12 +340,12 @@ function mainLoop() {
         }
         if ((getPageSetting('RBWraid') == true || getPageSetting('RDailyBWraid') == true) && Rbwraidon) RbuyWeps();
         if (game.global.mapsActive && getPageSetting('RBWraid') == true && game.global.world == getPageSetting('RBWraidingz') && getCurrentMapObject().level <= getPageSetting('RBWraidingmax')) RbuyWeps();
-    
+
 	//RHeirlooms
 	if (getPageSetting('Rhs') == true) {
 	    Rheirloomswap();
 	}
-	    
+
         //RGolden
         var Ragu = getPageSetting('RAutoGoldenUpgrades');
         var Rdagu = getPageSetting('RdAutoGoldenUpgrades');
