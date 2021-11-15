@@ -667,7 +667,6 @@ function initializeAllSettings() {
     createSetting('ATGA2', 'ATGA', '<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ', 'boolean', 'false', null, 'ATGA');
     createSetting('ATGA2gen', 'ATGA: Gen %', '<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ', 'value', '1', null, 'ATGA');
     createSetting('ATGA2timer', 'ATGA: Timer', '<b>ATGA Timer</b><br>This is the default time your ATGA will use. ', 'value', '-1', null, 'ATGA');
-    createSetting('ATGA2elec', 'ATGA: T: Electricity', '<b>ATGA Timer: Electricity</b><br>This is timer ATGA will use if electricity challange is active.', 'value', '-1', null, 'ATGA')
 
     //Zone Timers
     document.getElementById('ATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -693,8 +692,9 @@ function initializeAllSettings() {
     createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '-1', null, 'ATGA');
 
 
-
     //Challenges
+    document.getElementById('dhATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
+    createSetting('ATGA2elec', 'ATGA: T: Electricity', '<b>ATGA Timer: Electricity</b><br>This is timer ATGA will use if electricity challange is active.', 'value', '-1', null, 'ATGA')
 
     //Hide
     createSetting('Rchallengehide', 'Hide Stuff', 'Enable seeing the hide challenges buttons. Feel free to turn this off once you are done. ', 'boolean', false, null, 'Challenges');
@@ -1809,6 +1809,7 @@ function updateCustomButtons() {
     (!radonon && ATGAon) ? turnOn("cATGA2timer") : turnOff("cATGA2timer");
     (!radonon && ATGAon) ? turnOn("chATGA2timer") : turnOff("chATGA2timer");
     (!radonon && ATGAon) ? turnOn("dATGA2Auto") : turnOff("dATGA2Auto");
+    (!radonon && ATGAon) ? turnOn("ATGA2elec") : turnOff("ATGA2elec");
 
 
 
