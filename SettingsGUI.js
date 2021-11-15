@@ -693,7 +693,7 @@ function initializeAllSettings() {
 
 
     //Challenges
-    document.getElementById('dhATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
+    document.getElementById('chATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
     createSetting('ATGA2elec', 'ATGA: T: Electricity', '<b>ATGA Timer: Electricity</b><br>This is timer ATGA will use if electricity challange is active.', 'value', '-1', null, 'ATGA')
 
     //Hide
