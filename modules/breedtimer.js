@@ -62,7 +62,7 @@ function ATGA2() {
 		target = new Decimal(getPageSetting('dsATGA2timer'));
 
 		// Challanges
-		if (game.global.challengeActive === "Electricity" && getPageSetting('ATGA2elec') > 0) {
+		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
 			target = new Decimal(getPageSetting('ATGA2elec'));
 		}
 
