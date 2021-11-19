@@ -471,7 +471,7 @@ function autoMap() {
     }
 
     //Voids
-    if (needToVoid) {
+    if (needToVoid && !shouldFarm) {
         var voidArray = [];
         var prefixlist = {
             'Deadly': 10,
