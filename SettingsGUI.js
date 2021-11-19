@@ -174,6 +174,7 @@ function initializeAllTabs() {
     createTabs("Nature", "Nature Settings");
     createTabs("Display", "Display & Spam Settings");
     createTabs("Import Export", "Import & Export Settings");
+    createTabs("Achievements", "Toggle Selections for Achievement Hunting")
     var li_0 = document.createElement('li');
     var a_0 = document.createElement('a');
     a_0.className = "tablinks minimize";
@@ -1014,6 +1015,9 @@ function initializeAllSettings() {
     createSetting('Export60', '-60 AT Settings', 'Gives you an AT settings String that you can use to import. Use if you are less than z60. ', 'infoclick', 'Export60', null, 'Import Export');
     createSetting('Export550', '550+ AT Settings', 'Gives you an AT settings String that you can use to import. Use if you are z550+ ', 'infoclick', 'Export550', null, 'Import Export');
     createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
+
+    //Achivements
+    createSetting('AcUnbalanced', 'Unbalanced', 'Try to obtain unbalanced achievement', 'boolean', false, null, 'Achievements');
     settingsProfileMakeGUI();
 }
 
@@ -2094,6 +2098,8 @@ function updateCustomButtons() {
     (keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
     (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
 
+    // Achievements
+    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === true) ? turnOff("AcUnbalanced") : turnOn("AcUnbalanced")
 
     //Dropdowns
     document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;

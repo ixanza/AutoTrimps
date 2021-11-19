@@ -124,3 +124,22 @@ function formatMinutesForDescriptions(number){
 
 window.onerror=function(b,c,d,e,f){var g=['Message: '+b,'URL: '+c,'Line: '+d,'Column: '+e,'Error object: '+JSON.stringify(f)].join(' - ');0!=d&&console.log('AT logged error: '+g)};
 function throwErrorfromModule(){throw new Error("We have successfully read the thrown error message out of a module")}
+
+// Achievements
+const getAchievement = (name) => {
+    let obj = {found: false};
+    for (let achievement of Object.values(game.achievements)) {
+        let names = achievement.names;
+        for (let i = 0; i < names; i++) {
+            if (names[i] === name) {
+                obj.found = true;
+                if (Array.isArray(achievement.finished)) {
+                    obj.finished = achievement.finished[i];
+                } else {
+                    obj.finished = i <= achievement.finished;
+                }
+            }
+        }
+    }
+    return obj;
+}
