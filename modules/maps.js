@@ -272,7 +272,11 @@ function autoMap() {
     var enemyHealth = calcEnemyHealth();
 
     if (getPageSetting('DisableFarm') > 0) {
-        shouldFarm = (calcHDratio() >= getPageSetting('DisableFarm'));
+        if (doVoids && getPageSetting('VDisableFarm') > 0) {
+            shouldFarm = (calcHDratio() >= getPageSetting('VDisableFarm'));
+        } else {
+            shouldFarm = (calcHDratio() >= getPageSetting('DisableFarm'));
+        }
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
     }
@@ -1118,7 +1122,7 @@ function RautoMap() {
 		RAMPmapbought4 = false;
 		RAMPmapbought5 = false;
 		RAMPfragmappybought = false;
-		
+
 		if (RAMPrepMap1 != undefined) {
 			if (getPageSetting('RAMPraidrecycle') == true) {
 				recycleMap(getMapIndex(RAMPrepMap1));
@@ -1166,7 +1170,7 @@ function RautoMap() {
 				Rshouldmayhem = 2;
 			}
 		}
-		
+
 		var mayhemextra = 0;
 		if (Rshouldmayhem > 0 && getPageSetting('Rmayhemmap') == 2) {
 			mayhemextra = 0;
@@ -1242,7 +1246,7 @@ function RautoMap() {
 				Rshouldpanda = true;
 			}
 		}
-		
+
 		var pandaextra = 1;
 		if (Rshouldpanda == true && getPageSetting('Rpandamaps') == true) {
 			pandaextra = 1;
@@ -1299,7 +1303,7 @@ function RautoMap() {
 			}
 		}
 	}
-    
+
 	//Insanity Farm
 	if (game.global.challengeActive == "Insanity") {
 		var insanityfarmcell;
@@ -1331,7 +1335,7 @@ function RautoMap() {
 			insanityfragmappybought = false;
 		}
 	}
-	
+
 	//Storm
 	if (game.global.challengeActive == "Storm") {
 		Rstormfarm = (getPageSetting('Rstormon') == true && game.global.world > 5 && (game.global.challengeActive == "Storm" && getPageSetting('Rstormzone') > 0 && getPageSetting('RstormHD') > 0 && getPageSetting('Rstormmult') > 0));
@@ -1341,13 +1345,13 @@ function RautoMap() {
 			var stormmult = getPageSetting('Rstormmult');
 			var stormHDzone = (game.global.world - stormzone);
 			var stormHDmult = (stormHDzone == 0) ? stormHD : Math.pow(stormmult, stormHDzone) * stormHD;
-			
+
 			if (game.global.world >= stormzone && RcalcHDratio() > stormHDmult) {
 				Rshouldstormfarm = true;
 			}
 		}
 	}
-	
+
     //Ship Farm
 	if (game.jobs.Worshipper.locked == 0) {
 		var shipfarmcell;
@@ -1365,7 +1369,7 @@ function RautoMap() {
 			var shipamountzones = shipfarmamount[shipamountfarmindex];
 
 			if (getPageSetting('Rshipfarmamount') == 50) shipamountzones = 50;
-			
+
 			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships) {
 				Rshouldshipfarm = true;
 			}
@@ -1385,30 +1389,30 @@ function RautoMap() {
 		if (Ralchfarm) {
 			var alchfarmzone = getPageSetting('Ralchfarmzone');
 			var alchfarmstacks = getPageSetting('Ralchfarmstack').split(',');
-			
+
 			var alchstacksfarmindex = alchfarmzone.indexOf(game.global.world);
 			var alchstackszones = alchfarmstacks[alchstacksfarmindex];
 			if (alchstackszones != undefined) {
 			    var potion;
 			    var potionletter = alchstackszones[0];
-			    if (potionletter == 'h') { 
-				potion = alchObj.getPotionCount('Herby Brew');  
+			    if (potionletter == 'h') {
+				potion = alchObj.getPotionCount('Herby Brew');
 				potionletter = "Herby Brew";
 			    }
-			    else if (potionletter == 'f') { 
-				potion = alchObj.getPotionCount('Potion of Finding'); 
-				potionletter = "Potion of Finding"; 
+			    else if (potionletter == 'f') {
+				potion = alchObj.getPotionCount('Potion of Finding');
+				potionletter = "Potion of Finding";
 			    }
-			    else if (potionletter == 'g') { 
-				potion = alchObj.getPotionCount('Gaseous Brew');  
+			    else if (potionletter == 'g') {
+				potion = alchObj.getPotionCount('Gaseous Brew');
 				potionletter = "Gaseous Brew";
 			    }
-			    else if (potionletter == 'v') { 
-				potion = alchObj.getPotionCount('Potion of the Void');  
+			    else if (potionletter == 'v') {
+				potion = alchObj.getPotionCount('Potion of the Void');
 				potionletter = "Potion of the Void";
 			    }
-			    else if (potionletter == 's') { 
-				potion = alchObj.getPotionCount('Potion of Strength');  
+			    else if (potionletter == 's') {
+				potion = alchObj.getPotionCount('Potion of Strength');
 				potionletter = "Potion of Strength";
 			    }
 
@@ -1426,14 +1430,14 @@ function RautoMap() {
 		    alchfragmappybought = false;
 		}
 	}
-	
+
     //Equip Farming
     Requipfarm = (getPageSetting('Requipfarmon') == true && game.global.world > 5 && (getPageSetting('Requipfarmzone') > 0 && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0));
     if (Requipfarm) {
 	var equipfarmzone = getPageSetting('Requipfarmzone');
 	var metal = game.resources.metal.owned
         var metalneeded = estimateEquipsForZone()[0];
-	    
+
         if (game.global.world >= equipfarmzone && metal < metalneeded) {
             Rshouldequipfarm = true;
         }
@@ -2312,7 +2316,7 @@ function RautoMap() {
                 if (alchfragcheck && getPageSetting('Ralchfarmlevel') != 0) {
                     if (alchfarmzone.includes(game.global.world)) {
 			if (Rshouldalchfarm) {
-		
+
 	                var alchfarmzone = getPageSetting('Ralchfarmzone');
                         var alchfarmlevel = getPageSetting('Ralchfarmlevel');
 	                var alchfarmselection = getPageSetting('Ralchfarmselection').split(',');
