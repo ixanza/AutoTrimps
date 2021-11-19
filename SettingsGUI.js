@@ -173,8 +173,8 @@ function initializeAllTabs() {
     createTabs("SA", "SA Settings");
     createTabs("Nature", "Nature Settings");
     createTabs("Display", "Display & Spam Settings");
-    createTabs("Import Export", "Import & Export Settings");
     createTabs("Achievements", "Toggle Selections for Achievement Hunting")
+    createTabs("Import Export", "Import & Export Settings");
     var li_0 = document.createElement('li');
     var a_0 = document.createElement('a');
     a_0.className = "tablinks minimize";
@@ -2099,7 +2099,7 @@ function updateCustomButtons() {
     (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
 
     // Achievements
-    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === true) ? turnOff("AcUnbalanced") : turnOn("AcUnbalanced")
+    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === true) ? turnOn("AcUnbalanced") : turnOff("AcUnbalanced")
 
     //Dropdowns
     document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;
