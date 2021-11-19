@@ -59,7 +59,7 @@ function updateAutoMapsStatus(get) {
     else if (doMaxMapBonus) status = 'Max Map Bonus After Zone';
     else if (!game.global.mapsUnlocked) status = '&nbsp;';
     else if (needPrestige && !doVoids) status = 'Prestige';
-    else if (doVoids) {
+    else if (doVoids && !shouldFarm) {
         var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
