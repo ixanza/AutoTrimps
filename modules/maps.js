@@ -35,6 +35,7 @@ function updateAutoMapsStatus(get) {
 
     var status;
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
+    let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
@@ -63,7 +64,7 @@ function updateAutoMapsStatus(get) {
         var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
-    else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165) status = "Farming Toxicity Stacks";
+    else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks) status = "Farming Toxicity Stacks";
     else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
     else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
