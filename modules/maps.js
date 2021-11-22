@@ -281,8 +281,9 @@ function autoMap() {
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
     }
-    if (!game.global.runningChallengeSquared && !shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165) {
-        shouldFarm = game.challenges.Toxicity.stacks < getPageSetting('TStacks');
+    let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
+    if (!game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165) {
+        shouldFarm = game.challenges.Toxicity.stacks < toxStacks;
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm) {
             toggleSetting('repeatUntil');
         }
