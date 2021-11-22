@@ -64,6 +64,8 @@ function ATGA2() {
 		// Challanges
 		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
 			target = new Decimal(getPageSetting('ATGA2elec'));
+		} else if (game.global.challengeActive === "Toxicity" && getPageSetting('ATGA2tox') > 0) {
+			target = new Decimal(getPageSetting('ATGA2tox'));
 		}
 
 		if ((getPageSetting('dATGA2Auto')==2||(getPageSetting('dATGA2Auto')==1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')){

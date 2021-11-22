@@ -696,7 +696,8 @@ function initializeAllSettings() {
 
     //Challenges
     document.getElementById('chATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
-    createSetting('ATGA2elec', 'ATGA: T: Electricity', '<b>ATGA Timer: Electricity</b><br>This is timer ATGA will use if electricity challange is active.', 'value', '-1', null, 'ATGA')
+    createSetting('ATGA2elec', 'ATGA: T: Electricity', '<b>ATGA Timer: Electricity</b><br>This is timer ATGA will use if electricity challenge is active.', 'value', '-1', null, 'ATGA')
+    createSetting('ATGA2tox', 'ATGA: T: Toxicity', '<b>ATGA Timer: Toxicity</b><br>This is timer ATGA will use if toxicity challenge is active.', 'value', '-1', null, 'ATGA')
 
     //Hide
     createSetting('Rchallengehide', 'Hide Stuff', 'Enable seeing the hide challenges buttons. Feel free to turn this off once you are done. ', 'boolean', false, null, 'Challenges');
@@ -1816,6 +1817,7 @@ function updateCustomButtons() {
     (!radonon && ATGAon) ? turnOn("chATGA2timer") : turnOff("chATGA2timer");
     (!radonon && ATGAon) ? turnOn("dATGA2Auto") : turnOff("dATGA2Auto");
     (!radonon && ATGAon) ? turnOn("ATGA2elec") : turnOff("ATGA2elec");
+    (!radonon && ATGAon) ? turnOn("ATGA2tox") : turnOff("ATGA2tox");
 
 
 
