@@ -63,6 +63,7 @@ function updateAutoMapsStatus(get) {
         var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
+    else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165) status = "Farming Toxicity Stacks";
     else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
     else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
@@ -279,6 +280,15 @@ function autoMap() {
         }
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
+    }
+    if (!game.global.runningChallengeSquared && !shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165) {
+        shouldFarm = game.challenges.Toxicity.stacks < getPageSetting('TStacks');
+        if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm) {
+            toggleSetting('repeatUntil');
+        }
+        if (game.global.lastClearedCell >= 98) {
+            forceAbandonTrimps();
+        }
     }
     if (game.global.spireActive) {
         enemyDamage = calcSpire(99, game.global.gridArray[99].name, 'attack');

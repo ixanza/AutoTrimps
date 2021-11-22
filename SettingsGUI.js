@@ -547,7 +547,8 @@ function initializeAllSettings() {
     createSetting('AdvMapSpecialModifier', 'Map Special Modifier', '<b>BELOW 300 ONLY</b><br> Attempt to select the BEST map special modifier. When starting a map for <b>Prestige</b> it will use <i>Prestigious</i>. When starting a map for <b>Farming</b> (for equipment) it will use your best metal cache. In any other case (such as farming for map stacks) it will use <i>Fast Attacks</i>. In all cases it uses the best modifier that can be afforded.', 'boolean', true, null, 'Maps');
     createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
     createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
-     createSetting('VDisableFarm', 'VM Farming H:D', 'H:D value to be checked only if we are going to run VMs. Allows you to farm more for VMs. 0 or -1 will make this value default to normal H:D value</b>', 'value', -1, null, 'Maps');
+    createSetting('VDisableFarm', 'VM Farming H:D', 'H:D value to be checked only if we are going to run VMs. Allows you to farm more for VMs. 0 or -1 will make this value default to normal H:D value</b>', 'value', -1, null, 'Maps');
+    createSetting('TStacks', 'Toxicity Stack Farming', 'If Toxicity challange is running and it is not C2, this will attempt to farm toxicity stacks at last zone of the challenge. 0 or -1 to disable.', 'value', -1, null, 'Maps');
 
     //RMaps
 
@@ -1701,6 +1702,7 @@ function updateCustomButtons() {
     !radonon ? turnOn("scryvoidmaps"): turnOff("scryvoidmaps");
     !radonon ? turnOn("buywepsvoid"): turnOff("buywepsvoid");
     !radonon ? turnOn("VDisableFarm"): turnOff("VDisableFarm");
+    !radonon ? turnOn("TStacks"): turnOff("TStacks");
 
     //RMaps
     radonon ? turnOn("RAutoMaps"): turnOff("RAutoMaps");
