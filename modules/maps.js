@@ -452,6 +452,12 @@ function autoMap() {
                         setPageSetting('TrimpleZ', 0);
                     break;
                 }
+                if (theMap.name === "Imploding Star" && game.global.challengeActive === "Devastation") {
+                    var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
+                    if (game.global.world < 170 + theMapDifficulty) continue;
+                    selectedMap = theMap.id;
+                    break;
+                }
                 if (!runningC2) {
                     if (theMap.name == 'The Prison' && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
                         var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
