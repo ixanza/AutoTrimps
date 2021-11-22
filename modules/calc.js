@@ -112,10 +112,10 @@ function getCritMulti(high) {
 
     var critChance = getPlayerCritChance();
     var CritD = getPlayerCritDamageMult();
-	
+
     if (
-	high && 
-	(getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily") || 
+	high &&
+	(getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily") ||
 	(getPageSetting('use3daily') == true && getPageSetting('dhighdmg') != undefined && game.global.challengeActive == "Daily")
        ) {
 	 highDamageShield();
@@ -389,11 +389,14 @@ function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
         }
         else if (game.global.challengeActive == "Corrupted"){
             number *= 3;
-	}
+        }
+        else if (game.global.challengeActive === "Toxicity") {
+            number *= 5;
+        }
         else if (game.global.challengeActive == "Domination"){
             	if (game.global.lastClearedCell == 98) {
 		    number *= 2.5;
-	    	}
+                }
 		else number *= 0.1;
 	}
         else if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated"){
@@ -616,7 +619,7 @@ function calcCurrentStance() {
             else {
                 return 1;
 	    }
-	
+
 	//High
         } else if (usehigh) {
 	    if (
@@ -668,13 +671,13 @@ function RcalcOurDmg(minMaxAvg, equality) {
 
     // Soldiers
     number *= game.resources.trimps.maxSoldiers;
-    
+
     // Smithies
     number *= Math.pow(1.25, game.buildings.Smithy.owned);
-    
+
     // Achievement bonus
     number *= 1 + (game.global.achievementBonus / 100);
-    
+
     // Power
     number += (number * game.portal.Power.radLevel * game.portal.Power.modifier);
 
@@ -682,13 +685,13 @@ function RcalcOurDmg(minMaxAvg, equality) {
     var mapBonus = game.global.mapBonus;
     if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
     number *= 1 + (mapBonus * .2);
-    
+
     // Tenacity
     number *= game.portal.Tenacity.getMult();
-    
+
     // Hunger
     number *= game.portal.Hunger.getMult();
-	
+
     // Ob
     number *= game.portal.Observation.getMult();
 
@@ -697,48 +700,48 @@ function RcalcOurDmg(minMaxAvg, equality) {
 
     // Robotrimp
     number *= 1 + (0.2 * game.global.roboTrimpLevel);
-    
+
     // Mayhem Completions
     number *= game.challenges.Mayhem.getTrimpMult();
-    
+
     // Panda Completions
     number *= game.challenges.Pandemonium.getTrimpMult();
 
     // Heirloom
     number *= 1 + calcHeirloomBonus('Shield','trimpAttack',1,true) / 100;
-    
+
     // Frenzy perk
-    if (getPageSetting('Rcalcfrenzy') == true) { 
+    if (getPageSetting('Rcalcfrenzy') == true) {
         number *= 1 + (0.5 * game.portal.Frenzy.radLevel);
     }
-	
+
     // Golden Upgrade
     number *= 1 + game.goldenUpgrades.Battle.currentBonus;
-    
+
     // Herbalist Mastery
     if (game.talents.herbalist.purchased) {
         number *= game.talents.herbalist.getBonus();
     }
-	
+
     // Challenge 2 or 3 reward
     number *= 1 + (game.global.totalSquaredReward / 100);
-	  
+
     // Fluffy Modifier
     number *= Fluffy.getDamageModifier();
-    
+
     // Pspire Strength Towers
     number *= 1 + (playerSpireTraps.Strength.getWorldBonus() / 100);
-    
+
     // Sharp Trimps
     if (game.singleRunBonuses.sharpTrimps.owned){
 	number *= 1.5;
     }
-    
+
     // Sugar rush event bonus
     if (game.global.sugarRush) {
 	number *= sugarRush.getAttackStrength();
     }
-    
+
     // Challenges
     if (game.global.challengeActive == "Melt") {number *= 5 * Math.pow(0.99, game.challenges.Melt.stacks);}
     if (game.global.challengeActive == "Unbalance") {number *= game.challenges.Unbalance.getAttackMult();}
@@ -747,7 +750,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
     if (game.global.challengeActive == "Quest") {number *= game.challenges.Quest.getAttackMult();}
     if (game.global.challengeActive == "Archaeology") {number *= game.challenges.Archaeology.getStatMult("attack");}
     if (game.global.challengeActive == "Berserk") {number *= game.challenges.Berserk.getAttackMult();}
-    if (game.challenges.Nurture.boostsActive() == true) {number *= game.challenges.Nurture.getStatBoost();}   
+    if (game.challenges.Nurture.boostsActive() == true) {number *= game.challenges.Nurture.getStatBoost();}
     if (game.global.challengeActive == "Alchemy") { number *= alchObj.getPotionEffect("Potion of Strength");}
 
     // Dailies
@@ -758,7 +761,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
         if (game.talents.daily.purchased){
             number *= 1.5;
         }
-        
+
         // Min damage reduced (additive)
 	if (typeof game.global.dailyChallenge.minDamage !== 'undefined') {
 	    minDailyMod -= dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
@@ -767,7 +770,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
 	if (typeof game.global.dailyChallenge.maxDamage !== 'undefined') {
 	    maxDailyMod += dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
         }
-        
+
         // Minus attack on odd zones
 	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1)) {
 	    number *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
@@ -815,9 +818,9 @@ function RcalcOurDmg(minMaxAvg, equality) {
 }
 
 function RcalcOurHealth() {
-	
+
     //Health
-	
+
     var health = 50;
     if (game.resources.trimps.maxSoldiers > 0) {
         var equipmentList = ["Shield", "Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
@@ -892,10 +895,10 @@ function RcalcOurHealth() {
     if (typeof game.global.dailyChallenge.pressure !== 'undefined') {
         health *= (dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks));
     }
-	
+
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
 	health *= Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult();
-	
+
     return health;
 }
 
@@ -1017,7 +1020,7 @@ function RcalcEnemyHealth(world) {
 	health *= 10;
     }
     if (game.global.challengeActive == "Archaeology") {
-	
+
     }
     if (game.global.challengeActive == "Mayhem") {
 	health *= game.challenges.Mayhem.getEnemyMult();
@@ -1060,7 +1063,7 @@ function RcalcEnemyHealthMod(world, cell, name) {
 	health *= 10;
     }
     if (game.global.challengeActive == "Archaeology") {
-	
+
     }
     if (game.global.challengeActive == "Mayhem") {
 	health *= game.challenges.Mayhem.getEnemyMult();
@@ -1100,28 +1103,28 @@ function RcalcHDratio() {
 
 function getTotalHealthMod() {
     var healthMulti = 1;
- 
+
     // Smithies
     healthMulti *= game.buildings.Smithy.getMult();
- 
+
     // Perks
     healthMulti *= 1 + (game.portal.Toughness.radLevel * game.portal.Toughness.modifier);
     healthMulti *= Math.pow(1 + game.portal.Resilience.modifier, game.portal.Resilience.radLevel);
     healthMulti *= game.portal.Observation.getMult();
     healthMulti *= game.portal.Championism.getMult();
- 
+
     // Scruffy's +50% health bonus
     healthMulti *= (Fluffy.isRewardActive("healthy") ? 1.5 : 1);
- 
+
     // Heirloom Health bonus
     healthMulti *= 1 + calcHeirloomBonus('Shield', 'trimpHealth',1, true) / 100;
- 
+
     // Golden Upgrades
     healthMulti *= 1 + game.goldenUpgrades.Battle.currentBonus;
- 
+
     // C2/3
     healthMulti *= 1 + game.global.totalSquaredReward / 100;
- 
+
     // Challenge Multis
     healthMulti *= (game.global.challengeActive == 'Revenge') ? game.challenges.Revenge.getMult() : 1;
     healthMulti *= (game.global.challengeActive == 'Wither') ? game.challenges.Wither.getTrimpHealthMult() : 1;
@@ -1134,19 +1137,19 @@ function getTotalHealthMod() {
 
     // Daily mod
     healthMulti *= (typeof game.global.dailyChallenge.pressure !== 'undefined') ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
- 
+
     // Mayhem
     healthMulti *= game.challenges.Mayhem.getTrimpMult();
-	
+
     // Panda
     healthMulti *= game.challenges.Pandemonium.getTrimpMult();
 
     // AB
     healthMulti *= autoBattle.bonuses.Stats.getMult();
- 
+
     // Prismatic
     healthMulti *= 1 + getEnergyShieldMult();
- 
+
     return healthMulti;
 }
 
