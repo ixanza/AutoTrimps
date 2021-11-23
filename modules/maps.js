@@ -288,7 +288,7 @@ function autoMap() {
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm) {
             toggleSetting('repeatUntil');
         }
-        if (!game.global.mapsActive && game.global.lastClearedCell >= 98) {
+        if (shouldFarm && !game.global.mapsActive && game.global.lastClearedCell >= 98) {
             forceAbandonTrimps();
         }
     }
