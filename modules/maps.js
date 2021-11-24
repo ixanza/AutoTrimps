@@ -282,13 +282,14 @@ function autoMap() {
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
     }
+    let toxCell = voidMapLevelSettingCell > 0 ? Math.min(98, voidMapLevelSettingCell - 2) : 98;
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
-    if (!game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165) {
+    if (!game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165 && game.global.lastClearedCell > toxCell) {
         shouldFarm = game.challenges.Toxicity.stacks < toxStacks;
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm) {
             toggleSetting('repeatUntil');
         }
-        if (shouldFarm && !game.global.mapsActive && game.global.lastClearedCell >= 98) {
+        if (shouldFarm && !game.global.mapsActive && game.global.lastClearedCell >= toxCell) {
             forceAbandonTrimps();
         }
     }
