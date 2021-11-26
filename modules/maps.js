@@ -64,7 +64,7 @@ function updateAutoMapsStatus(get) {
         var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
-    else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks) status = "Farming Toxicity Stacks";
+    else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks && game.global.challengeActive === "Toxicity") status = "Farming Toxicity Stacks";
     else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
     else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
@@ -284,7 +284,7 @@ function autoMap() {
     }
     let toxCell = voidMapLevelSettingCell > 0 ? Math.min(98, voidMapLevelSettingCell - 2) : 98;
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
-    if (!game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165 && game.global.lastClearedCell > toxCell) {
+    if (game.global.challengeActive === "Toxicity" && !game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165 && game.global.lastClearedCell > toxCell) {
         shouldFarm = game.challenges.Toxicity.stacks < toxStacks;
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm) {
             toggleSetting('repeatUntil');
