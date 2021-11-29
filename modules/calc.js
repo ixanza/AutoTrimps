@@ -411,6 +411,15 @@ function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
     if (!enemy && game.global.usingShriek) {
         number *= game.mapUnlocks.roboTrimp.getShriekValue();
     }
+    let calcCorruption = getPageSetting("calcCorruption")
+    if (calcCorruption) {
+        if (mutations.Corruption.active()) {
+            number *= getCorruptScale("attack")
+            if (game.global.gridArray.some(item => item?.corrupted === "corruptStrong")) {
+                number *= 2;
+            }
+        }
+    }
 
     if (!disableFlucts) {
         if (minFluct > 1) minFluct = 1;
@@ -458,12 +467,20 @@ function calcEnemyHealth(world, map) {
 	}
     }
     if (corrupt && !healthy) {
-        var cptnum = getCorruptedCellsNum();
-        var cpthlth = getCorruptScale("health");
-        var cptpct = cptnum / 100;
-        var hlthprop = cptpct * cpthlth;
-        if (hlthprop >= 1)
-            health *= hlthprop;
+        let calcCorruption = getPageSetting("calcCorruption")
+        if (calcCorruption) {
+            health *= getCorruptScale("health")
+            if (game.global.gridArray.some(item => item?.corrupted === "corruptTough")) {
+                health *= 5;
+            }
+        } else {
+            var cptnum = getCorruptedCellsNum();
+            var cpthlth = getCorruptScale("health");
+            var cptpct = cptnum / 100;
+            var hlthprop = cptpct * cpthlth;
+            if (hlthprop >= 1)
+                health *= hlthprop;
+        }
     }
     if (healthy) {
     var scales = Math.floor((game.global.world - 150) / 6);
