@@ -421,6 +421,10 @@ function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
         }
     }
 
+    if (game.global.spireActive) {
+        number = calcSpire(99, game.global.gridArray[99].name, 'attack');
+    }
+
     if (!disableFlucts) {
         if (minFluct > 1) minFluct = 1;
         if (maxFluct == -1) maxFluct = fluctuation;
