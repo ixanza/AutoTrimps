@@ -569,7 +569,7 @@ function autoMap() {
     }
 
     //Skip Spires
-    if (!preSpireFarming && getPageSetting('SkipSpires') == 1 && ((game.global.challengeActive != 'Daily' && isActiveSpireAT()) || (game.global.challengeActive == 'Daily' && disActiveSpireAT()))) {
+    if (!preSpireFarming && !spireMapBonusFarming && getPageSetting('SkipSpires') == 1 && ((game.global.challengeActive != 'Daily' && isActiveSpireAT()) || (game.global.challengeActive == 'Daily' && disActiveSpireAT()))) {
         enoughDamage = true;
         enoughHealth = true;
         shouldFarm = false;
