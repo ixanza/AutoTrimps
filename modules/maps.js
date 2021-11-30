@@ -36,13 +36,14 @@ function updateAutoMapsStatus(get) {
     var status;
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
+    let praid = prestraidon ?? false;
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
     else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
 
     //Raiding
-    else if (game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location != "Void" && getCurrentMapObject().location != "Bionic") status = 'Prestige Raiding';
+    else if (praid && game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location != "Void" && getCurrentMapObject().location != "Bionic") status = 'Prestige Raiding';
     else if (game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location == "Bionic") status = 'BW Raiding';
 
     //Spire
@@ -101,7 +102,7 @@ function testMapSpecialModController() {
                 if (needPrestige && a.includes("p")) {
                     c.value = "p";
                 } else if (shouldFarm || !enoughHealth || preSpireFarming) {
-                    c.value = a.includes("lmc") ? "lmc" : a.includes("hc") ? "hc" : a.includes("smc") ? "smc" : "lc";
+                    c.value = a.includes("lmc") ? "lmc" : a.includes("hc") ? "hc" : a.iPrncludes("smc") ? "smc" : "lc";
                 } else c.value = "fa";
                 for (var d = updateMapCost(!0), e = game.resources.fragments.owned, f = 100 * (d / e); 0 < c.selectedIndex && d > e;) {
                     c.selectedIndex -= 1;
