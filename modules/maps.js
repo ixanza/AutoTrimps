@@ -271,7 +271,7 @@ function autoMap() {
 
     //Calc
     var ourBaseDamage = calcOurDmg("avg", false, true);
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0), true, true);
+    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, false), true, true);
     var enemyHealth = calcEnemyHealth();
 
     if (getPageSetting('DisableFarm') > 0) {
@@ -400,7 +400,7 @@ function autoMap() {
     maxlvl += extraMapLevels;
     if (getPageSetting('DynamicSiphonology') || shouldFarmLowerZone) {
         for (siphlvl; siphlvl < maxlvl; siphlvl++) {
-            var maphp = getEnemyMaxHealth(siphlvl) * 1.1;
+            var maphp = getEnemyMaxHealth(siphlvl, 30, "Snimp", false) * 1.1;
             var cpthlth = getCorruptScale("health") / 2;
             if (mutations.Magma.active())
                 maphp *= cpthlth;
@@ -546,7 +546,7 @@ function autoMap() {
         for (var map in voidArraySorted) {
             var theMap = voidArraySorted[map];
             doVoids = true;
-            var eAttack = getEnemyMaxAttack(game.global.world, theMap.size, 'Voidsnimp', theMap.difficulty);
+            var eAttack = getEnemyMaxAttack(game.global.world, theMap.size, 'Voidsnimp', theMap.difficulty, false);
             if (game.global.world >= 181 || (game.global.challengeActive == "Corrupted" && game.global.world >= 60))
                 eAttack *= (getCorruptScale("attack") / 2).toFixed(1);
             if (game.global.challengeActive == 'Balance') {

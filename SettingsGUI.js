@@ -792,7 +792,7 @@ function initializeAllSettings() {
     createSetting('addpoison', 'Poison Calc', '<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ', 'boolean', 'false', null, 'Combat');
     createSetting('fullice', 'Ice Calc', '<b>Experimental. </b><br>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Stops H:D spazzing out. ', 'boolean', 'false', null, 'Combat');
     createSetting('45stacks', 'Antistack Calc', '<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ', 'boolean', 'false', null, 'Combat');
-    createSetting('calcCorruption', 'Calculate Corruption', 'Assume whole map is corrupted if corruption is started', 'boolean', 'false', null, 'Combat');
+    createSetting('calcCorruption', 'Calculate Corruption&Healthy', 'Add corruption & healthy mutation attack and hp modifiers to calculations. ', 'boolean', 'false', null, 'Combat');
 
 
     //RCombat

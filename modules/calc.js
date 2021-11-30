@@ -289,7 +289,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
 	if (Fluffy.isActive()){
 		number *= Fluffy.getDamageModifier();
 	}
-	if (getHeirloomBonus("Shield", "gammaBurst") > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5)) {
+	if (getHeirloomBonus("Shield", "gammaBurst") > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0, (getPageSetting("calcCorruption") ?? false)))) >= 5)) {
 	    	number *= ((getHeirloomBonus("Shield", "gammaBurst") / 100) + 1) / 5;
 	}
 
@@ -411,15 +411,6 @@ function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
     if (!enemy && game.global.usingShriek) {
         number *= game.mapUnlocks.roboTrimp.getShriekValue();
     }
-    let calcCorruption = getPageSetting("calcCorruption")
-    if (calcCorruption) {
-        if (mutations.Corruption.active()) {
-            number *= getCorruptScale("attack")
-            if (game.global.gridArray.some(item => item?.corrupted === "corruptStrong")) {
-                number *= 2;
-            }
-        }
-    }
 
     if (game.global.spireActive) {
         number = calcSpire(99, game.global.gridArray[99].name, 'attack');
@@ -460,36 +451,9 @@ function calcEnemyBaseHealth(zone, level, name) {
 
 function calcEnemyHealth(world, map) {
     world = !world ? game.global.world : world;
-    var health = calcEnemyBaseHealth(world, 50, "Snimp");
-    var corrupt = mutations.Corruption.active();
-    var healthy = mutations.Healthy.active();
-    if (map) {
-	corrupt = false;
-	healthy = false;
-	if (game.global.universe == 1) {
-	    health *= 0.5;
-	}
-    }
-    if (corrupt && !healthy) {
-        let calcCorruption = getPageSetting("calcCorruption")
-        if (calcCorruption) {
-            health *= getCorruptScale("health")
-            if (game.global.gridArray.some(item => item?.corrupted === "corruptTough")) {
-                health *= 5;
-            }
-        } else {
-            var cptnum = getCorruptedCellsNum();
-            var cpthlth = getCorruptScale("health");
-            var cptpct = cptnum / 100;
-            var hlthprop = cptpct * cpthlth;
-            if (hlthprop >= 1)
-                health *= hlthprop;
-        }
-    }
-    if (healthy) {
-    var scales = Math.floor((game.global.world - 150) / 6);
-    health *= 14*Math.pow(1.05, scales);
-    health *= 1.15;
+    var health = getEnemyMaxHealth(world, 50, "Snimp", (getPageSetting("calcCorruption") ?? false));
+    if (map && game.global.universe === 1) {
+        health *= 0.5;
     }
     if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
         var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
@@ -497,8 +461,8 @@ function calcEnemyHealth(world, map) {
         oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
         health *= oblitMult;
     }
-    if (game.global.challengeActive == "Coordinate"){
-	health *= getBadCoordLevel();
+    if (game.global.challengeActive == "Coordinate") {
+        health *= getBadCoordLevel();
     }
     if (game.global.challengeActive == "Toxicity") {
         health *= 2;
@@ -521,7 +485,7 @@ function calcEnemyHealth(world, map) {
         } else health *= 0.1;
     }
     if (game.global.spireActive) {
-	health = calcSpire(99, game.global.gridArray[99].name, 'health');
+        health = calcSpire(99, game.global.gridArray[99].name, 'health');
     }
     return health;
 }

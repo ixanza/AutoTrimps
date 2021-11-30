@@ -93,7 +93,7 @@ var equipmentList = {
         Equip: false
     }
 };
-var mapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"}; 
+var mapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"};
 function equipEffect(a,b){if(b.Equip)return a[b.Stat+'Calculated'];var c=a.increase.by*a.owned,d=game.upgrades.Gymystic.done?game.upgrades.Gymystic.modifier+0.01*(game.upgrades.Gymystic.done-1):1,e=a.increase.by*(a.owned+1)*d;return e-c}
 function equipCost(a,b){var c=parseFloat(getBuildingItemPrice(a,b.Resource,b.Equip,1));return c=b.Equip?Math.ceil(c*Math.pow(1-game.portal.Artisanistry.modifier,game.portal.Artisanistry.level)):Math.ceil(c*Math.pow(1-game.portal.Resourceful.modifier,game.portal.Resourceful.level)),c}
 function PrestigeValue(a){var b=game.upgrades[a].prestiges,c=game.equipment[b],d;d=c.blockNow?"block":"undefined"==typeof c.health?"attack":"health";var e=Math.round(c[d]*Math.pow(1.19,c.prestige*game.global.prestige[d]+1));return e}
@@ -194,9 +194,9 @@ function dorangewindstack(){(9<game.equipment.Dagger.level&&0==game.upgrades.Dag
 
 function windstackingprestige() {
     if (
-		(game.global.challengeActive != "Daily" && getEmpowerment() == "Wind" && getPageSetting('WindStackingMin') > 0 && game.global.world >= getPageSetting('WindStackingMin') && calcHDratio() < 5) || 
-		(game.global.challengeActive == "Daily" && getEmpowerment() == "Wind" && getPageSetting('dWindStackingMin') > 0 && game.global.world >= getPageSetting('dWindStackingMin') && calcHDratio() < 5) || 
-		(game.global.challengeActive != "Daily" && getPageSetting('wsmax') > 0 && getPageSetting('wsmaxhd') > 0 && game.global.world >= getPageSetting('wsmax') && calcHDratio() < getPageSetting('wsmaxhd')) || 
+		(game.global.challengeActive != "Daily" && getEmpowerment() == "Wind" && getPageSetting('WindStackingMin') > 0 && game.global.world >= getPageSetting('WindStackingMin') && calcHDratio() < 5) ||
+		(game.global.challengeActive == "Daily" && getEmpowerment() == "Wind" && getPageSetting('dWindStackingMin') > 0 && game.global.world >= getPageSetting('dWindStackingMin') && calcHDratio() < 5) ||
+		(game.global.challengeActive != "Daily" && getPageSetting('wsmax') > 0 && getPageSetting('wsmaxhd') > 0 && game.global.world >= getPageSetting('wsmax') && calcHDratio() < getPageSetting('wsmaxhd')) ||
 		(game.global.challengeActive == "Daily" && getPageSetting('dwsmax') > 0 && getPageSetting('dwsmaxhd') > 0 && game.global.world >= getPageSetting('dwsmax') && calcHDratio() < getPageSetting('dwsmaxhd'))
 	) {
 	if (game.global.challengeActive != "Daily") orangewindstack();
@@ -279,7 +279,7 @@ function autoLevelEquipment() {
 	ourDamage *= trimpAA;
 
 
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0), true, true);
+    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, (getPageSetting("calcCorruption") ?? false)), true, true);
     var enemyHealth = calcEnemyHealth();
     var pierceMod = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
     var numHits = MODULES["equipment"].numHitsSurvived;
@@ -488,7 +488,7 @@ var RequipmentList = {
     }
 };
 
-var Rmapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"}; 
+var Rmapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"};
 
 function RequipEffect(gameResource, equip) {
     if (equip.Equip) {
@@ -964,8 +964,8 @@ function buyPrestigeMaybe(equipName) {
     var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige + 1) * game.global.prestige[equipStat]) + 1));
     var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 
-    return newStatValue > currentStatValue 
-    
+    return newStatValue > currentStatValue
+
 }
 
 function RautoEquip() {
@@ -985,7 +985,7 @@ function RautoEquip() {
             }
         }
     } while (prestigeLeft)
-    
+
     // Gather settings
     var alwaysLvl2 = getPageSetting('Requip2');
     var attackEquipCap = ((getPageSetting('Requipcapattack') <= 0) ? Infinity : getPageSetting('Requipcapattack'));
@@ -999,7 +999,7 @@ function RautoEquip() {
             if (game.equipment[equip].level < 2) {
                 buyEquipment(equip, null, true, 1);
             }
-        } 
+        }
     }
 
     // Loop through actually getting equips
@@ -1022,16 +1022,16 @@ function RautoEquip() {
                         if (
                             zoneGo ||
                             underStats ||
-                            Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned 
+                            Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned
                         ) {
                             if (!game.equipment[equipName].locked) {
                                 if (buyEquipment(equipName, null, true, 1)){
                                 keepBuying = true;
                             }
 }
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
             }
 
             // Set up for Health
@@ -1039,7 +1039,7 @@ function RautoEquip() {
             resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
             equipCap = healthEquipCap;
             underStats = RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
-            
+
         }
 
     } while (keepBuying)
@@ -1069,7 +1069,7 @@ function equipfarmdynamicHD() {
     }
     return equipfarmHDmult;
 }
-	
+
 function estimateEquipsForZone() {
     var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
 	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
@@ -1119,7 +1119,7 @@ function estimateEquipsForZone() {
     var healthNeeded = ourHealth * healthNeededMulti / (getTotalHealthMod() * game.resources.trimps.maxSoldiers);
 
     var bonusLevels = {}; // How many levels you'll be getting in each shield-gambeson armor slots
-    
+
     while (healthNeeded > 0) {
         var bestArmor = mostEfficientEquipment(bonusLevels)[1];
         healthNeeded -= game.equipment[bestArmor][RequipmentList[bestArmor].Stat + "Calculated"];
@@ -1148,5 +1148,5 @@ function estimateEquipsForZone() {
     }
 
     return [totalCost, bonusLevels, tempEqualityUse];
-    
+
 }
