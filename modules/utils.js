@@ -143,3 +143,17 @@ const getAchievement = (name) => {
     }
     return obj;
 }
+
+const possibleToGetTimedAchievement = (achievement) => {
+    let result = false;
+    let gameAcv = game.achievements[achievement];
+    if (gameAcv) {
+        let finished = gameAcv.finished;
+        let breakpoints = gameAcv.breakpoints;
+        if (finished < breakpoints) {
+            let nextBreakpoint = breakpoints[finished + 1] * 60;
+            result = nextBreakpoint > (game.global.time / 60 / 1000);
+        }
+    }
+    return result;
+}

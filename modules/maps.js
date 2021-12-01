@@ -475,7 +475,7 @@ function autoMap() {
                         setPageSetting('TrimpleZ', 0);
                     break;
                 }
-                if (theMap.name === "Imploding Star" && game.global.challengeActive === "Devastation") {
+                if (theMap.name === "Imploding Star" && (game.global.challengeActive === "Devastation" || possibleToGetTimedAchievement("starTimed"))) {
                     var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                     if (game.global.world < 170 + theMapDifficulty) continue;
                     selectedMap = theMap.id;
