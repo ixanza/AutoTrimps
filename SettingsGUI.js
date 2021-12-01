@@ -2104,7 +2104,7 @@ function updateCustomButtons() {
     (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
 
     // Achievements
-    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === true) ? turnOn("AcUnbalanced") : turnOff("AcUnbalanced")
+    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === false) ? turnOn("AcUnbalanced") : turnOff("AcUnbalanced")
 
     //Dropdowns
     document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;

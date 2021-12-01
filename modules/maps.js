@@ -145,6 +145,15 @@ function autoMap() {
         return;
     }
 
+    // Challanges
+    if (getPageSetting("AcUnbalanced") && game.global.challengeActive === "Unbalance" && !game.global.runningChallengeSquared && game.challenges.Unbalance.balanceStacks >= 90) {
+        shouldFarm = true;
+        enoughDamage = false;
+        enoughHealth = false;
+        updateAutoMapsStatus();
+        return;
+    }
+
     //WS
     var mapenoughdamagecutoff = getPageSetting("mapcuntoff");
     if (getEmpowerment() == 'Wind' && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared && getPageSetting("AutoStance") == 3 && getPageSetting("WindStackingMin") > 0 && game.global.world >= getPageSetting("WindStackingMin") && getPageSetting("windcutoffmap") > 0)
