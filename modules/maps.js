@@ -145,15 +145,6 @@ function autoMap() {
         return;
     }
 
-    // Challanges
-    if (getPageSetting("AcUnbalanced") && game.global.challengeActive === "Unbalance" && !game.global.runningChallengeSquared && game.challenges.Unbalance.balanceStacks >= 90) {
-        shouldFarm = true;
-        enoughDamage = false;
-        enoughHealth = false;
-        updateAutoMapsStatus();
-        return;
-    }
-
     //WS
     var mapenoughdamagecutoff = getPageSetting("mapcuntoff");
     if (getEmpowerment() == 'Wind' && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared && getPageSetting("AutoStance") == 3 && getPageSetting("WindStackingMin") > 0 && game.global.world >= getPageSetting("WindStackingMin") && getPageSetting("windcutoffmap") > 0)
@@ -447,27 +438,27 @@ function autoMap() {
         for (var map in game.global.mapsOwnedArray) {
             var theMap = game.global.mapsOwnedArray[map];
             if (theMap.noRecycle) {
-                if (theMap.name == 'The Wall' && game.upgrades.Bounty.allowed == 0 && !game.talents.bounty.purchased) {
+                if (theMap.name == 'The Wall' && ((game.upgrades.Bounty.allowed == 0 && !game.talents.bounty.purchased) || possibleToGetTimedAchievement("wallTimed"))) {
                     var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                     if (game.global.world < 15 + theMapDifficulty) continue;
                     selectedMap = theMap.id;
                     break;
                 }
-                if (theMap.name == 'Dimension of Anger' && document.getElementById("portalBtn").style.display == "none" && !game.talents.portal.purchased) {
+                if (theMap.name == 'Dimension of Anger' && ((document.getElementById("portalBtn").style.display == "none" && !game.talents.portal.purchased) || possibleToGetTimedAchievement("angerTimed"))) {
                     var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                     if (game.global.world < 20 + theMapDifficulty) continue;
                     selectedMap = theMap.id;
                     break;
                 }
                 var runningC2 = game.global.runningChallengeSquared;
-                if (theMap.name == 'The Block' && !game.upgrades.Shieldblock.allowed && ((game.global.challengeActive == "Scientist" || game.global.challengeActive == "Trimp") && !runningC2 || getPageSetting('BuyShieldblock'))) {
+                if (theMap.name == 'The Block' && !game.upgrades.Shieldblock.allowed && ((game.global.challengeActive == "Scientist" || game.global.challengeActive == "Trimp") && !runningC2 || getPageSetting('BuyShieldblock') || possibleToGetTimedAchievement("blockTimed"))) {
                     var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                     if (game.global.world < 11 + theMapDifficulty) continue;
                     selectedMap = theMap.id;
                     break;
                 }
                 var treasure = getPageSetting('TrimpleZ');
-                if (theMap.name == 'Trimple Of Doom' && (!runningC2 && game.mapUnlocks.AncientTreasure.canRunOnce && game.global.world >= treasure)) {
+                if (theMap.name == 'Trimple Of Doom' && ((!runningC2 && game.mapUnlocks.AncientTreasure.canRunOnce && game.global.world >= treasure) || possibleToGetTimedAchievement("doomTimed"))) {
                     var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                     if ((game.global.world < 33 + theMapDifficulty) || treasure > -33 && treasure < 33) continue;
                     selectedMap = theMap.id;
@@ -482,13 +473,13 @@ function autoMap() {
                     break;
                 }
                 if (!runningC2) {
-                    if (theMap.name == 'The Prison' && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse")) {
+                    if (theMap.name == 'The Prison' && (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse" || possibleToGetTimedAchievement("prisonTimed"))) {
                         var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                         if (game.global.world < 80 + theMapDifficulty) continue;
                         selectedMap = theMap.id;
                         break;
                     }
-                    if (theMap.name == 'Bionic Wonderland' && game.global.challengeActive == "Crushed") {
+                    if ((theMap.name == 'Bionic Wonderland' && game.global.challengeActive == "Crushed") || possibleToGetTimedAchievement("bionicTimed")) {
                         var theMapDifficulty = Math.ceil(theMap.difficulty / 2);
                         if (game.global.world < 125 + theMapDifficulty) continue;
                         selectedMap = theMap.id;
@@ -583,6 +574,14 @@ function autoMap() {
         enoughHealth = true;
         shouldFarm = false;
         shouldDoMaps = false;
+    }
+
+    // Challenges
+    if (getPageSetting("AcUnbalanced") && game.global.challengeActive === "Unbalance" && !game.global.runningChallengeSquared && game.challenges.Unbalance.balanceStacks >= 90) {
+        enoughDamage = false;
+        enoughHealth = false;
+        shouldFarm = true;
+        shouldDoMaps = true;
     }
 
     //Automaps
