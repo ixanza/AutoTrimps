@@ -4,8 +4,16 @@ var prestraid=!1,dprestraid=!1,failpraid=!1,dfailpraid=!1,bwraided=!1,dbwraided=
 function armydeath(){if(game.global.mapsActive)return!1;var e=game.global.lastClearedCell+1,l=game.global.gridArray[e].attack*dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength,game.global.dailyChallenge.empower.stacks),a=game.global.soldierHealth+game.global.soldierEnergyShield;"Ice"==getEmpowerment()&&(l*=game.empowerments.Ice.getCombatModifier());var g=game.global.soldierCurrentBlock;return 3==game.global.formation?g/=4:"0"!=game.global.formation&&(g*=2),g>game.global.gridArray[e].attack?l*=getPierceAmt():l-=g*(1-getPierceAmt()),"Daily"==game.global.challengeActive&&void 0!==game.global.dailyChallenge.crits&&(l*=dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),void 0!==game.global.dailyChallenge.bogged&&(a-=game.global.soldierHealthMax*dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),void 0!==game.global.dailyChallenge.plague&&(a-=game.global.soldierHealthMax*dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength,game.global.dailyChallenge.plague.stacks)),"Electricity"==game.global.challengeActive&&(a-=game.global.soldierHealth-=game.global.soldierHealthMax*(.1*game.challenges.Electricity.stacks)),"corruptCrit"==game.global.gridArray[e].corrupted?l*=5:"healthyCrit"==game.global.gridArray[e].corrupted?l*=7:"corruptBleed"==game.global.gridArray[e].corrupted?a*=.8:"healthyBleed"==game.global.gridArray[e].corrupted&&(a*=.7),(a-=l)<=1e3}
 function autoRoboTrimp(){if(!(0<game.global.roboTrimpCooldown)&&game.global.roboTrimpLevel){var a=parseInt(getPageSetting("AutoRoboTrimp"));0==a||game.global.world>=a&&!game.global.useShriek&&(magnetoShriek(),MODULES.other.enableRoboTrimpSpam&&debug("Activated Robotrimp MagnetoShriek Ability @ z"+game.global.world,"graphs","*podcast"))}}
 function isBelowThreshold(a){return a!=game.global.world}
-function buyWeps(){if(!((getPageSetting('BuyWeaponsNew')==1)||(getPageSetting('BuyWeaponsNew')==3)))return;preBuy(),game.global.buyAmt=getPageSetting('gearamounttobuy'),game.equipment.Dagger.level<getPageSetting('CapEquip2')&&canAffordBuilding('Dagger',null,null,!0)&&buyEquipment('Dagger',!0,!0),game.equipment.Mace.level<getPageSetting('CapEquip2')&&canAffordBuilding('Mace',null,null,!0)&&buyEquipment('Mace',!0,!0),game.equipment.Polearm.level<getPageSetting('CapEquip2')&&canAffordBuilding('Polearm',null,null,!0)&&buyEquipment('Polearm',!0,!0),game.equipment.Battleaxe.level<getPageSetting('CapEquip2')&&canAffordBuilding('Battleaxe',null,null,!0)&&buyEquipment('Battleaxe',!0,!0),game.equipment.Greatsword.level<getPageSetting('CapEquip2')&&canAffordBuilding('Greatsword',null,null,!0)&&buyEquipment('Greatsword',!0,!0),!game.equipment.Arbalest.locked&&game.equipment.Arbalest.level<getPageSetting('CapEquip2')&&canAffordBuilding('Arbalest',null,null,!0)&&buyEquipment('Arbalest',!0,!0),postBuy()}
-function buyArms(){if(!((getPageSetting('BuyArmorNew')==1)||(getPageSetting('BuyArmorNew')==3)))return;preBuy(),game.global.buyAmt=10,game.equipment.Shield.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Shield',null,null,!0)&&buyEquipment('Shield',!0,!0),game.equipment.Boots.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Boots',null,null,!0)&&buyEquipment('Boots',!0,!0),game.equipment.Helmet.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Helmet',null,null,!0)&&buyEquipment('Helmet',!0,!0),game.equipment.Pants.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Pants',null,null,!0)&&buyEquipment('Pants',!0,!0),game.equipment.Shoulderguards.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Shoulderguards',null,null,!0)&&buyEquipment('Shoulderguards',!0,!0),game.equipment.Breastplate.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Breastplate',null,null,!0)&&buyEquipment('Breastplate',!0,!0),!game.equipment.Gambeson.locked&&game.equipment.Gambeson.level<getPageSetting('CapEquiparm')&&canAffordBuilding('Gambeson',null,null,!0)&&buyEquipment('Gambeson',!0,!0),postBuy()}
+
+function buyWeps() {
+	if (!((getPageSetting('BuyWeaponsNew') == 1) || (getPageSetting('BuyWeaponsNew') == 3))) return;
+	preBuy(), game.global.buyAmt = getPageSetting('gearamounttobuy'), game.equipment.Dagger.level < mostEffectiveLevel("Dagger") && canAffordBuilding('Dagger', null, null, !0) && buyEquipment('Dagger', !0, !0), game.equipment.Mace.level < mostEffectiveLevel("Mace") && canAffordBuilding('Mace', null, null, !0) && buyEquipment('Mace', !0, !0), game.equipment.Polearm.level < mostEffectiveLevel("Polearm") && canAffordBuilding('Polearm', null, null, !0) && buyEquipment('Polearm', !0, !0), game.equipment.Battleaxe.level < mostEffectiveLevel("Battleaxe") && canAffordBuilding('Battleaxe', null, null, !0) && buyEquipment('Battleaxe', !0, !0), game.equipment.Greatsword.level < mostEffectiveLevel("Greatsword") && canAffordBuilding('Greatsword', null, null, !0) && buyEquipment('Greatsword', !0, !0), !game.equipment.Arbalest.locked && game.equipment.Arbalest.level < mostEffectiveLevel("Arbalest") && canAffordBuilding('Arbalest', null, null, !0) && buyEquipment('Arbalest', !0, !0), postBuy()
+}
+
+function buyArms() {
+	if (!((getPageSetting('BuyArmorNew') == 1) || (getPageSetting('BuyArmorNew') == 3))) return;
+	preBuy(), game.global.buyAmt = 10, game.equipment.Shield.level < mostEffectiveLevel("Shield", "Health") && canAffordBuilding('Shield', null, null, !0) && buyEquipment('Shield', !0, !0), game.equipment.Boots.level < mostEffectiveLevel("Boots", "Health") && canAffordBuilding('Boots', null, null, !0) && buyEquipment('Boots', !0, !0), game.equipment.Helmet.level < mostEffectiveLevel("Helmet", "Health") && canAffordBuilding('Helmet', null, null, !0) && buyEquipment('Helmet', !0, !0), game.equipment.Pants.level < mostEffectiveLevel("Pants", "Health") && canAffordBuilding('Pants', null, null, !0) && buyEquipment('Pants', !0, !0), game.equipment.Shoulderguards.level < mostEffectiveLevel("Shoulderguards", "Health") && canAffordBuilding('Shoulderguards', null, null, !0) && buyEquipment('Shoulderguards', !0, !0), game.equipment.Breastplate.level < mostEffectiveLevel("Breastplate", "Health") && canAffordBuilding('Breastplate', null, null, !0) && buyEquipment('Breastplate', !0, !0), !game.equipment.Gambeson.locked && game.equipment.Gambeson.level < mostEffectiveLevel("Gambeson", "Health") && canAffordBuilding('Gambeson', null, null, !0) && buyEquipment('Gambeson', !0, !0), postBuy()
+}
 function isActiveSpireAT(){return game.global.challengeActive!='Daily'&&game.global.spireActive&&game.global.world>=getPageSetting('IgnoreSpiresUntil')}
 function disActiveSpireAT(){return game.global.challengeActive=='Daily'&&game.global.spireActive&&game.global.world>=getPageSetting('dIgnoreSpiresUntil')}
 function exitSpireCell(){isActiveSpireAT()&&game.global.lastClearedCell>=getPageSetting('ExitSpireCell')-1&&endSpire()}
@@ -47,7 +55,7 @@ function autoGoldenUpgradesAT(setting) {
 
 //Praiding
 
-function plusMapToRun1() { 
+function plusMapToRun1() {
 var map = 1;
 if (game.global.world % 10 == 5)
 	map = 6;
@@ -62,7 +70,7 @@ if (game.global.world % 10 == 9)
 return map;
 }
 
-function plusMapToRun2() { 
+function plusMapToRun2() {
 var map = 2;
 if (game.global.world % 10 == 4)
 	map = 7;
@@ -79,7 +87,7 @@ if (game.global.world % 10 == 9)
 return map;
 }
 
-function plusMapToRun3() { 
+function plusMapToRun3() {
 var map = 3;
 if (game.global.world % 10 == 3)
 	map = 8;
@@ -98,7 +106,7 @@ if (game.global.world % 10 == 9)
 return map;
 }
 
-function plusMapToRun4() { 
+function plusMapToRun4() {
 var map = 4;
 if (game.global.world % 10 == 2)
 	map = 9;
@@ -119,7 +127,7 @@ if (game.global.world % 10 == 9)
 return map;
 }
 
-function plusMapToRun5() { 
+function plusMapToRun5() {
 var map = 5;
 if (game.global.world % 10 == 1)
 	map = 10;
@@ -994,7 +1002,7 @@ function pcheckmap5() {
 
 var pMap1 = undefined;
 var pMap2 = undefined;
-var pMap3 = undefined;  
+var pMap3 = undefined;
 var pMap4 = undefined;
 var pMap5 = undefined;
 var repMap1 = undefined;
@@ -1388,7 +1396,7 @@ function PraidHarder() {
     fMap = null;
     debug("Turning AutoMaps back on");
     game.options.menu.repeatUntil.enabled = 0;
-    autoTrimpSettings['AutoMaps'].value = 1;    
+    autoTrimpSettings['AutoMaps'].value = 1;
   }
 
   if (!getPageSetting(praidSetting).includes(game.global.world)) {
@@ -1869,7 +1877,7 @@ function tdStringCode2(){
         infoHtml += "<div onclick='playerSpire.shrink()' id='shrinkSpireBox' class='spireControlBox'>Shrink Window</div>";
         infoHtml += "<div onclick='playerSpire.settingsTooltip()' id='spireSettingsBox' class='spireControlBox'>Settings</div>"
         infoHtml += "<div onclick='tooltip(\"confirm\", null, \"update\", \"Are you sure you want to sell all Traps and Towers? You will get back 100% of Runestones spent on them.<br/><br/>" + ((this.paused) ? "" : "<b>Protip:</b> Pause your Spire before selling your defenses if you want to avoid leaking!") + "\", \"playerSpire.resetTraps()\", \"Sell All?\")' class='spireControlBox'>Sell All</div>";
-        infoHtml += "<div onclick='playerSpire.togglePause()' id='pauseSpireBtn' class='spireControlBox spirePaused" + ((this.paused) ? "Yes'>Unpause" : "'>Pause Spire") + "</div>";      
+        infoHtml += "<div onclick='playerSpire.togglePause()' id='pauseSpireBtn' class='spireControlBox spirePaused" + ((this.paused) ? "Yes'>Unpause" : "'>Pause Spire") + "</div>";
         infoHtml += "<div class='spireControlBoxDbl'><div onclick='playerSpire.presetTooltip(1)'>Layout 1</div><div onclick='playerSpire.presetTooltip(2)'>Layout 2</div></div>"
         infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftUp\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftUp\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftUp") ? " selected" : "") + "'>Shift Up</div>";
         infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftDown\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftDown\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftDown") ? " selected" : "") + "'>Shift Down</div>";
@@ -2187,7 +2195,7 @@ function RPraidHarder() {
     else {
       debug("Turning AutoMaps back on");
       game.options.menu.repeatUntil.enabled = 0;
-      autoTrimpSettings['RAutoMaps'].value = 1;    
+      autoTrimpSettings['RAutoMaps'].value = 1;
     }
   }
 
@@ -2461,18 +2469,18 @@ function questcheck() {
 		return 0;
 }
 
-function Rgetequipcost(equip, resource, amt) { 
+function Rgetequipcost(equip, resource, amt) {
 	var cost = Math.ceil(getBuildingItemPrice(game.equipment[equip], resource, true, amt) * (Math.pow(amt - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel)));
 	return cost;
                        }
-					   
+
 //smithylogic('Shield', 'wood', true)
 function smithylogic(name, resource, equip) {
 
 	var go = true;
-	
+
 	//Checks
-	
+
 	if (getPageSetting('Rsmithylogic') == false || getPageSetting('Rsmithynumber') <= 0 || getPageSetting('Rsmithypercent') <= 0 || getPageSetting('Rsmithyseconds') <= 0) {
 	    return go;
 	}
@@ -2482,9 +2490,9 @@ function smithylogic(name, resource, equip) {
 	if (name == undefined) {
 	    return go;
 	}
-	
+
 	//Vars
-	
+
 	var amt = (getPageSetting('Rgearamounttobuy') > 0) ? getPageSetting('Rgearamounttobuy') : 1;
 	var percent = (getPageSetting('Rsmithypercent') / 100);
 	var seconds = getPageSetting('Rsmithyseconds');
@@ -2504,7 +2512,7 @@ function smithylogic(name, resource, equip) {
 	var itemwood = null;
 	var itemmetal = null;
 	var itemgems = null;
-	
+
 	if (!equip) {
 		if (name == "Hut") {
 		    itemwood = getBuildingItemPrice(game.buildings[name], "wood", false, amt);
@@ -2542,34 +2550,34 @@ function smithylogic(name, resource, equip) {
 	else if (equip && name != "Shield") {
 		itemmetal = Rgetequipcost(name, resource, amt);
 	}
-	
+
 	if (itemwood == null && itemmetal == null && itemgems == null) {
 	    return go;
 	}
 	if (!smithyclosewood && !smithyclosemetal && !smithyclosegems) {
 	    return go;
 	}
-	else if (smithyclosewood && itemwood > smithypercentwood && (name == "Shield" || name == "Hut" || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort")) { 
+	else if (smithyclosewood && itemwood > smithypercentwood && (name == "Shield" || name == "Hut" || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort")) {
 	    go = false;
 	    return go;
 	}
-	else if (smithyclosemetal && itemmetal > smithypercentmetal && ((equip && name != "Shield") || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway")) { 
+	else if (smithyclosemetal && itemmetal > smithypercentmetal && ((equip && name != "Shield") || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway")) {
 	    go = false;
 	    return go;
 	}
-	else if (smithyclosegems && itemgems > smithypercentgems && (name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway" || name == "Collector")) { 
+	else if (smithyclosegems && itemgems > smithypercentgems && (name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway" || name == "Collector")) {
 	    go = false;
 	    return go;
 	}
-	else if (smithyclosewood && itemwood <= smithypercentwood && (name == "Shield" || name == "Hut" || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort")) { 
+	else if (smithyclosewood && itemwood <= smithypercentwood && (name == "Shield" || name == "Hut" || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort")) {
 	    go = true;
 	    return go;
 	}
-	else if (smithyclosemetal && itemmetal <= smithypercentmetal && ((equip && name != "Shield") || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway")) { 
+	else if (smithyclosemetal && itemmetal <= smithypercentmetal && ((equip && name != "Shield") || name == "House" || name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway")) {
 	    go = true;
 	    return go;
 	}
-	else if (smithyclosegems && itemgems <= smithypercentgems && (name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway" || name == "Collector")) { 
+	else if (smithyclosegems && itemgems <= smithypercentgems && (name == "Mansion" || name == "Hotel" || name == "Resort" || name == "Gateway" || name == "Collector")) {
 	    go = true;
 	    return go;
 	}
@@ -2595,7 +2603,7 @@ function archstring() {
 
 //RAMP
 
-function RAMPplusMapToRun(number) { 
+function RAMPplusMapToRun(number) {
     var map;
     if (Rshoulddopraid) {
         var praidzone = getPageSetting('RAMPraidzone');
@@ -2603,9 +2611,9 @@ function RAMPplusMapToRun(number) {
 
 	var praidindex = praidzone.indexOf(game.global.world);
 	var raidzones = raidzone[praidindex];
-	    
+
 	map = (raidzones - game.global.world - number);
-	    
+
 	return map;
     }
 }
@@ -2620,7 +2628,7 @@ function RAMPshouldrunmap(number) {
 	var raidzones = raidzone[praidindex];
 
 	var actualraidzone = (raidzones - number);
-	    
+
         if (Rgetequips(actualraidzone, false) > 0) {
 	    go = true;
         }
@@ -2635,12 +2643,12 @@ function RAMPpcheckmap(number) {
 
 	    var praidindex = praidzone.indexOf(game.global.world);
 	    var raidzones = raidzone[praidindex];
-	    
+
 	    var map = (raidzones - game.global.world);
-	    
+
 	    if (number == 0) {
 		if (game.global.world % 10 == 0 ) {
-		    
+
 		}
 	    }
 	}
@@ -3287,13 +3295,13 @@ function insanityfragmin(number) {
 function insanityfrag() {
 	var cost = 0;
 	if (Rshouldinsanityfarm) {
-		
+
 	    var insanityfarmzone = getPageSetting('Rinsanityfarmzone');
 	    var insanityfarmlevel = getPageSetting('Rinsanityfarmlevel');
 
             var insanityfarmlevelindex = insanityfarmzone.indexOf(game.global.world);
             var insanitylevelzones = insanityfarmlevel[insanityfarmlevelindex];
-		
+
 	    if (getPageSetting('Rinsanityfarmfrag') == true) {
 		cost = insanityfragmin(insanitylevelzones);
 	    }
@@ -3568,13 +3576,13 @@ function shipfragmin(number) {
 function shipfrag() {
 	var cost = 0;
 	if (Rshouldshipfarm) {
-		
+
 	    var shipfarmzone = getPageSetting('Rshipfarmzone');
 	    var shipfarmlevel = getPageSetting('Rshipfarmlevel');
 
             var shipfarmlevelindex = shipfarmzone.indexOf(game.global.world);
             var shiplevelzones = shipfarmlevel[shipfarmlevelindex];
-		
+
 	    if (getPageSetting('Rshipfarmfrag') == true) {
 		cost = shipfragmin(shiplevelzones);
 	    }
@@ -3797,7 +3805,7 @@ function alchfragmin(number, selection) {
 function alchfrag() {
 	var cost = 0;
 	if (Rshouldalchfarm) {
-		
+
 	    var alchfarmzone = getPageSetting('Ralchfarmzone');
             var alchfarmlevel = getPageSetting('Ralchfarmlevel');
 	    var alchfarmselection = getPageSetting('Ralchfarmselection').split(',');
@@ -3814,7 +3822,7 @@ function alchfrag() {
             else if (selection == 'l') selection = "Farmlands";
 
 	    alchfragmin(alchlevelzones, selection);
-		
+
 	    if (getPageSetting('Ralchfarmfrag') == true) {
 		cost = alchfragmin(alchlevelzones, selection);
 	    }

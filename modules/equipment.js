@@ -155,8 +155,8 @@ function evaluateEquipmentEfficiency(equipName) {
 
     var isLiquified = (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp");
     var cap = 100;
-    if (equipmentList[equipName].Stat == 'health') cap = getPageSetting('CapEquiparm');
-    if (equipmentList[equipName].Stat == 'attack') cap = getPageSetting('CapEquip2');
+    if (equipmentList[equipName].Stat == 'health') cap = mostEffectiveLevel(equipName, "Health")
+    if (equipmentList[equipName].Stat == 'attack') cap = mostEffectiveLevel(equipName, "Weapon")
     if ((isLiquified) && cap > 0 && gameResource.level >= (cap / MODULES["equipment"].capDivisor)) {
         Factor = 0;
         Wall = true;
@@ -1149,4 +1149,33 @@ function estimateEquipsForZone() {
 
     return [totalCost, bonusLevels, tempEqualityUse];
 
+}
+
+const mostEffectiveLevel = (equipment, type= "Weapon") => {
+    let level = type === "Weapon" ? getPageSetting("CapEquip2") : getPageSetting("CapEquiparm")
+    if (getPageSetting("mostEffective")) {
+        switch (equipment) {
+            case "Greatsword":
+            case "Pants":
+            case "Shoulderguards":
+            case "Breastplate":
+                level = 1;
+                break;
+            case "Polearm":
+            case "Battleaxe":
+            case "Helm":
+                level = 2;
+                break;
+            case "Mace":
+            case "Arbalest":
+            case "Boots":
+            case "Gambeson":
+                level = 3;
+                break;
+            case "Dagger":
+                level = 5;
+                break;
+        }
+    }
+    return level;
 }

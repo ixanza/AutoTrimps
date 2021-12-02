@@ -498,6 +498,8 @@ function initializeAllSettings() {
     createSetting('gearamounttobuy', 'Gear Levels to Buy', 'Set the amount of Gear Levels to buy for AT. I.e if set to 1 will buy 1 level at a time. Recommended value 1. <b>MUST ALWAYS HAVE A VALUE GREATER THAN 0! </b>', 'value', 1, null, "Gear");
     createSetting('always2', 'Always Level 2', 'Always buys level 2 of weapons and armor regardless of efficiency', 'boolean', false, null, "Gear");
 
+    // Line 3
+    createSetting('mostEffective', 'Most effective levels', 'Limits weapon/armor level by most effective levels possible<br> For Weapons: 5/3/2/2/1/3<br> For Armor: 3/2/1/1/1/3<br>Ignores level cap set if it is enabled.', 'boolean', false, null, "Gear");
 
     //RGear
 
@@ -1660,6 +1662,7 @@ function updateCustomButtons() {
     !radonon ? turnOn("trimpsnotdie"): turnOff("trimpsnotdie");
     !radonon ? turnOn("gearamounttobuy"): turnOff("gearamounttobuy");
     !radonon ? turnOn("always2"): turnOff("always2");
+    !radonon ? turnOn("mostEffective"): turnOff("mostEffective");
 
 
     //RGear
