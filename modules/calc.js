@@ -497,7 +497,7 @@ function calcEnemyHealth(world, map, daily = true) {
         } else health *= 0.1;
     }
     if (daily) {
-        number = calcDailyHealthMod(number);
+        health = calcDailyHealthMod(health);
     }
     if (game.global.spireActive) {
         health = calcSpire(99, game.global.gridArray[99].name, 'health');
