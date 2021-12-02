@@ -332,6 +332,18 @@ function calcDailyAttackMod(number) {
         if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined'){
             number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
         }
+        if (typeof game.global.dailyChallenge.empower !== "undefined") {
+            number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks)
+        }
+    }
+    return number;
+}
+
+function calcDailyHealthMod(number) {
+    if (game.global.challengeActive == "Daily"){
+        if (typeof game.global.dailyChallenge.empower !== "undefined") {
+            number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks)
+        }
     }
     return number;
 }
@@ -483,6 +495,9 @@ function calcEnemyHealth(world, map) {
         if (game.global.lastClearedCell == 98) {
             health *= 7.5;
         } else health *= 0.1;
+    }
+    if (daily) {
+        number = calcDailyHealthMod(number);
     }
     if (game.global.spireActive) {
         health = calcSpire(99, game.global.gridArray[99].name, 'health');
