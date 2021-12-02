@@ -152,7 +152,7 @@ const possibleToGetTimedAchievement = (achievement) => {
         let breakpoints = gameAcv.breakpoints;
         if (finished < breakpoints.length) {
             let nextBreakpoint = breakpoints[finished];
-            result = nextBreakpoint > (game.global.time / 600);
+            result = nextBreakpoint > ((getGameTime() - game.global.portalTime) / 1000 / 60);
         }
     }
     return result;
