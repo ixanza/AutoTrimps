@@ -1163,7 +1163,7 @@ const mostEffectiveLevel = (equipment, type= "Weapon") => {
                 break;
             case "Polearm":
             case "Battleaxe":
-            case "Helm":
+            case "Helmet":
                 level = 2;
                 break;
             case "Mace":
