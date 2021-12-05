@@ -196,17 +196,17 @@ let dBreedTimerEnabled = false;
 let queueSize = 20;
 let queueCreatedTimer = 30;
 let dQueue = [];
-let lastUpdate = 0;
 let lastUpdateTime = 0;
 let lastPortal = 0;
+let startMonitor = false;
 
 const enableDynamicTimer = (targetTime) => {
 	dBreedTimerEnabled = true;
 	queueCreatedTimer = targetTime;
 	dQueue = Array(queueSize).fill(targetTime);
-	lastUpdate = 0;
 	lastUpdateTime = 0;
 	lastPortal = game.stats.totalPortals.valueTotal();
+	startMonitor = false;
 }
 
 const disableDynamicTimer = () => {
@@ -225,13 +225,15 @@ const getDynamicTime = () => {
 const updateQueueTimer = () => {
 	if (lastPortal !== game.stats.totalPortals.valueTotal()) {
 		disableDynamicTimer();
-	} else if (lastUpdate !== game.stats.battlesLost.value) {
-		lastUpdate = game.stats.battlesLost.value;
+	} else if (game.global.fighting && !startMonitor) {
+		startMonitor = true;
+		lastUpdateTime = getGameTime();
+	} else if (!game.global.fighting && startMonitor) {
+		startMonitor = false;
 		dQueue.pop();
 		let newLastUpdateTime = getGameTime();
 		let deathTimer = new Decimal((newLastUpdateTime - lastUpdateTime) / 1000)
 		deathTimer = Decimal.min(deathTimer, queueCreatedTimer);
-		lastUpdateTime = newLastUpdateTime;
 		dQueue.unshift(deathTimer);
 	}
 }
