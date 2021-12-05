@@ -671,6 +671,7 @@ function initializeAllSettings() {
     createSetting('ATGA2', 'ATGA', '<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ', 'boolean', 'false', null, 'ATGA');
     createSetting('ATGA2gen', 'ATGA: Gen %', '<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ', 'value', '1', null, 'ATGA');
     createSetting('ATGA2timer', 'ATGA: Timer', '<b>ATGA Timer</b><br>This is the default time your ATGA will use. ', 'value', '-1', null, 'ATGA');
+    createSetting('dyATGA2timer', 'Dynamic Timer', '<b>Dynamic ATGA Timer</b><br>Automatically adjust timer based on weighted average of how long your Trimps last. It will never set up more than current timer.', 'boolean', false, null, 'ATGA');
 
     //Zone Timers
     document.getElementById('ATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -1809,6 +1810,7 @@ function updateCustomButtons() {
     !radonon && getPageSetting('ATGA2') == true ? turnOn("ATGA2timer"): turnOff("ATGA2timer");
     !radonon && getPageSetting('ATGA2') == true ? turnOn("ATGA2gen"): turnOff("ATGA2gen");
     var ATGAon = (getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0);
+    (!radonon && ATGAon) ? turnOn("dyATGA2timer") : turnOff("zATGA2timer");
     (!radonon && ATGAon) ? turnOn("zATGA2timer") : turnOff("zATGA2timer");
     (!radonon && ATGAon && getPageSetting('zATGA2timer') > 0) ? turnOn("ztATGA2timer") : turnOff("ztATGA2timer");
     (!radonon && ATGAon) ? turnOn("ATGA2timerz") : turnOff("ATGA2timerz");

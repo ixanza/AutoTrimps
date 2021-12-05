@@ -61,6 +61,23 @@ function ATGA2() {
 		if (game.global.challengeActive == "Daily" && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
 		target = new Decimal(getPageSetting('dsATGA2timer'));
 
+		let dyTimer = getPageSetting("dyATGA2timer");
+		if (dBreedTimerEnabled !== dyTimer) {
+			if (dyTimer) {
+				enableDynamicTimer(target);
+			} else {
+				disableDynamicTimer();
+			}
+		}
+
+		if (dBreedTimerEnabled) {
+			if (target !== queueCreatedTimer) {
+				adjustDynamicTimerQueue(target);
+			}
+			updateQueueTimer();
+			target = getDynamicTime();
+		}
+
 		// Challanges
 		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
 			target = new Decimal(getPageSetting('ATGA2elec'));
@@ -172,4 +189,48 @@ function forceAbandonTrimps() {
         mapsClicked();
     }
 
+}
+
+/* DYNAMIC TIMER */
+let dBreedTimerEnabled = false;
+let queueSize = 20;
+let queueCreatedTimer = 30;
+let dQueue = [];
+let lastUpdate = 0;
+let lastUpdateTime = 0;
+let lastPortal = 0;
+
+const enableDynamicTimer = (targetTime) => {
+	dBreedTimerEnabled = true;
+	queueCreatedTimer = targetTime;
+	dQueue = Array(queueSize).fill(targetTime);
+	lastUpdate = 0;
+	lastUpdateTime = 0;
+	lastPortal = game.stats.totalPortals.valueTotal();
+}
+
+const disableDynamicTimer = () => {
+	dBreedTimerEnabled = false;
+	dQueue = [];
+}
+
+const adjustDynamicTimerQueue = (targetTime) => {
+	dQueue = dQueue.map(value => value === queueCreatedTimer ? targetTime : value)
+}
+
+const getDynamicTime = () => {
+	return dQueue.reduce((a, b) => a + b, 0) / dQueue.length
+}
+
+const updateQueueTimer = () => {
+	if (lastPortal !== game.stats.totalPortals.valueTotal()) {
+		disableDynamicTimer();
+	} else if (lastUpdate !== game.stats.trimpsKilled.value) {
+		lastUpdate = game.stats.trimpsKilled.value;
+		dQueue.pop();
+		let newLastUpdateTime = ((getGameTime() - game.global.portalTime) / 1000);
+		let deathTimer = Math.min(newLastUpdateTime - lastUpdateTime, queueCreatedTimer);
+		lastUpdateTime = newLastUpdateTime;
+		dQueue.push(deathTimer);
+	}
 }
