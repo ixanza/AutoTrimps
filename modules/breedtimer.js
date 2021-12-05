@@ -228,7 +228,7 @@ const updateQueueTimer = () => {
 	} else if (game.global.fighting && !startMonitor) {
 		startMonitor = true;
 		lastUpdateTime = getGameTime();
-	} else if (!game.global.fighting && startMonitor) {
+	} else if (!game.global.fighting && game.global.soldierHealth <= 0 && startMonitor) {
 		startMonitor = false;
 		dQueue.pop();
 		let newLastUpdateTime = getGameTime();
