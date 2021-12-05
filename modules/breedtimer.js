@@ -225,12 +225,13 @@ const getDynamicTime = () => {
 const updateQueueTimer = () => {
 	if (lastPortal !== game.stats.totalPortals.valueTotal()) {
 		disableDynamicTimer();
-	} else if (lastUpdate !== game.stats.trimpsKilled.value) {
-		lastUpdate = game.stats.trimpsKilled.value;
+	} else if (lastUpdate !== game.stats.battlesLost.value) {
+		lastUpdate = game.stats.battlesLost.value;
 		dQueue.pop();
-		let newLastUpdateTime = ((getGameTime() - game.global.portalTime) / 1000);
-		let deathTimer = Math.min(newLastUpdateTime - lastUpdateTime, queueCreatedTimer);
+		let newLastUpdateTime = getGameTime();
+		let deathTimer = new Decimal((newLastUpdateTime - lastUpdateTime) / 1000)
+		deathTimer = Decimal.min(deathTimer, queueCreatedTimer);
 		lastUpdateTime = newLastUpdateTime;
-		dQueue.push(new Decimal(deathTimer));
+		dQueue.unshift(deathTimer);
 	}
 }
