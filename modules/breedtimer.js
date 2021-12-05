@@ -61,6 +61,20 @@ function ATGA2() {
 		if (game.global.challengeActive == "Daily" && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
 		target = new Decimal(getPageSetting('dsATGA2timer'));
 
+		// Challanges
+		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
+			target = new Decimal(getPageSetting('ATGA2elec'));
+		} else if (game.global.challengeActive === "Toxicity" && getPageSetting('ATGA2tox') > 0) {
+			target = new Decimal(getPageSetting('ATGA2tox'));
+		}
+
+		if ((getPageSetting('dATGA2Auto')==2||(getPageSetting('dATGA2Auto')==1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')){
+			plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
+			boggedDamage =  (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
+			atl = Math.ceil((Math.sqrt((plagueDamagePerStack/2+boggedDamage)**2 - 2 * plagueDamagePerStack * (boggedDamage-1)) - (plagueDamagePerStack/2+boggedDamage)) / plagueDamagePerStack);
+			target = new Decimal(Math.ceil(isNaN(atl) ? target : atl/1000*(((game.portal.Agility.level) ? 1000 * Math.pow(1 - game.portal.Agility.modifier, game.portal.Agility.level) : 1000) + ((game.talents.hyperspeed2.purchased && (game.global.world <= Math.floor((game.global.highestLevelCleared + 1) * 0.5))) || (game.global.mapExtraBonus == "fa")) * -100 + (game.talents.hyperspeed.purchased) * -100)));
+		}
+
 		let dyTimer = getPageSetting("dyATGA2timer");
 		if (dBreedTimerEnabled !== dyTimer) {
 			if (dyTimer) {
@@ -76,20 +90,6 @@ function ATGA2() {
 			}
 			updateQueueTimer();
 			target = getDynamicTime();
-		}
-
-		// Challanges
-		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
-			target = new Decimal(getPageSetting('ATGA2elec'));
-		} else if (game.global.challengeActive === "Toxicity" && getPageSetting('ATGA2tox') > 0) {
-			target = new Decimal(getPageSetting('ATGA2tox'));
-		}
-
-		if ((getPageSetting('dATGA2Auto')==2||(getPageSetting('dATGA2Auto')==1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')){
-			plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
-			boggedDamage =  (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
-			atl = Math.ceil((Math.sqrt((plagueDamagePerStack/2+boggedDamage)**2 - 2 * plagueDamagePerStack * (boggedDamage-1)) - (plagueDamagePerStack/2+boggedDamage)) / plagueDamagePerStack);
-			target = new Decimal(Math.ceil(isNaN(atl) ? target : atl/1000*(((game.portal.Agility.level) ? 1000 * Math.pow(1 - game.portal.Agility.modifier, game.portal.Agility.level) : 1000) + ((game.talents.hyperspeed2.purchased && (game.global.world <= Math.floor((game.global.highestLevelCleared + 1) * 0.5))) || (game.global.mapExtraBonus == "fa")) * -100 + (game.talents.hyperspeed.purchased) * -100)));
 		}
 
 		var now = new Date().getTime();
