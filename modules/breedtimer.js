@@ -71,7 +71,7 @@ function ATGA2() {
 		}
 
 		if (dBreedTimerEnabled) {
-			if (target !== queueCreatedTimer) {
+			if (!target.equals(queueCreatedTimer)) {
 				adjustDynamicTimerQueue(target);
 			}
 			updateQueueTimer();
@@ -219,7 +219,7 @@ const adjustDynamicTimerQueue = (targetTime) => {
 }
 
 const getDynamicTime = () => {
-	return dQueue.reduce((a, b) => a + b, 0) / dQueue.length
+	return dQueue.reduce((a,b) => a.plus(b)).div(queueSize)
 }
 
 const updateQueueTimer = () => {
@@ -231,6 +231,6 @@ const updateQueueTimer = () => {
 		let newLastUpdateTime = ((getGameTime() - game.global.portalTime) / 1000);
 		let deathTimer = Math.min(newLastUpdateTime - lastUpdateTime, queueCreatedTimer);
 		lastUpdateTime = newLastUpdateTime;
-		dQueue.push(deathTimer);
+		dQueue.push(new Decimal(deathTimer));
 	}
 }
