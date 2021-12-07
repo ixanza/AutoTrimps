@@ -11,7 +11,7 @@ function calculateEnemyScale(type) {
 		if (val?.active() && val?.statScale) {
 			let statMulti = getMutationStatScale(key, type);
 			// Void maps pre magma
-			if (game.global.mapsActive && getCurrentMapObject().location === "Void" && !mutations.Magma.active()) {
+			if (getCurrentMapObject().location === "Void" && !mutations.Magma.active()) {
 				statMulti /= 2;
 			}
 			if (statMulti > 0) {
