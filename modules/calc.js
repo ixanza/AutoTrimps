@@ -5,92 +5,70 @@ var trimpAA = 1;
 //Helium
 
 function getTrimpAttack() {
-	var dmg = 6;
-        var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
-        for(var i = 0; i < equipmentList.length; i++){
-            if(game.equipment[equipmentList[i]].locked !== 0) continue;
-            var attackBonus = game.equipment[equipmentList[i]].attackCalculated;
-            var level       = game.equipment[equipmentList[i]].level;
-            dmg += attackBonus*level;
+    let attack = game.global.soldierCurrentAttack;
+    if (game.global.difs.attack !== 0) {
+        let attackTemp = game.resources.trimps.maxSoldiers * game.global.difs.attack * ((game.portal.Power.modifier * getPerkLevel("Power")) + 1);
+        if (mutations.Magma.active()) {
+            attackTemp *= mutations.Magma.getTrimpDecay();
         }
-	if (mutations.Magma.active()){
-		dmg *= mutations.Magma.getTrimpDecay();
-	}
-	dmg *= game.resources.trimps.maxSoldiers;
-	if (game.portal.Power.level > 0) {
-		dmg += (dmg * game.portal.Power.level * game.portal.Power.modifier);
-	}
-    if (game.portal.Power_II.level > 0) {
-		dmg *= (1 + (game.portal.Power_II.modifier * game.portal.Power_II.level));
-	}
-	if (game.global.formation !== 0){
-		dmg *= (game.global.formation == 2) ? 4 : 0.5;
-	}
-	return dmg;
+        if (getPerkLevel("Power_II")) attackTemp *= (1 + (game.portal.Power_II.modifier * getPerkLevel("Power_II")));
+        if (game.global.formation !== 0 && game.global.formation != 5) {
+            attackTemp *= (game.global.formation == 2) ? 4 : 0.5;
+        }
+        attack += attackTemp;
+    }
+    return attack;
 }
 
 function calcOurHealth(stance) {
-    var health = 50;
-
-    if (game.resources.trimps.maxSoldiers > 0) {
-        var equipmentList = ["Shield", "Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
-        for(var i = 0; i < equipmentList.length; i++){
-            if(game.equipment[equipmentList[i]].locked !== 0) continue;
-            var healthBonus = game.equipment[equipmentList[i]].healthCalculated;
-            var level       = game.equipment[equipmentList[i]].level;
-            health += healthBonus*level;
+    let health = game.global.soldierHealthMax;
+    if (!stance && game.global.formation !== 0 && game.global.formation !== 5) {
+        health /= (game.global.formation == 1) ? 4 : 0.5;
+    }
+    if (game.global.difs.health !== 0) {
+        let healthTemp = game.resources.trimps.maxSoldiers * game.global.difs.health * ((game.portal.Toughness.modifier * getPerkLevel("Toughness")) + 1);
+        if (mutations.Magma.active()) {
+            healthTemp *= mutations.Magma.getTrimpDecay();
         }
-    }
-    health *= game.resources.trimps.maxSoldiers;
-    if (game.goldenUpgrades.Battle.currentBonus > 0) {
-        health *= game.goldenUpgrades.Battle.currentBonus + 1;
-    }
-    if (game.portal.Toughness.level > 0) {
-        health *= ((game.portal.Toughness.level * game.portal.Toughness.modifier) + 1);
-    }
-    if (game.portal.Toughness_II.level > 0) {
-        health *= ((game.portal.Toughness_II.level * game.portal.Toughness_II.modifier) + 1);
-    }
-    if (game.portal.Resilience.level > 0) {
-        health *= (Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience.level));
-    }
-    var geneticist = game.jobs.Geneticist;
-    if (geneticist.owned > 0) {
-        health *= (Math.pow(1.01, game.global.lastLowGen));
-    }
-    if (stance && game.global.formation > 0) {
-        var formStrength = 0.5;
-        if (game.global.formation == 1) formStrength = 4;
-        health *= formStrength;
-    }
-    if (game.global.challengeActive == "Life") {
-        health *= game.challenges.Life.getHealthMult();
-    } else if (game.global.challengeActive == "Balance") {
-        health *= game.challenges.Balance.getHealthMult();
-    } else if (typeof game.global.dailyChallenge.pressure !== 'undefined') {
-        health *= (dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks));
-    }
-    if (mutations.Magma.active()) {
-        var mult = mutations.Magma.getTrimpDecay();
-        var lvls = game.global.world - mutations.Magma.start() + 1;
-        health *= mult;
-    }
-    var heirloomBonus = calcHeirloomBonus("Shield", "trimpHealth", 0, true);
-    if (heirloomBonus > 0) {
-        health *= ((heirloomBonus / 100) + 1);
-    }
-    if (game.global.radioStacks > 0) {
-        health *= (1 - (game.global.radioStacks * 0.1));
-    }
-    if (game.global.totalSquaredReward > 0) {
-        health *= (1 + (game.global.totalSquaredReward / 100));
-    }
-    if (game.jobs.Amalgamator.owned > 0) {
-        health *= game.jobs.Amalgamator.getHealthMult();
-    }
-    if (game.talents.voidPower.purchased && game.global.voidBuff) {
-        var amt = (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 65 : 35) : 15;
-        health *= (1 + (amt / 100));
+        if (getPerkLevel("Toughness_II")) healthTemp *= (1 + (game.portal.Toughness_II.modifier * getPerkLevel("Toughness_II")));
+        if (getPerkLevel("Observation") && game.portal.Observation.trinkets > 0) healthTemp *= game.portal.Observation.getMult();
+        if (getPerkLevel("Championism")) healthTemp *= game.portal.Championism.getMult();
+        if (game.global.mayhemCompletions) healthTemp *= game.challenges.Mayhem.getTrimpMult();
+        if (autoBattle.bonuses.Stats.level > 0 && game.global.universe == 2) healthTemp *= autoBattle.bonuses.Stats.getMult();
+        if (game.global.challengeActive == "Alchemy") healthTemp *= alchObj.getPotionEffect("Potion of Strength");
+        if (game.global.pandCompletions) healthTemp *= game.challenges.Pandemonium.getTrimpMult();
+        if (game.talents.mapHealth.purchased && game.global.mapsActive) healthTemp *= 2;
+        if (Fluffy.isRewardActive("healthy")) healthTemp *= 1.5;
+        if (game.jobs.Geneticist.owned > 0) healthTemp *= Math.pow(1.01, game.global.lastLowGen);
+        if (game.goldenUpgrades.Battle.currentBonus > 0) healthTemp *= game.goldenUpgrades.Battle.currentBonus + 1;
+        if (game.global.universe == 2 && game.buildings.Smithy.owned > 0) healthTemp *= game.buildings.Smithy.getMult();
+        if (game.global.challengeActive == "Insanity") healthTemp *= game.challenges.Insanity.getHealthMult();
+        if (getPerkLevel("Resilience") > 0) healthTemp *= Math.pow(game.portal.Resilience.modifier + 1, getPerkLevel("Resilience"));
+        if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.pressure !== 'undefined') healthTemp *= dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks);
+        if (stance && game.global.formation !== 0 && game.global.formation !== 5) {
+            healthTemp *= (game.global.formation == 1) ? 4 : 0.5;
+        }
+        if (game.global.totalSquaredReward > 0)
+            healthTemp *= ((game.global.totalSquaredReward / 100) + 1);
+        if (game.global.challengeActive == "Balance") {
+            healthTemp *= game.challenges.Balance.getHealthMult();
+        }
+        if (game.global.challengeActive == "Revenge") healthTemp *= game.challenges.Revenge.getMult();
+        if (game.global.challengeActive == "Life") {
+            healthTemp *= game.challenges.Life.getHealthMult();
+        }
+        if (game.global.challengeActive == "Duel" && game.challenges.Duel.trimpStacks < 20) healthTemp *= game.challenges.Duel.healthMult;
+        if (game.global.challengeActive == "Wither") {
+            healthTemp *= game.challenges.Wither.getTrimpHealthMult();
+        }
+        if (game.challenges.Nurture.boostsActive()) healthTemp *= game.challenges.Nurture.getStatBoost();
+        healthTemp = calcHeirloomBonus("Shield", "trimpHealth", healthTemp);
+        if (game.jobs.Amalgamator.owned > 0)
+            healthTemp *= game.jobs.Amalgamator.getHealthMult();
+        if (game.global.challengeActive == "Berserk") {
+            healthTemp *= game.challenges.Berserk.getHealthMult();
+        }
+        health += healthTemp;
     }
     return health;
 }
@@ -131,33 +109,17 @@ function getCritMulti(high) {
 }
 
 function calcOurBlock(stance) {
-    var block = 0;
-    var gym = game.buildings.Gym;
-    if (gym.owned > 0) {
-        var gymStrength = gym.owned * gym.increase.by;
-        block += gymStrength;
+    let block = game.global.soldierCurrentBlock;
+    if (!stance && game.global.formation !== 0 && game.global.formation !== 5) {
+        block /= (game.global.formation == 3) ? 4 : 0.5;
     }
-    var shield = game.equipment.Shield;
-    if (shield.blockNow && shield.level > 0) {
-        var shieldStrength = shield.level * shield.blockCalculated;
-        block += shieldStrength;
-    }
-    var trainer = game.jobs.Trainer;
-    if (trainer.owned > 0) {
-        var trainerStrength = trainer.owned * (trainer.modifier / 100);
-        trainerStrength = calcHeirloomBonus("Shield", "trainerEfficiency", trainerStrength);
-        block *= (trainerStrength + 1);
-    }
-    block *= game.resources.trimps.maxSoldiers;
-    if (stance && game.global.formation == 3) {
-        block *= 4;
-    }
-    var heirloomBonus = calcHeirloomBonus("Shield", "trimpBlock", 0, true);
-    if (heirloomBonus > 0) {
-        block *= ((heirloomBonus / 100) + 1);
-    }
-    if (game.global.radioStacks > 0) {
-        block *= (1 - (game.global.radioStacks * 0.1));
+    if (game.global.difs.block !== 0) {
+        let blockTemp = (game.resources.trimps.maxSoldiers * game.global.difs.block * ((game.global.difs.trainers * (calcHeirloomBonus("Shield", "trainerEfficiency", game.jobs.Trainer.modifier) / 100)) + 1));
+        if (stance && game.global.formation !== 0 && game.global.formation !== 5) {
+            blockTemp *= (game.global.formation == 3) ? 4 : 0.5;
+        }
+        blockTemp = calcHeirloomBonus("Shield", "trimpBlock", blockTemp);
+        block += blockTemp;
     }
     return block;
 }
@@ -355,19 +317,7 @@ function calcSpire(cell, name, what) {
 	if (game.global.challengeActive == "Daily" && disActiveSpireAT() && getPageSetting('dExitSpireCell') > 0 && getPageSetting('dExitSpireCell') <= 100)
 		exitCell = (getPageSetting('dExitSpireCell') - 1);
 	var enemy = cell == 99 ? (exitCell == 99 ? game.global.gridArray[99].name : "Snimp") : name;
-	var base = (what == "attack") ? game.global.getEnemyAttack(exitCell, enemy, false) : (calcEnemyBaseHealth(game.global.world, exitCell, enemy) * 2);
-	var mod = (what == "attack") ? 1.17 : 1.14;
-    	var spireNum = Math.floor((game.global.world-100)/100);
-	if (spireNum > 1){
-		var modRaiser = 0;
-		modRaiser += ((spireNum - 1) / 100);
-		if (what == "attack") modRaiser *= 8;
-		if (what == "health") modRaiser *= 2;
-		mod += modRaiser;
-	}
-	base *= Math.pow(mod, exitCell);
-	base *= game.badGuys[enemy][what];
-	return base;
+	return getSpireStats(exitCell, enemy, what)
 }
 
 function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
