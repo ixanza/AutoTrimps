@@ -13,7 +13,7 @@ const getEnemyHealth = (cell, enemyName, ignoreEnemyStat) => {
 }
 
 const getTrimpsHealth = () => {
-    return game.global.soldierHealthMax;
+    return getTrimpsHealthWithStance() / getFormationBonus("health");
 }
 
 const getTrimpsHealthWithStance = () => {
@@ -21,6 +21,10 @@ const getTrimpsHealthWithStance = () => {
 }
 
 const getTrimpsAttack = () => {
+    return getTrimpsAttackWithStance() / getFormationBonus("attack");
+}
+
+const getTrimpsAttackWithStance = () => {
     return game.global.soldierCurrentAttack;
 }
 
