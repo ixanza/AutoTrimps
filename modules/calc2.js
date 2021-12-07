@@ -61,18 +61,6 @@ const getTrimpsDamage = (minMaxOrAverage, stance, flucts = true) => {
     }
 }
 
-const getEnemyDamage = (enemyAttack, minMaxOrAverage, flucts = true) => {
-    if (minMaxOrAverage === "min") {
-        flucts = false;
-    } else if (minMaxOrAverage === "max") {
-    }
-    if (minMaxOrAverage === "avg") {
-        return (getEnemyDamage(enemyAttack, "min", flucts) + getEnemyDamage(enemyAttack, "max", flucts)) / 2;
-    } else {
-        return calculateDamage(enemyAttack, false, false, true, false, flucts);
-    }
-}
-
 // FIXME NO METHOD RETURNS, BAKED IN GAME LOGIC
 const getFormationBonus = (what) => {
     let formStrength = 1;
