@@ -3,6 +3,9 @@
  * instead of implementing yourself to replace current calc
  * */
 
+const calculateMaxDamage = Function("number", "buildString", "isTrimp", "noCheckAchieve", "cell", "noFluctuation", calculateDamage.toString().substr(calculateDamage.toString().indexOf('{'), calculateDamage.toString().lastIndexOf('}')).replace("var max = Math.ceil(number + (number * maxFluct));", "var max = Math.ceil(number + (number * maxFluct));return max;"))
+const calculateMinDamage = Function("number", "buildString", "isTrimp", "noCheckAchieve", "cell", "noFluctuation", calculateDamage.toString().substr(calculateDamage.toString().indexOf('{'), calculateDamage.toString().lastIndexOf('}')).replace("var min = Math.floor(number * (1 - minFluct));", "var min = Math.floor(number * (1 - minFluct));return min;"))
+
 const getEnemyAttack = (cell, enemyName, ignoreEnemyStat) => {
     return game.global.getEnemyAttack(cell, enemyName, ignoreEnemyStat);
 }
@@ -45,31 +48,22 @@ const getTrimpsBlockWithStance = () => {
 
 const getTrimpsDamage = (minMaxOrAverage, stance, flucts = true) => {
     let attack = stance ? getTrimpsAttackWithStance() : getTrimpsAttack();
-    let buildString = false;
-    let noCheckAchievements = false;
     if (minMaxOrAverage === "min") {
-        flucts = true;
+        return calculateMinDamage(attack, false, true, true, false, flucts);
     } else if (minMaxOrAverage === "max") {
-        buildString = true;
-        flucts = false;
-        noCheckAchievements = true;
-    }
-    if (minMaxOrAverage === "avg") {
-        return (getTrimpsDamage("min", stance, flucts) + getTrimpsDamage("max", stance, flucts)) / 2;
+        return calculateMaxDamage(attack, false, true, true, false, flucts);
     } else {
-        return calculateDamage(attack, buildString, true, noCheckAchievements, false, flucts);
+        return (getTrimpsDamage("max", stance, flucts) + getTrimpsDamage("min", stance, flucts)) / 2
     }
 }
 
 const getEnemyDamage = (enemyAttack, minMaxOrAverage, flucts = true) => {
     if (minMaxOrAverage === "min") {
-        flucts = false;
+        return calculateMinDamage(enemyAttack, false, false, true, false, flucts);
     } else if (minMaxOrAverage === "max") {
-    }
-    if (minMaxOrAverage === "avg") {
-        return (getEnemyDamage(enemyAttack, "min", flucts) + getEnemyDamage(enemyAttack, "max", flucts)) / 2;
+        return calculateMaxDamage(enemyAttack, false, false, true, false, flucts);
     } else {
-        return calculateDamage(enemyAttack, false, false, true, false, flucts);
+        return (getEnemyDamage(enemyAttack, "max", flucts) + getEnemyDamage(enemyAttack, "min", flucts)) / 2
     }
 }
 
