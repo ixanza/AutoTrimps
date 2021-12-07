@@ -46,16 +46,18 @@ const getTrimpsBlockWithStance = () => {
 const getTrimpsDamage = (minMaxOrAverage, stance, flucts = true) => {
     let attack = stance ? getTrimpsAttackWithStance() : getTrimpsAttack();
     let buildString = false;
+    let noCheckAchievements = false;
     if (minMaxOrAverage === "min") {
         flucts = true;
     } else if (minMaxOrAverage === "max") {
         buildString = true;
         flucts = false;
+        noCheckAchievements = true;
     }
     if (minMaxOrAverage === "avg") {
         return (getTrimpsDamage("min", stance, flucts) + getTrimpsDamage("max", stance, flucts)) / 2;
     } else {
-        return calculateDamage(attack, buildString, true, false, false, flucts);
+        return calculateDamage(attack, buildString, true, noCheckAchievements, false, flucts);
     }
 }
 
