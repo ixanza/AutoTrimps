@@ -1,7 +1,6 @@
 /**
  * Rewrite game logic as much as possible using in game provided methods,
  * instead of implementing yourself to replace current calc
- *
  * */
 
 const getEnemyAttack = (cell, enemyName, ignoreEnemyStat) => {
@@ -26,6 +25,22 @@ const getTrimpsAttack = () => {
 
 const getTrimpsAttackWithStance = () => {
     return game.global.soldierCurrentAttack;
+}
+
+const getTrimpsCritDamage = () => {
+    return getPlayerCritDamageMult();
+}
+
+const getTrimpsCritChance = () => {
+    return getPlayerCritChance();
+}
+
+const getTrimpsBlock = () => {
+    return getTrimpsBlockWithStance() / getFormationBonus("block");
+}
+
+const getTrimpsBlockWithStance = () => {
+    return game.global.soldierCurrentBlock;
 }
 
 // FIXME NO METHOD RETURNS, BAKED IN GAME LOGIC
