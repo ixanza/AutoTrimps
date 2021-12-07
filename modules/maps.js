@@ -37,6 +37,20 @@ function updateAutoMapsStatus(get) {
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
     let praid = prestraidon ?? false;
+    let ourBaseDamage;
+    let enemyDamage;
+    let enemyHealth;
+    if (doVoids) {
+        let hardestVoidMap = game.global.mapsOwnedArray.filter(item => item.location === "Void").reduce((acc, item) => acc.difficulty > item.difficulty ? acc : item)
+        ourBaseDamage = calcOurDmg("avg", false, true);
+        enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, hardestVoidMap.size, 'Cthulimp', hardestVoidMap.difficulty, false), true, true);
+        enemyHealth = calcEnemyHealth(game.global.world + 1, true, true, getEnemyMaxHealth(game.global.world +1, hardestVoidMap.size, 'Cthulimp', true, hardestVoidMap.d));
+    } else {
+        ourBaseDamage = calcOurDmg("avg", false, true);
+        enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, true), true, true);
+        enemyHealth = calcEnemyHealth();
+    }
+    let hdRatio = calcHDRatio(ourBaseDamage, enemyHealth);
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
@@ -66,9 +80,9 @@ function updateAutoMapsStatus(get) {
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
     else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks && game.global.challengeActive === "Toxicity") status = "Farming Toxicity Stacks";
-    else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
+    else if (shouldFarm) status = 'Farming: ' + hdRatio.toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
-    else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
+    else if (!enoughDamage) status = 'Want ' + hdRatio.toFixed(4) + 'x &nbspmore damage';
     else if (!enoughHealth) status = 'Want more health';
     else if (enoughHealth && enoughDamage) status = 'Advancing';
 
