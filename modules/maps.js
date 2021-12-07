@@ -145,6 +145,7 @@ function testMapSpecialModController() {
 }
 
 function autoMap() {
+
     //Failsafes
     if (!game.global.mapsUnlocked || calcOurDmg("avg", false, true) <= 0) {
         enoughDamage = true;

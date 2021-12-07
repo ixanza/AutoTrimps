@@ -105,13 +105,73 @@ function calcSpire(cell, name, what) {
 }
 
 function calcBadGuyDmg(enemy,attack,daily,maxormin,disableFlucts) {
-    let enemyAttack;
-    if (enemy) {
-        enemyAttack = enemy.attack;
-    } else {
-        enemyAttack = attack;
+    var number;
+    if (enemy)
+        number = enemy.attack;
+    else
+        number = attack;
+    var fluctuation = .2;
+    var maxFluct = -1;
+    var minFluct = -1;
+
+    if (!enemy && game.global.challengeActive){
+        if (game.global.challengeActive == "Coordinate"){
+            number *= getBadCoordLevel();
+        }
+        else if (game.global.challengeActive == "Meditate"){
+            number *= 1.5;
+        }
+        else if (enemy && game.global.challengeActive == "Nom" && typeof enemy.nomStacks !== 'undefined'){
+            number *= Math.pow(1.25, enemy.nomStacks);
+        }
+        else if (game.global.challengeActive == "Watch") {
+            number *= 1.25;
+        }
+        else if (game.global.challengeActive == "Lead"){
+            number *= (1 + (game.challenges.Lead.stacks * 0.04));
+        }
+        else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) {
+            number *= 10;
+        }
+        else if (game.global.challengeActive == "Corrupted"){
+            number *= 3;
+        }
+        else if (game.global.challengeActive === "Toxicity") {
+            number *= 5;
+        }
+        else if (game.global.challengeActive == "Domination"){
+            	if (game.global.lastClearedCell == 98) {
+		    number *= 2.5;
+                }
+		else number *= 0.1;
+	}
+        else if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated"){
+			var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
+			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+			number *= oblitMult;
+	}
+        if (daily)
+            number = calcDailyAttackMod(number);
     }
-    return getEnemyDamage(enemyAttack, maxormin, disableFlucts);
+    if (!enemy && game.global.usingShriek) {
+        number *= game.mapUnlocks.roboTrimp.getShriekValue();
+    }
+
+    if (game.global.spireActive) {
+        number = calcSpire(99, game.global.gridArray[99].name, 'attack');
+    }
+
+    if (!disableFlucts) {
+        if (minFluct > 1) minFluct = 1;
+        if (maxFluct == -1) maxFluct = fluctuation;
+        if (minFluct == -1) minFluct = fluctuation;
+        var min = Math.floor(number * (1 - minFluct));
+        var max = Math.ceil(number + (number * maxFluct));
+        return maxormin ? max : min;
+    }
+    else
+        return number;
 }
 
 function calcEnemyBaseHealth(zone, level, name) {
