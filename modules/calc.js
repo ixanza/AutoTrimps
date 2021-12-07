@@ -461,9 +461,9 @@ function calcEnemyBaseHealth(zone, level, name) {
     return health;
 }
 
-function calcEnemyHealth(world, map, daily = true) {
+function calcEnemyHealth(world, map, daily = true, health) {
     world = !world ? game.global.world : world;
-    var health = getEnemyMaxHealth(world, 50, "Snimp", (getPageSetting("calcCorruption") ?? false));
+    var health = health || getEnemyMaxHealth(world, 50, "Snimp", (getPageSetting("calcCorruption") ?? false));
     if (map && game.global.universe === 1) {
         health *= 0.5;
     }

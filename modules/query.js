@@ -10,6 +10,10 @@ function calculateEnemyScale(type) {
 		let val = mutation[1]
 		if (val?.active() && val?.statScale) {
 			let statMulti = getMutationStatScale(key, type);
+			// Void maps pre magma
+			if (getCurrentMapObject().location === "Void" && !mutations.Magma.active()) {
+				statMulti /= 2;
+			}
 			if (statMulti > 0) {
 				let tempMulti = val.statScale(statMulti);
 				if (tempMulti > maxScale) {
@@ -26,7 +30,7 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
 	let enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
 	enemyDamage *= difficulty;
 	// Nothing uses this but implement it properly
-	if (scale) {
+	if (scale && (!game.global.mapsActive || getCurrentMapObject().location === "Void")) {
 		enemyDamage *= calculateEnemyScale("attack");
 	}
 	return Math.floor(enemyDamage);
@@ -36,7 +40,7 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
 	// Use code directly stolen from game instead
 	let enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
 	// Nothing uses this but implement it properly
-	if (scale) {
+	if (scale && (!game.global.mapsActive || getCurrentMapObject().location === "Void")) {
 		enemyHealth *= calculateEnemyScale("health");
 	}
 	return Math.floor(enemyHealth);

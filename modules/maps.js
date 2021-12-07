@@ -270,9 +270,19 @@ function autoMap() {
     }
 
     //Calc
-    var ourBaseDamage = calcOurDmg("avg", false, true);
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, false), true, true);
-    var enemyHealth = calcEnemyHealth();
+    var ourBaseDamage;
+    var enemyDamage;
+    var enemyHealth;
+    if (doVoids) {
+        let hardestVoidMap = game.global.mapsOwnedArray.filter(item => item.location === "Void").reduce((acc, item) => acc.difficulty > item.difficulty ? acc : item)
+        ourBaseDamage = calcOurDmg("avg", false, true);
+        enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, hardestVoidMap.size, 'Cthulimp', hardestVoidMap.difficulty, false), true, true);
+        enemyHealth = calcEnemyHealth(game.global.world + 1, true, true, getEnemyMaxHealth(game.global.world +1, hardestVoidMap.size, 'Cthulimp', true));
+    } else {
+        ourBaseDamage = calcOurDmg("avg", false, true);
+        enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, true), true, true);
+        enemyHealth = calcEnemyHealth();
+    }
 
     if (getPageSetting('DisableFarm') > 0) {
         if (doVoids && getPageSetting('VDisableFarm') > 0) {
