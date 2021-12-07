@@ -52,7 +52,162 @@ function calcOurBlock(stance) {
 }
 
 function calcOurDmg(minMaxAvg, incStance, incFlucts) {
-    return getTrimpsDamage(minMaxAvg, incStance, incFlucts)
+  var number = getTrimpAttack();
+  var fluctuation = .2;
+	var maxFluct = -1;
+	var minFluct = -1;
+	if (game.jobs.Amalgamator.owned > 0){
+		number *= game.jobs.Amalgamator.getDamageMult();
+	}
+	if (game.challenges.Electricity.stacks > 0) {
+		number *= (1 - (game.challenges.Electricity.stacks * 0.1));
+	}
+	if (getPageSetting('45stacks') == false && game.global.antiStacks > 0) {
+		number *= ((game.global.antiStacks * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
+	}
+	if (getPageSetting('45stacks') == true && game.global.antiStacks > 0) {
+		number *= ((45 * game.portal.Anticipation.level * game.portal.Anticipation.modifier) + 1);
+	}
+	if (game.global.mapBonus > 0){
+	    var mapBonus = game.global.mapBonus;
+            if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
+		number *= ((mapBonus * .2) + 1);
+	}
+	if (game.global.achievementBonus > 0){
+		number *= (1 + (game.global.achievementBonus / 100));
+	}
+	if (game.global.challengeActive == "Discipline"){
+		fluctuation = .995;
+	}
+	else if (game.portal.Range.level > 0){
+		minFluct = fluctuation - (.02 * game.portal.Range.level);
+	}
+	if (game.global.challengeActive == "Decay"){
+		number *= 5;
+		number *= Math.pow(0.995, game.challenges.Decay.stacks);
+	}
+	if (game.global.roboTrimpLevel > 0){
+		number *= ((0.2 * game.global.roboTrimpLevel) + 1);
+	}
+	if (game.global.challengeActive == "Lead" && ((game.global.world % 2) == 1)){
+		number *= 1.5;
+	}
+	if (game.goldenUpgrades.Battle.currentBonus > 0) {
+		number *= game.goldenUpgrades.Battle.currentBonus + 1;
+	}
+	if (game.talents.voidPower.purchased && game.global.voidBuff) {
+		var vpAmt = (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 65 : 35) : 15;
+		number *= ((vpAmt / 100) + 1);
+	}
+	if (game.global.totalSquaredReward > 0) {
+		number *= ((game.global.totalSquaredReward / 100) + 1);
+	}
+	if (getPageSetting('fullice') == true && getEmpowerment() == "Ice") {
+		number *= (Fluffy.isRewardActive('naturesWrath') ? 3 : 2);
+	}
+	if (getPageSetting('fullice') == false && getEmpowerment() == "Ice") {
+		number *= (game.empowerments.Ice.getDamageModifier()+1);
+	}
+	if (getEmpowerment() == "Poison" && getPageSetting('addpoison') == true) {
+		number *= (1 + game.empowerments.Poison.getModifier());
+		number *= 4;
+	}
+	if (game.talents.magmamancer.purchased) {
+		number *= game.jobs.Magmamancer.getBonusPercent();
+	}
+	if (game.talents.stillRowing2.purchased) {
+		number *= ((game.global.spireRows * 0.06) + 1);
+	}
+	if (game.global.voidBuff && game.talents.voidMastery.purchased){
+		number *= 5;
+	}
+	if (game.talents.healthStrength.purchased && mutations.Healthy.active()) {
+		number *= ((0.15 * mutations.Healthy.cellCount()) + 1);
+	}
+	if (game.talents.herbalist.purchased) {
+	        number *= game.talents.herbalist.getBonus();
+	}
+	if (game.global.sugarRush > 0) {
+		number *= sugarRush.getAttackStrength();
+	}
+	if (playerSpireTraps.Strength.owned) {
+			var strBonus = playerSpireTraps.Strength.getWorldBonus();
+			number *= (1 + (strBonus / 100));
+	}
+	if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value) {
+			number *= (1 + (game.stats.totalVoidMaps.value * 0.05));
+	}
+	if (game.global.challengeActive == "Life") {
+		number *= game.challenges.Life.getHealthMult();
+	}
+	if (game.singleRunBonuses.sharpTrimps.owned){
+		number *= 1.5;
+	}
+	if (game.global.uberNature == "Poison") {
+		number *= 3;
+	}
+	if (incStance && game.talents.scry.purchased && game.global.formation == 4 && (mutations.Healthy.active() || mutations.Corruption.active())){
+		number *= 2;
+	}
+	if (game.global.challengeActive == "Daily" && game.talents.daily.purchased){
+		number *= 1.5;
+	}
+    	if (game.global.challengeActive == 'Lead' && game.global.world % 2 == 1 && game.global.world != 179) {
+        	number /= 1.5;
+    	}
+	if (game.global.challengeActive == "Daily"){
+		if (typeof game.global.dailyChallenge.minDamage !== 'undefined'){
+			if (minFluct == -1) minFluct = fluctuation;
+			minFluct += dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
+		}
+		if (typeof game.global.dailyChallenge.maxDamage !== 'undefined'){
+			if (maxFluct == -1) maxFluct = fluctuation;
+			maxFluct += dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
+		}
+		if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1)){
+				number *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+		}
+		if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0)){
+				number *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+		}
+		if (typeof game.global.dailyChallenge.rampage !== 'undefined'){
+			number *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
+		}
+	}
+	number = calcHeirloomBonus("Shield", "trimpAttack", number)
+	if (Fluffy.isActive()){
+		number *= Fluffy.getDamageModifier();
+	}
+	if (getHeirloomBonus("Shield", "gammaBurst") > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0, (getPageSetting("calcCorruption") ?? false)))) >= 5)) {
+	    	number *= ((getHeirloomBonus("Shield", "gammaBurst") / 100) + 1) / 5;
+	}
+
+
+  if (!incStance && game.global.formation != 0) {
+    number /= (game.global.formation == 2) ? 4 : 0.5;
+  }
+
+  var min = number;
+  var max = number;
+  var avg = number;
+
+  min *= (getCritMulti(false)*0.8);
+  avg *= getCritMulti(false);
+  max *= (getCritMulti(false)*1.2);
+
+  if (incFlucts) {
+    if (minFluct > 1) minFluct = 1;
+    if (maxFluct == -1) maxFluct = fluctuation;
+    if (minFluct == -1) minFluct = fluctuation;
+
+    min *= (1 - minFluct);
+    max *= (1 + maxFluct);
+    avg *= 1 + (maxFluct - minFluct)/2;
+  }
+
+  if (minMaxAvg == "min") return min;
+  else if (minMaxAvg == "max") return max;
+  else if (minMaxAvg == "avg") return avg;
 }
 
 function calcDailyAttackMod(number) {
