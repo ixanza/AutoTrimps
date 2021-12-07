@@ -5,13 +5,14 @@
 
 const calculateMaxDamage = Function("number", "buildString", "isTrimp", "noCheckAchieve", "cell", "noFluctuation", calculateDamage.toString().substr(calculateDamage.toString().indexOf('{'), calculateDamage.toString().lastIndexOf('}')).replace("var max = Math.ceil(number + (number * maxFluct));", "var max = Math.ceil(number + (number * maxFluct));return max;"))
 const calculateMinDamage = Function("number", "buildString", "isTrimp", "noCheckAchieve", "cell", "noFluctuation", calculateDamage.toString().substr(calculateDamage.toString().indexOf('{'), calculateDamage.toString().lastIndexOf('}')).replace("var min = Math.floor(number * (1 - minFluct));", "var min = Math.floor(number * (1 - minFluct));return min;"))
+const calculateEnemyCell = Function('cell', startFight.toString().substring(startFight.toString().indexOf('if (cell.maxHealth == -1) {'), startFight.toString().indexOf('else if (game.global.challengeActive == "Nom" && cell.nomStacks)', startFight.toString().indexOf('if (cell.maxHealth == -1) {'))))
 
 const getEnemyAttack = (cell, enemyName, ignoreEnemyStat) => {
     return game.global.getEnemyAttack(cell, enemyName, ignoreEnemyStat);
 }
 
 const getEnemyHealth = (cell, enemyName, ignoreEnemyStat) => {
-    return game.global.getEnemyAttack(cell, enemyName, ignoreEnemyStat);
+    return game.global.getEnemyHealth(cell, enemyName, ignoreEnemyStat);
 }
 
 const getTrimpsHealth = () => {
