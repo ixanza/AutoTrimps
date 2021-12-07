@@ -36,9 +36,10 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
 	return Math.floor(enemyDamage);
 }
 
-function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false) {
+function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0) {
 	// Use code directly stolen from game instead
 	let enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
+	enemyHealth *= difficulty;
 	// Nothing uses this but implement it properly
 	if (scale && (!game.global.mapsActive || getCurrentMapObject().location === "Void")) {
 		enemyHealth *= calculateEnemyScale("health");

@@ -529,6 +529,22 @@ function calcHDratio(map) {
     return ratio;
 }
 
+function calcHDRatio(ourBaseDamage, enemyHealth) {
+    //Shield
+    highDamageShield();
+    if (getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
+        ourBaseDamage /= getCritMulti(false);
+        ourBaseDamage *= trimpAA;
+        ourBaseDamage *= getCritMulti(true);
+    }
+    if (getPageSetting('use3daily') == true && getPageSetting('dhighdmg') != undefined && game.global.challengeActive == "Daily" && game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
+        ourBaseDamage /= getCritMulti(false);
+        ourBaseDamage *= trimpAA;
+        ourBaseDamage *= getCritMulti(true);
+    }
+    return enemyHealth / ourBaseDamage;
+}
+
 function calcCurrentStance() {
     if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive &&
 	(
