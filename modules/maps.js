@@ -277,19 +277,18 @@ function autoMap() {
         let hardestVoidMap = game.global.mapsOwnedArray.filter(item => item.location === "Void").reduce((acc, item) => acc.difficulty > item.difficulty ? acc : item)
         ourBaseDamage = calcOurDmg("avg", false, true);
         enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, hardestVoidMap.size, 'Cthulimp', hardestVoidMap.difficulty, false), true, true);
-        enemyHealth = calcEnemyHealth(game.global.world + 1, true, true, getEnemyMaxHealth(game.global.world +1, hardestVoidMap.size, 'Cthulimp', true, hardestVoidMap.d));
+        enemyHealth = calcEnemyHealth(game.global.world + 1, true, true, getEnemyMaxHealth(game.global.world +1, hardestVoidMap.size, 'Cthulimp', true));
     } else {
         ourBaseDamage = calcOurDmg("avg", false, true);
         enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, true), true, true);
         enemyHealth = calcEnemyHealth();
     }
 
-    let hdRatio = calcHDRatio(ourBaseDamage, enemyHealth);
     if (getPageSetting('DisableFarm') > 0) {
         if (doVoids && getPageSetting('VDisableFarm') > 0) {
-            shouldFarm = (hdRatio >= getPageSetting('VDisableFarm'));
+            shouldFarm = (calcHDratio() >= getPageSetting('VDisableFarm'));
         } else {
-            shouldFarm = (hdRatio >= getPageSetting('DisableFarm'));
+            shouldFarm = (calcHDratio() >= getPageSetting('DisableFarm'));
         }
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
@@ -345,15 +344,15 @@ function autoMap() {
                 shouldDoMaps = true;
         }
         if (game.global.gridArray[99].nomStacks == customVars.NomFarmStacksCutoff[1]) {
-            shouldFarm = (hdRatio > customVars.NomfarmingCutoff);
+            shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
             shouldDoMaps = true;
         }
         if (!game.global.mapsActive && game.global.gridArray[game.global.lastClearedCell + 1].nomStacks >= customVars.NomFarmStacksCutoff[2]) {
-            shouldFarm = (hdRatio > customVars.NomfarmingCutoff);
+            shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
             shouldDoMaps = true;
         }
         if (game.global.mapsActive && game.global.mapGridArray[game.global.lastClearedMapCell + 1].nomStacks >= customVars.NomFarmStacksCutoff[2]) {
-            shouldFarm = (hdRatio > customVars.NomfarmingCutoff);
+            shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
             shouldDoMaps = true;
             restartVoidMap = true;
         }
