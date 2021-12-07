@@ -43,7 +43,16 @@ function clearData(portal,clrall = false) {
     }
 }
 function deleteSpecific(){var a=document.getElementById("deleteSpecificTextBox").value;if(""!=a)if(0>parseInt(a))clearData(Math.abs(a));else for(var b=allSaveData.length-1;0<=b;b--)allSaveData[b].totalPortals==a&&allSaveData.splice(b,1)}
-function autoToggleGraph(){game.options.displayed&&toggleSettingsMenu();var a=document.getElementById('autoSettings');a&&'block'===a.style.display&&(a.style.display='none');var a=document.getElementById('autoTrimpsTabBarMenu');a&&'block'===a.style.display&&(a.style.display='none');var b=document.getElementById('graphParent');'block'===b.style.display?b.style.display='none':(b.style.display='block',setGraph(),drawGraph())}
+
+function autoToggleGraph() {
+    game.options.displayed && toggleSettingsMenu();
+    var a = document.getElementById('autoSettings');
+    a && 'block' === a.style.display && (a.style.display = 'none');
+    var a = document.getElementById('autoTrimpsTabBarMenu');
+    a && 'block' === a.style.display && (a.style.display = 'none');
+    var b = document.getElementById('graphParent');
+    'block' === b.style.display ? b.style.display = 'none' : (b.style.display = 'block', setGraph(), drawGraph())
+}
 function escapeATWindows(){var a=document.getElementById('tooltipDiv');if('none'!=a.style.display)return void cancelTooltip();game.options.displayed&&toggleSettingsMenu();var b=document.getElementById('autoSettings');'block'===b.style.display&&(b.style.display='none');var b=document.getElementById('autoTrimpsTabBarMenu');'block'===b.style.display&&(b.style.display='none');var c=document.getElementById('graphParent');'block'===c.style.display&&(c.style.display='none')}document.addEventListener('keydown',function(a){1!=game.options.menu.hotkeys.enabled||game.global.preMapsActive||game.global.lockTooltip||ctrlPressed||heirloomsShown||27!=a.keyCode||escapeATWindows()},!0);
 function getTotalDarkEssenceCount(){return game.global.spentEssence+game.global.essence}
 
@@ -157,7 +166,11 @@ function chkdsk(){rebuildDataIndex(),checkIndexConsistency(),checkWorldSequentia
 function rebuildDataIndex(){for(var a=0;a<allSaveData.length-1;a++)dataBase[a]={Index:a,Portal:allSaveData[a].totalPortals,Challenge:allSaveData[a].challenge,World:allSaveData[a].world},portalRunArray.push({Index:a,Portal:allSaveData[a].totalPortals,Challenge:allSaveData[a].challenge}),"undefined"==typeof portalExistsArray[allSaveData[a].totalPortals]?portalExistsArray[allSaveData[a].totalPortals]={Exists:!0,Row:portalRunIndex,Index:a,Challenge:allSaveData[a].challenge}:(databaseDirtyFlag.State=!0,databaseDirtyFlag.Reason="oreoportal",databaseDirtyFlag.Index=a,row=portalExistsArray[allSaveData[a].totalPortals].Row),portalRunIndex++}
 function checkIndexConsistency(){for(var a=0;a<dataBase.length-1;a++)if(dataBase[a].Index!=a){databaseDirtyFlag=[!0,'index',a];break}}
 function checkWorldSequentiality(){for(var a,b,c,d=1;d<dataBase.length-1;d++){if(lastworldEntry=dataBase[d-1],currentworldEntry=dataBase[d],nextworldEntry=dataBase[d+1],a=lastworldEntry.World,b=currentworldEntry.World,c=nextworldEntry.World,a>b&&1!=b){databaseDirtyFlag.State=!0,databaseDirtyFlag.Reason='descending',databaseDirtyFlag.Index=d;break}if(a>b&&1==b&&a==c){databaseDirtyFlag.State=!0,databaseDirtyFlag.Reason='badportal',databaseDirtyFlag.Index=d;break}}}
-function drawGraph(a,b){var c=document.getElementById('graphSelection');a?(c.selectedIndex--,0>c.selectedIndex&&(c.selectedIndex=0)):b&&c.selectedIndex!=c.options.length-1&&c.selectedIndex++,setGraphData(c.value)}
+
+function drawGraph(a, b) {
+    var c = document.getElementById('graphSelection');
+    a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value)
+}
 
 function setGraphData(graph) {
     var title, xTitle, yTitle, yType, valueSuffix, series, formatter, xminFloor = 1,
