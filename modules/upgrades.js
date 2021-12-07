@@ -57,6 +57,9 @@ function RbuyUpgrades() {
         //Coord
 	if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
 
+	//Hypo
+	if (upgrade == 'Supershield' && !Rhyposhouldwood) continue;
+
         //Other
         if (!available) continue;
         if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;

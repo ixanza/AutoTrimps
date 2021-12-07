@@ -15,6 +15,7 @@ function getHeirloomEff(name, type) {
     else if (getPageSetting('slot4modst') == name) return 5;
     else if (getPageSetting('slot5modst') == name) return 5;
     else if (getPageSetting('slot6modst') == name) return 5;
+    else if (getPageSetting('slot7modst') == name) return 5;
 	else return 0;
   }
   else if (type == "shield") {
@@ -24,6 +25,7 @@ function getHeirloomEff(name, type) {
     else if (getPageSetting('slot4modsh') == name) return 5;
     else if (getPageSetting('slot5modsh') == name) return 5;
     else if (getPageSetting('slot6modsh') == name) return 5;
+    else if (getPageSetting('slot7modsh') == name) return 5;
 	else return 0;
   }
   else if (type == "core") {
@@ -54,6 +56,7 @@ function evaluateHeirloomMods2(loom, location) {
 	else if (raretokeep == 'Plagued') raretokeep = 8;
 	else if (raretokeep == 'Radiating') raretokeep = 9;
         else if (raretokeep == 'Hazardous') raretokeep = 10;
+	else if (raretokeep == 'Enigmatic') raretokeep = 11;
 
   if (location.includes('Equipped'))
     loom = game.global[location];

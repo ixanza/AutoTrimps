@@ -543,9 +543,14 @@ function RbuyJobs() {
     }
 
     freeWorkers += currentworkers.reduce((a,b) => {return a + b;});
-	
-    freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs : 0;
 
+    // Explicit firefox handling because Ff specifically reduces free workers to 0.
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    
+    var reserveMod = isFirefox ? 1 + (game.resources.trimps.owned / 1e10) : 1;
+
+    freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod: 0;
+	
     // Calculate how much of each worker we should have
     // If focused farming go all in for caches
     var allIn = "";
@@ -626,9 +631,28 @@ function RbuyJobs() {
         game.global.buyAmt = buyAmountStore;
     } else {
         //buy everything
+
+        // Fire anything that we need to fire to free up workers
         for (var i = 0; i < desiredWorkers.length; i++) {
 
-            if (desiredWorkers[i] == 0) continue;
+            if (desiredWorkers[i] > 0) continue;
+
+            var buyAmountStore = game.global.buyAmt;
+            var fireState = game.global.firing;
+
+            game.global.firing = (desiredWorkers[i] < 0);
+            game.global.buyAmt = Math.abs(desiredWorkers[i]);
+
+            buyJob(ratioWorkers[i], true, true);
+
+            game.global.firing = fireState;
+            game.global.buyAmt = buyAmountStore;
+        }
+
+        // Buy up workers that we need to
+        for (var i = 0; i < desiredWorkers.length; i++) {
+
+            if (desiredWorkers[i] <= 0) continue;
 
             var buyAmountStore = game.global.buyAmt;
             var fireState = game.global.firing;

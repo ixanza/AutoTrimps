@@ -1024,7 +1024,8 @@ function RautoEquip() {
                             underStats ||
                             Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned
                         ) {
-                            if (!game.equipment[equipName].locked) {
+			    if (game.global.challengeActive == "Hypothermia" && equipName == 'Shield' && !Rhyposhouldwood) return;
+                            else if (!game.equipment[equipName].locked) {
                                 if (buyEquipment(equipName, null, true, 1)){
                                 keepBuying = true;
                             }

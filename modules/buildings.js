@@ -384,6 +384,7 @@ function mostEfficientHousing() {
 
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
+            if (resource == 'wood' && Rhyposhouldwood) worstTime = Infinity;
         }
 
         if (mostEfficient.time > worstTime) {
@@ -396,13 +397,109 @@ function mostEfficientHousing() {
     return mostEfficient.name;
 }
 
+function RbuyStorage(buyFood, buyWood, buyMetal) {
+
+    // Simple map for resources to the names of their storage buildings.
+    var Resources = {};
+    if (buyFood) {Resources.food = "Barn";}
+    if (buyWood) {Resources.wood = "Shed";}
+    if (buyMetal) {Resources.metal = "Forge";}
+
+    // Check if we're currently running trimple/atlantrimp
+    var isOnTrimple = game.global.currentMapId;
+    for (var Map in game.global.mapsOwnedArray) {
+        if (Map.id == isOnTrimple) {
+            if (Map.name == "Atlantrimp" || Map.name == "Trimple Of Doom"){
+                isOnTrimple = true;;
+            }
+        }
+    }
+
+    // Calculate whatever would send us over the current max
+    var jestImps = {};
+    for (var Res in Resources){
+
+        // Calculate maximum resources for given resource
+        var resMax = game.resources[Res].max;
+        if (game.global.universe == 1) {
+            resMax *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier;
+        } else {
+            resMax *= 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
+        }
+        resMax = calcHeirloomBonus("Shield", "storageSize", resMax, false);
+
+        // Check if we're in a map
+        var curRes = game.resources[Res].owned;
+        if (game.global.mapsActive)
+        {
+            if (isOnTrimple) {
+                jestImps[Res] = curRes * 2;
+            } else {
+                jestImps[Res] = curRes + scaleToCurrentMap(simpleSeconds(Res, 45));
+            }
+        } else {
+            jestImps[Res] = curRes * 1.1;
+        }
+
+
+        if (resMax < jestImps[Res]){
+            if (canAffordBuilding(Resources[Res]) && !(game.buildings[Resources[Res]].locked)){
+                buyBuilding(Resources[Res], true, true, 1);
+            }
+        }
+    }
+
+}
+
 function RbuyBuildings() {
  
-    // Storage, shouldn't be needed anymore that autostorage is lossless
-    if (!game.global.autoStorage) {toggleAutoStorage(false);}
+    // Storage
+    if (game.global.challengeActive == "Hypothermia" && getPageSetting('Rhypostorage')) {
+
+        var hypofarmzone;
+        var hypofarmamount;
+        var bonfire = game.challenges.Hypothermia.totalBonfires;
+	var wood = game.resources.wood.max;
+	var woodmax = wood * (1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier);
+        woodmax = calcHeirloomBonus("Shield", "storageSize", woodmax, false);
+
+        hypofarmzone = getPageSetting('Rhypofarmzone');
+        hypofarmamount = getPageSetting('Rhypofarmstack');
+
+        var hypoamountfarmindex = hypofarmzone.indexOf(game.global.world);
+        var hypoamountzones = hypofarmamount[hypoamountfarmindex];
+            
+        var currentprice = (1e10 * Math.pow(100, game.challenges.Hypothermia.totalBonfires));
+        var targetprice = (currentprice * Math.pow(100, ((hypoamountzones - bonfire) - 1))) * 1.05;
+	targetprice += (targetprice / 1000);
+
+	if (game.global.world > (getPageSetting('Rhypofarmzone')[getPageSetting('Rhypofarmzone').length - 1])) {
+	    if (!game.global.autoStorage) {
+	        toggleAutoStorage(false);
+	    }
+	}
+	
+	else {
+	    if (game.global.autoStorage) {
+                toggleAutoStorage(false);
+	    }
+
+            if (targetprice >= 1e10 && ((woodmax * Math.pow(2, game.buildings.Shed.purchased - game.buildings.Shed.owned)) < targetprice)) {
+                buyBuilding('Shed', true, true, 1);
+            }
+    
+            RbuyStorage(true, false, true);
+	}
+    }
+    else {
+        if (!game.global.autoStorage) {
+            toggleAutoStorage(false);
+        }
+    }
+
  
     //Smithy
-    if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
+    if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy') && Rhyposhouldwood) {
         // On quest challenge
         if (game.global.challengeActive == 'Quest') {
             if (smithybought > game.global.world) {smithybought = 0;}

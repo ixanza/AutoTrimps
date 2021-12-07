@@ -15,10 +15,11 @@ function initializeAutoTrimps() {
 }
 
 var changelogList = [];
+changelogList.push({date: "06/12/2021", version: "v4.6.0", description: "<b>v5.6.0</b> Hypothermia settings added. Calc updated. Heirlooms updated. Experience on portal added", isNew: true});
 changelogList.push({date: "15/05/2021", version: "v4.5.0", description: "<b>v5.5.0</b> Seperated Tribute and Time farm. Added automation for Pandemonium\, Alchemy and Spire Assault. Updated calcs. Added an option to calc frenzy. Credits to August for adding Staff swap and fixing a few bugs. ", isNew: true});
-changelogList.push({date: "15/09/2020", version: "v4.4.1", description: "<b>v5.4.1</b> Fixed things. Check your TF settings U2 people i added a toggle", isNew: false});
+changelogList.push({date: "15/09/2020", version: "v4.4.1", description: "<b>v5.4.1</b> Fixed things. Check your TF settings U2 people I added a toggle", isNew: false});
 changelogList.push({date: "06/09/2020", version: "v4.4.0", description: "<b>v5.4.0</b> There is not enough space to describe how much stuff has changed. But its got all 5.4 content ready. <b>CHANGED THE WAY JOBS\, GEAR\, BUILDINGS WORKS! CHECK SETTINGS!</b> ", isNew: false});
-changelogList.push({date: "28/05/2020", version: "v4.3.2", description: "<b>v5.3.8</b> Various bug fixes. <b>CHANGED THE WAY TF GATHER WORKS! CHECK TF SETTINGS!</b> ", isNew: false});
+//changelogList.push({date: "28/05/2020", version: "v4.3.2", description: "<b>v5.3.8</b> Various bug fixes. <b>CHANGED THE WAY TF GATHER WORKS! CHECK TF SETTINGS!</b> ", isNew: false});
 //changelogList.push({date: "08/05/2020", version: "v4.3.1", description: "<b>v5.3.7</b> Various bug fixes. <b>CHANGED THE WAY MELTING POINT SETTING WORKS PLEASE CHECK SETTING IN MAPS!</b> ", isNew: false});
 //changelogList.push({date: "20/02/2020", version: "v4.3.0", description: "<b>v5.3.0</b> Added Arch. Automated Quest. Fixed bugs. Updated calc. ", isNew: false});
 //changelogList.push({date: "22/11/2019", version: "v4.2.0", description: "<b>v5.2.1</b> Added Quagmire functionality. Added time and tribute farming. Added option to run Dailies in either universe. Added check to c2runner to not run a challenge if you have not unlocked it. Autoallocation sort of fixed. Added Greed to loot dumping. Graphs are still bad when moving between universes. Removed autonu due to being broken. ", isNew: false});

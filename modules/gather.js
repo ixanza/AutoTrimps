@@ -190,6 +190,9 @@ function RmanualLabor2() {
     else if (game.global.challengeActive == "Quest" && (questcheck() == 14 || questcheck() == 24)) {
 	setGather('science');
     }
+    else if (Rshouldhypofarm) {
+	     setGather('wood');
+    }
     else if (Rshouldshipfarm) {
 	     setGather('food');
     }
@@ -231,6 +234,9 @@ function RmanualLabor2() {
              setGather('trimps');
     }
     else if (!bwRewardUnlocked("Foremany") && (game.global.buildingsQueue.length ? (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1')) : false)) {
+             setGather('buildings');
+    }
+    else if (game.global.buildingsQueue.length > 2) {
              setGather('buildings');
     }
     else if (!game.global.trapBuildToggled && (game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1')){

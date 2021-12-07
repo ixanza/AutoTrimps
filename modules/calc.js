@@ -970,6 +970,12 @@ function RcalcBadGuyDmg(enemy, attack, equality) {
     if (game.global.challengeActive == "Alchemy") {
 	number *= ((alchObj.getEnemyStats(false, false)) + 1);
     }
+    if (game.global.challengeActive == "Hypothermia") {
+	number *= game.challenges.Hypothermia.getEnemyMult();
+    }
+    if (game.global.challengeActive == "Glass") {
+	number *= game.challenges.Glass.attackMult();
+    }
     if (!enemy && game.global.usingShriek) {
         number *= game.mapUnlocks.roboTrimp.getShriekValue();
     }
@@ -1047,6 +1053,13 @@ function RcalcEnemyHealth(world) {
     if (game.global.challengeActive == "Alchemy") {
 	health *= ((alchObj.getEnemyStats(false, false)) + 1);
     }
+    if (game.global.challengeActive == "Hypothermia") {
+	health *= game.challenges.Hypothermia.getEnemyMult();
+    }
+    if (game.global.challengeActive == "Glass") {
+	health *= 0.01;
+        health *= game.challenges.Glass.healthMult();
+    }
     return health;
 }
 
@@ -1089,6 +1102,13 @@ function RcalcEnemyHealthMod(world, cell, name) {
     }
     if (game.global.challengeActive == "Alchemy") {
 	health *= ((alchObj.getEnemyStats(false, false)) + 1);
+    }
+    if (game.global.challengeActive == "Hypothermia") {
+	health *= game.challenges.Hypothermia.getEnemyMult();
+    }
+    if (game.global.challengeActive == "Glass") {
+	health *= 0.01;
+        health *= game.challenges.Glass.healthMult();
     }
     return health;
 }
