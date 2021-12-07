@@ -55,6 +55,24 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     return getTrimpsDamage(minMaxAvg, incStance, incFlucts)
 }
 
+function calcDailyAttackMod(number) {
+    if (game.global.challengeActive == "Daily"){
+        if (typeof game.global.dailyChallenge.badStrength !== 'undefined'){
+            number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
+        }
+        if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive){
+            number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
+        }
+        if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined'){
+            number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
+        }
+        if (typeof game.global.dailyChallenge.empower !== "undefined") {
+            number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks)
+        }
+    }
+    return number;
+}
+
 function calcDailyHealthMod(number) {
     if (game.global.challengeActive == "Daily"){
         if (typeof game.global.dailyChallenge.empower !== "undefined") {
