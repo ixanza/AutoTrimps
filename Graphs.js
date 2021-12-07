@@ -7,7 +7,17 @@ function GraphsImportExportTooltip(a){if(!game.global.lockTooltip){var d=documen
 function loadGraphs(){var a=document.getElementById("importBox").value.replace(/(\r\n|\n|\r|\s)/gm,""),b=JSON.parse(a);null==b||(allSaveData=b,drawGraph())}
 function appendGraphs(){drawGraph()}
 var rememberSelectedVisible=[];
-function saveSelectedGraphs(){rememberSelectedVisible=[];for(var b,a=0;a<chart1.series.length;a++)b=chart1.series[a],rememberSelectedVisible[a]=b.visible}
+
+function saveSelectedGraphs() {
+    if (chart1) {
+        rememberSelectedVisible = [];
+        for (let b, a = 0; a < chart1.series.length; a++) {
+            b = chart1.series[a]
+            rememberSelectedVisible[a] = b.visible
+        }
+    }
+}
+
 function applyRememberedSelections(){for(var b,a=0;a<chart1.series.length;a++)b=chart1.series[a],!1==rememberSelectedVisible[a]&&b.hide()}
 function toggleSpecificGraphs(){for(var b,a=0;a<chart1.series.length;a++)b=chart1.series[a],b.visible?b.hide():b.show()}
 function toggleAllGraphs(){for(var c,a=0,b=0;b<chart1.series.length;b++)c=chart1.series[b],c.visible&&a++;for(var c,b=0;b<chart1.series.length;b++)c=chart1.series[b],a>chart1.series.length/2?c.hide():c.show()}
