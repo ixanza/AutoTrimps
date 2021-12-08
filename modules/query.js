@@ -2,18 +2,25 @@ function getPerSecBeforeManual(a){var b=0,c=game.jobs[a].increase;if("custom"==c
 function checkJobPercentageCost(a,b){var c="food",d=game.jobs[a],e=d.cost[c],f=0;b||(b=game.global.buyAmt),f="undefined"==typeof e[1]?e*b:Math.floor(e[0]*Math.pow(e[1],d.owned)*((Math.pow(e[1],b)-1)/(e[1]-1)));var g;if(game.resources[c].owned<f){var h=getPsString(c,!0);return 0<h&&(g=calculateTimeToMax(null,h,f-game.resources[c].owned)),[!1,g]}return g=0<game.resources[c].owned?(100*(f/game.resources[c].owned)).toFixed(1):0,[!0,g]}
 function getScienceCostToUpgrade(a){var b=game.upgrades[a];return void 0!==b.cost.resources.science&&void 0!==b.cost.resources.science[0]?Math.floor(b.cost.resources.science[0]*Math.pow(b.cost.resources.science[1],b.done)):void 0!==b.cost.resources.science&&void 0==b.cost.resources.science[0]?b.cost.resources.science:0}
 
-function calculateEnemyScale(type) {
+function calculateEnemyScale(type, forMap = false, voidMap = false) {
 	let maxScale = 1.0;
+	if (voidMap) forMap = true;
 	// Find maximum mutation multi
-	for (let mutation of Object.entries(mutations)) {
-		let key = mutation[0]
-		let val = mutation[1]
-		if (val?.active() && val?.statScale) {
-			let statMulti = getMutationStatScale(key, type);
-			if (statMulti > 0) {
-				let tempMulti = val.statScale(statMulti);
-				if (tempMulti > maxScale) {
-					maxScale = tempMulti;
+	if (!forMap || (forMap && (mutations.Magma.active() || game.global.world >= corruptionStart))) {
+		for (let mutation of Object.entries(mutations)) {
+			let key = mutation[0]
+			let val = mutation[1]
+			if (val?.active() && val?.statScale) {
+				let statMulti = getMutationStatScale(key, type);
+				if (statMulti > 0) {
+					let tempMulti = val.statScale(statMulti);
+					if (forMap && ((voidMap && !mutations.Magma.active())
+						|| (!voidMap && mutations.Magma.active()))) {
+						tempMulti /= 2;
+					}
+					if (tempMulti > maxScale) {
+						maxScale = tempMulti;
+					}
 				}
 			}
 		}
@@ -21,25 +28,136 @@ function calculateEnemyScale(type) {
 	return maxScale;
 }
 
-function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false) {
-	// Use code directly stolen from game instead
-	let enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
-	enemyDamage *= difficulty;
-	// Nothing uses this but implement it properly
-	if (scale) {
-		enemyDamage *= calculateEnemyScale("attack");
-	}
-	return Math.floor(enemyDamage);
+/**
+ * This is called in case we don't have cell instance to work with. Any calculation included in damage will not be here and vice versa.
+ * @param worldNumber
+ * @param cellNumber
+ * @param enemyName
+ * @param difficulty
+ * @param scale
+ * @param map
+ * @param voidMap
+ * @returns {number}
+ */
+function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false) {
+    // Use code directly stolen from game instead
+    let enemyDamage;
+    if (game.global.spireActive && checkIfSpireWorld()) {
+        enemyDamage = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'attack');
+    } else {
+        enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
+    }
+    if (voidMap) map = true;
+    if (map) enemyDamage *= difficulty;
+    // Mutations
+    if (scale) {
+        enemyDamage *= calculateEnemyScale("attack", map, voidMap);
+    }
+    // Other Stuff
+    if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
+        let oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+        let zoneModifier = Math.floor(worldNumber / game.challenges[game.global.challengeActive].zoneScaleFreq);
+        oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+        enemyDamage *= oblitMult;
+    }
+    if (game.global.challengeActive == "Life") {
+        enemyDamage *= 6;
+    } else if (game.global.challengeActive == "Toxicity") {
+        enemyDamage *= 5;
+    } else if (game.global.challengeActive == "Balance") {
+        enemyDamage *= (map) ? 2.35 : 1.17;
+    } else if (game.global.challengeActive == "Unbalance") {
+        enemyDamage *= 1.5;
+    } else if (game.global.challengeActive == "Domination") {
+        enemyDamage *= 2.5;
+    } else if (game.global.challengeActive == "Mayhem") {
+        let mayhemMult = game.challenges.Mayhem.getEnemyMult();
+        enemyDamage *= mayhemMult;
+    } else if (game.global.challengeActive == "Exterminate") {
+        let extMult = game.challenges.Exterminate.getSwarmMult();
+        enemyDamage *= extMult;
+    } else if (game.global.challengeActive == "Alchemy") {
+        let statMult = alchObj.getEnemyStats(map, voidMap) + 1;
+        enemyDamage *= statMult;
+    } else if (game.global.challengeActive == "Storm" && !map) {
+        enemyDamage *= game.challenges.Storm.getAttackMult();
+    }
+    return Math.floor(enemyDamage);
 }
 
-function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false) {
-	// Use code directly stolen from game instead
-	let enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
-	// Nothing uses this but implement it properly
-	if (scale) {
-		enemyHealth *= calculateEnemyScale("health");
-	}
-	return Math.floor(enemyHealth);
+function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false) {
+    // Use code directly stolen from game instead
+    let enemyHealth;
+    if (game.global.spireActive && checkIfSpireWorld()) {
+        enemyHealth = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'health');
+    } else {
+        enemyHealth = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
+    }
+    if (voidMap) map = true;
+    if (map) enemyHealth *= difficulty;
+    // Mutations
+    if (scale) {
+        enemyHealth *= calculateEnemyScale("health", map, voidMap);
+    }
+    // Other Stuff
+    if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
+        let oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+        let zoneModifier = Math.floor(worldNumber / game.challenges[game.global.challengeActive].zoneScaleFreq);
+        oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
+        enemyHealth *= oblitMult;
+    } else if (daily && game.global.challengeActive == "Daily") {
+        if (typeof game.global.dailyChallenge.badHealth !== 'undefined') {
+            enemyHealth *= dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength);
+        }
+        if (typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && map) {
+            enemyHealth *= dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength);
+        }
+        if (typeof game.global.dailyChallenge.empower !== 'undefined') {
+            if (!map) enemyHealth *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+        }
+    } else if (game.global.challengeActive == "Life") {
+        enemyHealth *= 11;
+    } else if (game.global.challengeActive == "Coordinate") {
+        enemyHealth *= getBadCoordLevel();
+    } else if (game.global.challengeActive == "Meditate") {
+        enemyHealth *= 2;
+    } else if (game.global.challengeActive == "Toxicity") {
+        enemyHealth *= 2;
+    } else if (game.global.challengeActive == "Balance") {
+        enemyHealth *= 2;
+    } else if (game.global.challengeActive == "Unbalance") {
+        enemyHealth *= (map) ? 2 : 3;
+    } else if (game.global.challengeActive == "Lead" && (game.challenges.Lead.stacks > 0)) {
+        enemyHealth *= (1 + (Math.min(game.challenges.Lead.stacks, 200) * 0.04));
+    } else if (game.global.challengeActive == "Domination") {
+        enemyHealth *= 7.5;
+    } else if (game.global.challengeActive == "Quest") {
+        enemyHealth *= game.challenges.Quest.getHealthMult();
+    } else if (game.global.challengeActive == "Revenge" && worldNumber % 2 == 0) {
+        enemyHealth *= 10;
+    } else if (game.global.challengeActive == "Mayhem") {
+        let mayhemMult = game.challenges.Mayhem.getEnemyMult();
+        enemyHealth *= mayhemMult;
+    } else if (game.global.challengeActive == "Exterminate") {
+        let extMult = game.challenges.Exterminate.getSwarmMult();
+        enemyHealth *= extMult;
+    } else if (game.global.challengeActive == "Duel") {
+        if (game.challenges.Duel.enemyStacks < 20) enemyHealth *= game.challenges.Duel.healthMult;
+    } else if (game.global.challengeActive == "Nurture") {
+        if (map) enemyHealth *= 10;
+        else enemyHealth *= 2;
+        enemyHealth *= game.buildings.Laboratory.getEnemyMult();
+    } else if (game.global.challengeActive == "Alchemy") {
+        let statMult = alchObj.getEnemyStats(map, voidMap) + 1;
+        enemyHealth *= statMult;
+    } else if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !map)
+        || game.global.challengeActive == "Pandemonium")) {
+        if (cellNumber == 99 && !map) enemyHealth *= game.challenges[game.global.challengeActive].getBossMult();
+        else enemyHealth *= game.challenges.Pandemonium.getPandMult();
+    } else if (game.global.challengeActive == "Storm" && !map) {
+        enemyHealth *= game.challenges.Storm.getHealthMult();
+    }
+    return Math.floor(enemyHealth);
 }
 
 function getMutationStatScale(mutationName, type) {

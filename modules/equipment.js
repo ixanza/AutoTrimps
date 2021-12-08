@@ -279,7 +279,7 @@ function autoLevelEquipment() {
 	ourDamage *= trimpAA;
 
 
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, (getPageSetting("calcCorruption") ?? false)), true, true);
+    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, (getPageSetting("calcCorruption") ?? false), false, false), true, true);
     var enemyHealth = calcEnemyHealth();
     var pierceMod = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
     var numHits = MODULES["equipment"].numHitsSurvived;
