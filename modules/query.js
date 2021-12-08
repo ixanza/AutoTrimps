@@ -6,7 +6,7 @@ function calculateEnemyScale(type, forMap = false, voidMap = false) {
 	let maxScale = 1.0;
 	if (voidMap) forMap = true;
 	// Find maximum mutation multi
-	if (!forMap || (forMap && (mutations.Magma.active() || game.global.world >= corruptionStart))) {
+	if (!forMap || (forMap && (mutations.Magma.active() || game.global.world >= mutations.Corruption.start(true)))) {
 		for (let mutation of Object.entries(mutations)) {
 			let key = mutation[0]
 			let val = mutation[1]
