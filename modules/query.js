@@ -52,6 +52,10 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     // Mutations
     if (scale) {
         enemyDamage *= calculateEnemyScale("attack", map, voidMap);
+        let grid = map ? game.global.mapGridArray : game.global.gridArray;
+        grid = grid.filter(item => item.corrupted).map(item => item.corrupted)
+        if (grid.includes("healthyStrong")) enemyDamage *= 2.5;
+        else if (grid.includes("corruptStrong")) enemyDamage *= 2;
     }
     // Other Stuff
     if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
@@ -98,6 +102,10 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     // Mutations
     if (scale) {
         enemyHealth *= calculateEnemyScale("health", map, voidMap);
+        let grid = map ? game.global.mapGridArray : game.global.gridArray;
+        grid = grid.filter(item => item.corrupted).map(item => item.corrupted)
+        if (grid.includes("healthyStrong")) enemyHealth *= 7.5;
+        else if (grid.includes("corruptTough")) enemyHealth *= 5;
     }
     // Other Stuff
     if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
