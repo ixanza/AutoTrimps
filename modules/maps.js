@@ -29,6 +29,7 @@ var spireMapBonusFarming = !1;
 var spireTime = 0;
 var doMaxMapBonus = !1;
 var vanillaMapatZone = !1;
+var shouldFarmWonder = false;
 var additionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 
 function updateAutoMapsStatus(get) {
@@ -610,6 +611,7 @@ function autoMap() {
             mapsClicked();
         return;
     }
+
     if (!game.global.preMapsActive && game.global.mapsActive) {
         var doDefaultMapBonus = game.global.mapBonus < getPageSetting('MaxMapBonuslimit') - 1;
         if (selectedMap == game.global.currentMapId && (!getCurrentMapObject().noRecycle && (doDefaultMapBonus || vanillaMapatZone || doMaxMapBonus || shouldFarm || needPrestige || shouldDoSpireMaps))) {
@@ -753,6 +755,47 @@ function autoMap() {
             lastMapWeWereIn = getCurrentMapObject();
         }
     }
+
+    // Experience Challenge
+    if (getPageSetting('farmWonders') && game.global.challengeActive == "Experience") {
+        if(game.global.world >= game.challenges.Experience.nextWonder && getPageSetting('wondersAmount') > game.challenges.Experience.wonders) {
+            shouldFarmWonder = true
+            if(!game.global.mapsActive && game.global.mapsOwnedArray.filter(function (map) {
+                return map.level == game.global.world;
+            }).length >= 1) {
+                var mapID = game.global.mapsOwnedArray.find(function (map) {
+                    return map.level == game.global.world;
+                }).id;
+                selectedMap = mapID;
+                selectMap(mapID);
+                runMap();
+            } else if (!game.global.mapsActive) {
+                selectedMap = "create"
+                maplvlpicked = game.global.world
+                debug("Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
+                mapsClicked(true)
+                var result = buyMap();
+                if (result == -2) {
+                    debug("Too many maps, recycling now: ", "maps", 'th-large');
+                    recycleBelow(true);
+                    debug("Retrying, Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
+                    result = buyMap();
+                    if (result == -2) {
+                        recycleMap(lowestMap);
+                        result = buyMap();
+                        if (result == -2)
+                            debug("AutoMaps unable to recycle to buy map!");
+                        else
+                            debug("Retrying map buy after recycling lowest level map");
+                    }
+                }
+            }
+        } else if (shouldFarmWonder) {
+            shouldFarmWonder = false
+            selectedMap = "world"
+        }
+    }
+    
 }
 
 //Radon

@@ -384,7 +384,7 @@ function mostEfficientHousing() {
 
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
-            if (resource == 'wood' && Rhyposhouldwood) worstTime = Infinity;
+            if (resource == 'wood' && !Rhyposhouldwood) worstTime = Infinity;
         }
 
         if (mostEfficient.time > worstTime) {

@@ -551,6 +551,8 @@ function initializeAllSettings() {
     createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
     createSetting('VDisableFarm', 'VM Farming H:D', 'H:D value to be checked only if we are going to run VMs. Allows you to farm more for VMs. 0 or -1 will make this value default to normal H:D value</b>', 'value', -1, null, 'Maps');
     createSetting('TStacks', 'Toxicity Stack Farming', 'If Toxicity challange is running and it is not C2, this will attempt to farm toxicity stacks at last zone of the challenge. 0 or -1 to disable.', 'value', -1, null, 'Maps');
+    createSetting('farmWonders', 'Farm Wonders', 'Farms wonders until the selected amount and does BW at given zone to finish the challenge', 'boolean', false, null, 'Maps')
+    createSetting('wondersAmount', 'Wonders Amount', 'Select the amount of Wonders you want to farm in each given run, <b> 0 to disable </b>', 'value', '0', null, "Maps");
 
     //RMaps
 
@@ -1725,6 +1727,8 @@ function updateCustomButtons() {
     !radonon ? turnOn("buywepsvoid"): turnOff("buywepsvoid");
     !radonon ? turnOn("VDisableFarm"): turnOff("VDisableFarm");
     !radonon ? turnOn("TStacks"): turnOff("TStacks");
+    game.global.highestLevelCleared > 600 ? turnOn("farmWonders") : turnOff("farmWonders");
+    game.global.highestLevelCleared > 600 ? turnOn("wondersAmount") : turnOff("wondersAmount");
 
     //RMaps
     radonon ? turnOn("RAutoMaps"): turnOff("RAutoMaps");

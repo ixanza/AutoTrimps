@@ -65,6 +65,7 @@ function autoPortal() {
         case "Lead":
         case "Corrupted":
         case "Domination":
+        case "Experience":
             if (!game.global.challengeActive) {
                 doPortal(autoTrimpSettings.AutoPortal.selected);
             }
