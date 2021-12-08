@@ -2,7 +2,7 @@
 
 ## Discussion / Discord Channel
 <a href="https://discord.gg/Ztcnfjr"><img src="https://png.icons8.com/color/180/discord-new-logo.png" width=48></a>
-Discord is a chat program. Come to talk about AutoTrimps, for help, or suggestions for new features : https://discord.gg/Ztcnfjr
+Discord is a chat program. Come to talk about AutoTrimps, for help, or suggestions for new features : https://discord.gg/trimps
 
 ## Current Version - Ongoing Development!
 - Orkun Fork. All changes made by Orkun using Zek as base.
