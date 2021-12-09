@@ -271,15 +271,26 @@ function autoMap() {
     }
 
     //Calc
+    var difficulty = 1.0;
+    let enemyName = 'Snimp';
+    let hdMap = undefined;
+    if (needToVoid) {
+        difficulty = game.global.mapsOwnedArray
+            .filter(item => item.location === "Void")
+            .map(item => item.difficulty)
+            .reduce((acc, item) => Number(item) > acc ? Number(item) : acc, 0)
+        enemyName = "Cthulimp";
+        hdMap = game.global.world + 1;
+    }
     var ourBaseDamage = calcOurDmg("avg", false, true);
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0, getPageSetting("calcCorruption") ?? false, false, false), true, true);
-    var enemyHealth = calcEnemyHealth();
+    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, enemyName, difficulty, getPageSetting("calcCorruption") ?? false, needToVoid, needToVoid), true, true);
+    var enemyHealth = calcEnemyHealth(game.global.world + 1, needToVoid, true, needToVoid);
 
     if (getPageSetting('DisableFarm') > 0) {
         if (doVoids && getPageSetting('VDisableFarm') > 0) {
-            shouldFarm = (calcHDratio() >= getPageSetting('VDisableFarm'));
+            shouldFarm = (calcHDratio(hdMap) >= getPageSetting('VDisableFarm'));
         } else {
-            shouldFarm = (calcHDratio() >= getPageSetting('DisableFarm'));
+            shouldFarm = (calcHDratio(hdMap) >= getPageSetting('DisableFarm'));
         }
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
@@ -398,7 +409,7 @@ function autoMap() {
     maxlvl += extraMapLevels;
     if (getPageSetting('DynamicSiphonology') || shouldFarmLowerZone) {
         for (siphlvl; siphlvl < maxlvl; siphlvl++) {
-            var maphp = getEnemyMaxHealth(siphlvl, 30, "Snimp", true, 1.1, true, false, true);
+            var maphp = getEnemyMaxHealth(siphlvl, 30, enemyName, true, 1.1, true, false, true);
             var mapdmg = ourBaseDamage2;
             if (game.upgrades.Dominance.done)
                 mapdmg *= 4;

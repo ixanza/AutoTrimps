@@ -42,12 +42,12 @@ function calculateEnemyScale(type, forMap = false, voidMap = false) {
 function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false) {
     // Use code directly stolen from game instead
     let enemyDamage;
-    if (game.global.spireActive && checkIfSpireWorld()) {
+    if (voidMap) map = true;
+    if (!map && game.global.spireActive && checkIfSpireWorld()) {
         enemyDamage = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'attack');
     } else {
-        enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
+        enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty, scale, false);
     }
-    if (voidMap) map = true;
     if (map) enemyDamage *= difficulty;
     // Mutations
     if (scale) {
@@ -92,12 +92,12 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
 function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false) {
     // Use code directly stolen from game instead
     let enemyHealth;
-    if (game.global.spireActive && checkIfSpireWorld()) {
+    if (voidMap) map = true;
+    if (!map && game.global.spireActive && checkIfSpireWorld()) {
         enemyHealth = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'health');
     } else {
         enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
     }
-    if (voidMap) map = true;
     if (map) enemyHealth *= difficulty;
     // Mutations
     if (scale) {
@@ -132,7 +132,7 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     } else if (game.global.challengeActive == "Toxicity") {
         enemyHealth *= 2;
     } else if (game.global.challengeActive == "Balance") {
-        enemyHealth *= 2;
+        enemyHealth *= map ? 2.35 : 1.17;
     } else if (game.global.challengeActive == "Unbalance") {
         enemyHealth *= (map) ? 2 : 3;
     } else if (game.global.challengeActive == "Lead" && (game.challenges.Lead.stacks > 0)) {
