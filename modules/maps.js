@@ -295,9 +295,6 @@ function autoMap() {
             forceAbandonTrimps();
         }
     }
-    if (game.global.spireActive) {
-        enemyDamage = calcSpire(99, game.global.gridArray[99].name, 'attack');
-    }
     highDamageShield();
     if (getPageSetting('loomswap') > 0 && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg'))
         ourBaseDamage *= trimpAA;
