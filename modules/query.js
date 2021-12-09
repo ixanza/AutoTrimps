@@ -95,7 +95,7 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     if (game.global.spireActive && checkIfSpireWorld()) {
         enemyHealth = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'health');
     } else {
-        enemyHealth = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, 1.0, 1.0, false);
+        enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
     }
     if (voidMap) map = true;
     if (map) enemyHealth *= difficulty;
