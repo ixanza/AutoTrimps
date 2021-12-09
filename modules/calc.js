@@ -155,7 +155,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     if (antiStacks > 0) {
         number *= ((antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
     }
-    if (!game.global.mapsActive && game.global.mapBonus > 0){
+    if (game.global.mapBonus > 0){
         let mapBonus = game.global.mapBonus;
         if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
         number *= ((mapBonus * .2) + 1);
@@ -198,6 +198,8 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         } else {
             number *= 1 + game.empowerments.Ice.getDamageModifier();
         }
+    } else if (getPageSetting("addpoison") &&getEmpowerment() == "Poison") {
+        number += game.empowerments.Poison.getDamage()
     }
     if (game.talents.magmamancer.purchased){
         number *= game.jobs.Magmamancer.getBonusPercent();
