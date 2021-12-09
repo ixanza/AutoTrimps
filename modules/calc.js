@@ -190,7 +190,11 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         number *= ((game.global.totalSquaredReward / 100) + 1)
     }
     if (getEmpowerment() == "Ice"){
-        number *= 1 + game.empowerments.Ice.getDamageModifier();
+        if (getPageSetting("fullice")) {
+            number *= Fluffy.isRewardActive('naturesWrath') ? 3 : 2;
+        } else {
+            number *= 1 + game.empowerments.Ice.getDamageModifier();
+        }
     }
     if (game.talents.magmamancer.purchased){
         number *= game.jobs.Magmamancer.getBonusPercent();
