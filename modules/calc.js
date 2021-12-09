@@ -160,9 +160,6 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
         number *= ((mapBonus * .2) + 1);
     }
-    if (game.global.titimpLeft >= 1 && needToVoid){
-        number *= 2;
-    }
     if (game.global.achievementBonus > 0){
         number *= (1 + (game.global.achievementBonus / 100));
     }

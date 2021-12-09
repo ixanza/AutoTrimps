@@ -38,6 +38,7 @@ function updateAutoMapsStatus(get) {
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
     let praid = prestraidon ?? false;
+    let hdMap = doVoids ? game.global.world + 1 : undefined;
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
@@ -67,9 +68,9 @@ function updateAutoMapsStatus(get) {
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
     else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks && game.global.challengeActive === "Toxicity") status = "Farming Toxicity Stacks";
-    else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
+    else if (shouldFarm) status = 'Farming: ' + calcHDratio(hdMap).toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
-    else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
+    else if (!enoughDamage) status = 'Want ' + calcHDratio(hdMap).toFixed(4) + 'x &nbspmore damage';
     else if (!enoughHealth) status = 'Want more health';
     else if (enoughHealth && enoughDamage) status = 'Advancing';
 
@@ -287,7 +288,7 @@ function autoMap() {
     var enemyHealth = calcEnemyHealth(game.global.world + 1, needToVoid, true, needToVoid);
 
     if (getPageSetting('DisableFarm') > 0) {
-        if (doVoids && getPageSetting('VDisableFarm') > 0) {
+        if (needToVoid && getPageSetting('VDisableFarm') > 0) {
             shouldFarm = (calcHDratio(hdMap) >= getPageSetting('VDisableFarm'));
         } else {
             shouldFarm = (calcHDratio(hdMap) >= getPageSetting('DisableFarm'));
