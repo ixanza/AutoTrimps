@@ -198,8 +198,6 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         } else {
             number *= 1 + game.empowerments.Ice.getDamageModifier();
         }
-    } else if (getPageSetting("addpoison") &&getEmpowerment() == "Poison") {
-        number += game.empowerments.Poison.getDamage()
     }
     if (game.talents.magmamancer.purchased){
         number *= game.jobs.Magmamancer.getBonusPercent();
@@ -300,6 +298,10 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     if (Fluffy.isActive()){
         number *= Fluffy.getDamageModifier();
     }
+    let poisonDamage = 0;
+    if (getPageSetting("addpoison") && getEmpowerment() == "Poison") {
+        poisonDamage += game.empowerments.Poison.getDamage()
+    }
 
     let min = number;
     let max = number;
@@ -319,9 +321,9 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         avg *= 1 + (maxFluct - minFluct) / 2;
     }
 
-    if (minMaxAvg == "min") return min;
-    else if (minMaxAvg == "max") return max;
-    else if (minMaxAvg == "avg") return avg;
+    if (minMaxAvg == "min") return min + poisonDamage;
+    else if (minMaxAvg == "max") return max + poisonDamage;
+    else if (minMaxAvg == "avg") return avg + poisonDamage;
 }
 
 function calcDailyHealthMod(number) {
