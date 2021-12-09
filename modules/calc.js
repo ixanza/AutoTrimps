@@ -148,12 +148,15 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     if (game.challenges.Electricity.stacks > 0) { //Electricity
         number *= (1 - (game.challenges.Electricity.stacks * 0.1));
     }
-    if (game.global.antiStacks > 0) {
-        number *= ((game.global.antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
-        updateAntiStacks();
+    let antiStacks = game.global.antiStacks;
+    if (getPageSetting("45stacks")) {
+        antiStacks = game.talents.patience.purchased ? 45 : 30;
+    }
+    if (antiStacks > 0) {
+        number *= ((antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
     }
     if (!game.global.mapsActive && game.global.mapBonus > 0){
-        var mapBonus = game.global.mapBonus;
+        let mapBonus = game.global.mapBonus;
         if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
         number *= ((mapBonus * .2) + 1);
     }
@@ -170,7 +173,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         minFluct = fluctuation - (.02 * getPerkLevel("Range"));
     }
     if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt"){
-        var challenge = game.challenges[game.global.challengeActive];
+        let challenge = game.challenges[game.global.challengeActive];
         number *= 5;
         number *= Math.pow(challenge.decayValue, challenge.stacks);
     }
@@ -209,7 +212,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         number *= 5;
     }
     if (game.talents.scry.purchased && !game.global.mapsActive && isScryerBonusActive()){
-        var worldCell = getCurrentWorldCell();
+        let worldCell = getCurrentWorldCell();
         if (worldCell.mutation == "Corruption" || worldCell.mutation == "Healthy"){
             number *= 2;
         }
@@ -230,7 +233,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         number *= 1.5;
     }
     if (playerSpireTraps.Strength.owned){
-        var strBonus = playerSpireTraps.Strength.getWorldBonus();
+        let strBonus = playerSpireTraps.Strength.getWorldBonus();
         number *= (1 + (strBonus / 100));
     }
     if (getUberEmpowerment() == "Poison"){
