@@ -38,7 +38,7 @@ function updateAutoMapsStatus(get) {
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
     let praid = prestraidon ?? false;
-    let hdMap = doVoids ? game.global.world + 1 : undefined;
+    let hdMap = needToVoid ? game.global.world + 1 : undefined;
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
