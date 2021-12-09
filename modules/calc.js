@@ -212,7 +212,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
         number *= 5;
     }
     if (game.talents.scry.purchased && !needToVoid && isScryerBonusActive()){
-        let corruptedCells = game.global.gridArray.reduce((acc, item) => acc + (item.corrupted != null ? 1 : 0), 0) / game.global.gridArray.length;
+        let corruptedCells = game.global.gridArray.reduce((acc, item) => acc + (item.corrupted != null ? 1 : 0), 0);
         number *= (1 + 0.01 * corruptedCells);
     }
     if (game.talents.daily.purchased && game.global.challengeActive == "Daily"){
