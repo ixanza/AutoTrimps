@@ -541,17 +541,6 @@ function autoMap() {
         for (var map in voidArraySorted) {
             var theMap = voidArraySorted[map];
             doVoids = true;
-            var eAttack = getEnemyMaxAttack(game.global.world, theMap.size, 'Voidsnimp', theMap.difficulty, getPageSetting("calcCorruption"), true, true);
-            if (game.global.world >= 181 || (game.global.challengeActive == "Corrupted" && game.global.world >= 60))
-                eAttack *= (getCorruptScale("attack") / 2).toFixed(1);
-            if (game.global.challengeActive == 'Balance') {
-                eAttack *= 2;
-            }
-            if (game.global.challengeActive == 'Toxicity') {
-                eAttack *= 5;
-            }
-            if (getPageSetting('DisableFarm') <= 0)
-                shouldFarm = shouldFarm || false;
             if (!restartVoidMap)
                 selectedMap = theMap.id;
             if (game.global.mapsActive && getCurrentMapObject().location == "Void" && game.global.challengeActive == "Nom" && getPageSetting('FarmWhenNomStacks7')) {
