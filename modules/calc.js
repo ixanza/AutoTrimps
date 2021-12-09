@@ -339,7 +339,12 @@ function calcBadGuyDmg(enemy, attack, daily, maxormin, disableFlucts) {
     if (game.global.spireActive) number = calcSpire(100, game.global.gridArray[99].name, 'attack');
     else if (enemy) number = enemy.attack;
     else number = attack;
-
+    let cell;
+    if (game.global.mapsActive) {
+        cell = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
+    } else {
+        cell = game.global.gridArray[game.global.lastClearedCell + 1];
+    }
     let fluctuation = .2;
     let maxFluct = -1;
     let minFluct = -1;
