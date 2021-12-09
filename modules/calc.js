@@ -340,8 +340,8 @@ function calcSpire(cell, name, what) {
 
 function calcBadGuyDmg(enemy, attack, daily, maxormin, disableFlucts) {
     let number;
-    if (game.global.spireActive) number = calcSpire(100, game.global.gridArray[99].name, 'attack');
-    else if (enemy) number = enemy.attack;
+    if (enemy) number = enemy.attack;
+    else if (game.global.spireActive) number = calcSpire(100, game.global.gridArray[99].name, 'attack');
     else number = attack;
     let cell;
     if (game.global.mapsActive) {
