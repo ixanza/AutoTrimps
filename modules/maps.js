@@ -409,14 +409,19 @@ function autoMap() {
     var maxlvl = game.talents.mapLoot.purchased ? game.global.world - 1 : game.global.world;
     maxlvl += extraMapLevels;
     if (getPageSetting('DynamicSiphonology') || shouldFarmLowerZone) {
-        for (siphlvl; siphlvl < maxlvl; siphlvl++) {
-            var maphp = getEnemyMaxHealth(siphlvl, 30, enemyName, true, 1.1, true, false, true);
-            var mapdmg = ourBaseDamage2;
-            if (game.upgrades.Dominance.done)
-                mapdmg *= 4;
-            if (mapdmg < maphp) {
-                break;
+        if (getPageSetting("DynamicSiphonologyMethod") === 0) {
+            for (siphlvl; siphlvl < maxlvl; siphlvl++) {
+                var maphp = getEnemyMaxHealth(siphlvl, 30, enemyName, true, 1.1, true, false, true);
+                var mapdmg = ourBaseDamage2;
+                if (game.upgrades.Dominance.done)
+                    mapdmg *= 4;
+                if (mapdmg < maphp) {
+                    break;
+                }
             }
+        }
+        if (getPageSetting("DynamicSiphonologyMethod") === 1) {
+            siphlvl = getZoneToFarm().zone;
         }
     }
     var obj = {};
@@ -3076,7 +3081,7 @@ const getZoneToFarm = () => {
         bestItem.zone = bestResult.zoneNum;
         bestItem.stance = bestResult.stance;
     }
-    return getZoneToFarm();
+    return bestItem;
 }
 
 const calculateStats = (input) => {
