@@ -17,7 +17,6 @@ MODULES.maps.SkipNumUnboughtPrestiges = 2;
 MODULES.maps.UnearnedPrestigesRequired = 2;
 
 var doVoids = !1;
-var needToVoid = !1;
 var needPrestige = !1;
 var skippedPrestige = !1;
 var scryerStuck = !1;
