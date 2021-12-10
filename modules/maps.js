@@ -642,7 +642,7 @@ function autoMap() {
                 mapsClicked();
             }
             if ((!getPageSetting('PowerSaving') || (getPageSetting('PowerSaving') == 2) && doVoids) && game.global.switchToMaps &&
-                (needPrestige || doVoids ||
+                (needPrestige || doVoids || (!doVoids && needToVoid && shouldFarm) ||
                     ((game.global.challengeActive == 'Lead' && !challSQ) && game.global.world % 2 == 1) ||
                     (!enoughDamage && enoughHealth && game.global.lastClearedCell < 9) ||
                     (shouldFarm && game.global.lastClearedCell >= customVars.shouldFarmCell) ||
