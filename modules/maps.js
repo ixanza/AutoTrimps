@@ -2968,7 +2968,7 @@ const prepareInputs = () => {
     let ok_spread = 1 + (fluffy_ability >= 13) + (fluffy_ability >= 10) + game.talents.overkill.purchased ? 1 : 0;
     let overkill = getPerkLevel("Overkill");
     let plagueModifier = getPlaguebringerModifier();
-    let range = calcOurDmg("max", false, true, false) / attack;
+    let range = calcOurDmg("max", false, true, false, true) / attack;
     let mapReducer = game.talents.mapLoot.purchased;
     let mapSize = game.talents.mapLoot2.purchased ? 20 : 27;
     let speed = 10 * 0.95 ** getPerkLevel("Agility") - game.talents.hyperspeed.purchased ? 1 : 0;
