@@ -3041,6 +3041,10 @@ const prepareInputs = () => {
         magma: magma,
     }
 
+    let mapBonus = game.global.mapBonus < getPageSetting('MaxMapBonuslimit') - 1;
+    let minZone = undefined
+    if (mapBonus) minZone = game.global.world - game.portal.Siphonology.level;
+
     return {
         attack: attack,
         biome: biome,
@@ -3065,7 +3069,8 @@ const prepareInputs = () => {
         poison: 0, wind: 0, ice: 0,
         [['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: activeNatureLevel / 100,
 
-        ...death_stuff
+        ...death_stuff,
+        minZone: minZone
     }
 }
 
@@ -3086,7 +3091,7 @@ const getZoneToFarm = () => {
 
 const calculateStats = (input) => {
     let stats = [];
-    let stances = (input.zone < 70 ? 'X' : 'D') + (input.hze >= 181 && input.zone >= 60 ? 'S' : '');
+    let stances = !wantToScry ? (input.zone < 70 ? 'X' : 'D') : 'S';
 
     let extra = 0;
     if (input.hze >= 210)
@@ -3094,7 +3099,7 @@ const calculateStats = (input) => {
             ++extra;
     extra = extra || -input.reducer;
 
-    for (let zone = input.zone + extra; zone >= 6; --zone) {
+    for (let zone = input.zone + extra; zone >= 6 && (input.minZone === undefined || zone >= input.minZone); --zone) {
         if (input.coordinate) {
             let coords = 1;
             for (let z = 1; z < zone; ++z)
