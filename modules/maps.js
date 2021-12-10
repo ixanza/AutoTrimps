@@ -2905,3 +2905,161 @@ function RautoMap() {
         }
     }
 }
+
+/** ADVANCED ZONING LOGIC **/
+const biomes = {
+    all: [
+        [0.8,  0.7,  true],
+        [0.9,  1.3,  false],
+        [0.9,  1.3,  false],
+        [1,    1,    false],
+        [1.1,  0.7,  false],
+        [1.05, 0.8,  true],
+        [0.9,  1.1,  true],
+    ],
+    Gardens: [
+        [1.3,  0.95, false],
+        [0.95, 0.95, true],
+        [0.8,  1,    false],
+        [1.05, 0.8,  false],
+        [0.6,  1.3,  true],
+        [1,    1.1,  false],
+        [0.8,  1.4,  false],
+    ],
+    Sea: [
+        [0.8,  0.9,  true],
+        [0.8,  1.1,  true],
+        [1.4,  1.1,  false],
+    ],
+    Mountain: [
+        [0.5,  2,    false],
+        [0.8,  1.4,  false],
+        [1.15, 1.4,  false],
+        [1,    0.85, true],
+    ],
+    Forest: [
+        [0.75, 1.2,  true],
+        [1,    0.85, true],
+        [1.1,  1.5,  false],
+    ],
+    Depths: [
+        [1.2,  1.4,  false],
+        [0.9,  1,    true],
+        [1.2,  0.7,  false],
+        [1,    0.8,  true],
+    ],
+};
+
+const prepareInputs = () => {
+    let zone = game.global.world;
+    let attack = calcOurDmg("min", false, true, false);
+    let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
+    let critChance = (getPerkLevel("Relentlessness") * (game.portal.Relentlessness.modifier * 100) + getHeirloomBonus("Shield", "critChance")) / 100;
+    let critDamage = (100 + getPerkLevel("Relentlessness") * (game.portal.Relentlessness.otherModifier * 100) + getHeirloomBonus("Shield", "critDamage")) / 100;
+    let enemyHealth = calcEnemyHealth(game.global.world, true, true, false);
+    let coordinate = game.global.challengeActive === "Coordinate";
+    let difficulty = 80 + (game.global.challengeActive === "Mapocalypse" ? 300 : 0);
+    let fragments = game.resources.fragments.owned;
+    let hze = game.global.highestLevelCleared + 1;
+    let imps = 0;
+    for (let imp of ['Chronoimp', 'Jestimp', 'Titimp', 'Flutimp', 'Goblimp'])
+        imps += game.unlocks.imps[imp];
+    let fluffy_ability = game.global.fluffyPrestige + game.portal.Capable.level + game.talents.fluffyAbility.purchased ? 1 : 0;
+    let ok_spread = 1 + (fluffy_ability >= 13) + (fluffy_ability >= 10) + game.talents.overkill.purchased ? 1 : 0;
+    let overkill = getPerkLevel("Overkill");
+    let plagueModifier = getPlaguebringerModifier();
+    let range = calcOurDmg("max", false, true, false) / attack;
+    let mapReducer = game.talents.mapLoot.purchased;
+    let mapSize = game.talents.mapLoot2.purchased ? 20 : 27;
+    let speed = 10 * 0.95 ** getPerkLevel("Agility") - game.talents.hyperspeed.purchased ? 1 : 0;
+    if (game.talents.hyperspeed2.purchased && zone <= Math.ceil((hze / 2))) {
+        --speed;
+    }
+    let titimp = game.unlocks.imps.Titimp;
+
+    let nature = game.empowerments[['Poison', 'Wind', 'Ice'][Math.ceil(zone / 5) % 3]];
+    let natureStart = game.global.challengeActive === "Eradicated" ? 1 : 236;
+    let diplomacy = game.talents.nature2.purchased ? 5 : 0;
+    let activeNatureLevel = zone >= natureStart ? nature.level + diplomacy : 0;
+    let transfer = zone >= 236 ? nature.retainLevel + diplomacy : 0;
+
+    let enemyCd = 1;
+    let weakness = 0;
+    let plague = 0;
+    let bleed = 0;
+    let explosion = 0;
+    let nom = false;
+    let slow = game.global.challengeActive === "Slow";
+    let magma = mutations.Magma.active();
+    if (game.global.challengeActive === "Daily") {
+        if (game.global.dailyChallenge.crits !== undefined) {
+            enemyCd = 1 + (game.global.dailyChallenge.crits.strength / 100) * game.global.dailyChallenge.crits.stacks;
+        }
+        if (game.global.dailyChallenge.weakness !== undefined) {
+            weakness = (game.global.dailyChallenge.weakness.strength / 100) * game.global.dailyChallenge.weakness.stacks
+        }
+        if (game.global.dailyChallenge.plague !== undefined) {
+            plague = (game.global.dailyChallenge.plague.strength / 100) * game.global.dailyChallenge.plague.stacks
+        }
+        if (game.global.dailyChallenge.bogged !== undefined) {
+            bleed = (game.global.dailyChallenge.bogged.strength / 100) * game.global.dailyChallenge.bogged.stacks
+        }
+        if (game.global.dailyChallenge.explosive !== undefined) {
+            explosion = game.global.dailyChallenge.explosive.stacks
+        }
+    } else if (game.global.challengeActive === "Crushed") {
+        enemyCd = 5;
+    } else if (game.global.challengeActive === "Electricity") {
+        weakness = 0.1;
+        plague = 0.1;
+    } else if (game.global.challengeActive === "Nom") {
+        nom = true;
+        bleed = 0.05;
+    } else if (game.global.challengeActive === "Toxicity") {
+        bleed = 0.05;
+    }
+
+    let breedTimer = getBreedTimer();
+
+    let death_stuff = {
+        max_hp: calcOurHealth(false),
+        block: calcOurBlock(false),
+        challenge_attack: calcBadGuyDmg({attack: 1}, undefined, false, "max", false),
+        enemy_cd: enemyCd,
+        breed_timer: breedTimer,
+        weakness: weakness,
+        plague: plague,
+        bleed: bleed,
+        explosion: explosion,
+        nom: nom,
+        slow: slow,
+        magma: magma,
+    }
+
+    return {
+        attack: attack,
+        biome: biome,
+        cc: critChance,
+        cd: critDamage,
+        challenge_health: enemyHealth,
+        coordinate: coordinate,
+        difficulty: difficulty,
+        fragments: fragments,
+        hze: hze,
+        import_chance: imps * 0.03,
+        ok_spread: ok_spread,
+        overkill: overkill,
+        plaguebringer: plagueModifier,
+        range: range - 1,
+        reducer: mapReducer,
+        size: mapSize,
+        speed: speed,
+        titimp: titimp,
+        transfer: transfer / 100,
+        zone: zone,
+        poison: 0, wind: 0, ice: 0,
+        [['poison', 'wind', 'ice'][Math.ceil(zone / 5) % 3]]: activeNatureLevel / 100,
+
+        ...death_stuff
+    }
+}

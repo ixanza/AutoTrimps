@@ -3,6 +3,7 @@ MODULES["breedtimer"].voidCheckPercent = 95;
 
 var DecimalBreed = Decimal.clone({precision: 30, rounding: 4});
 var missingTrimps = new DecimalBreed(0);
+
 function ATGA2() {
 	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && game.global.challengeActive != "Trapper"){
 		var trimps = game.resources.trimps;
@@ -37,60 +38,7 @@ function ATGA2() {
 		var currentSend = game.resources.trimps.getCurrentSend();
 		var totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend))).div(DecimalBreed.log10(potencyMod)).div(10);
 
-		var target;
-		if (getPageSetting('ATGA2timer') > 0)
-		target = new Decimal(getPageSetting('ATGA2timer'));
-
-		if (getPageSetting('zATGA2timer') > 0 && getPageSetting('ztATGA2timer') > 0 && game.global.world < getPageSetting('zATGA2timer'))
-		target = new Decimal(getPageSetting('ztATGA2timer'));
-		if (getPageSetting('ATGA2timerz') > 0 && getPageSetting('ATGA2timerzt') > 0 && game.global.world >= getPageSetting('ATGA2timerz'))
-		target = new Decimal(getPageSetting('ATGA2timerzt'));
-
-		if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && game.global.challengeActive != 'Electricity' && game.global.challengeActive != 'Toxicity' && game.global.challengeActive != 'Nom')
-		target = new Decimal(getPageSetting('cATGA2timer'));
-		if (game.global.runningChallengeSquared && getPageSetting('chATGA2timer') > 0 && (game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))
-		target = new Decimal(getPageSetting('chATGA2timer'));
-
-		if (getPageSetting('dATGA2timer') > 0 && game.global.challengeActive == "Daily")
-		target = new Decimal(getPageSetting('dATGA2timer'));
-		if (getPageSetting('dhATGA2timer') > 0 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined'))
-		target = new Decimal(getPageSetting('dhATGA2timer'));
-
-		if (game.global.challengeActive != "Daily" && getPageSetting('sATGA2timer') > 0 && isActiveSpireAT() == true)
-		target = new Decimal(getPageSetting('sATGA2timer'));
-		if (game.global.challengeActive == "Daily" && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
-		target = new Decimal(getPageSetting('dsATGA2timer'));
-
-		// Challanges
-		if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
-			target = new Decimal(getPageSetting('ATGA2elec'));
-		} else if (game.global.challengeActive === "Toxicity" && getPageSetting('ATGA2tox') > 0) {
-			target = new Decimal(getPageSetting('ATGA2tox'));
-		}
-
-		if ((getPageSetting('dATGA2Auto')==2||(getPageSetting('dATGA2Auto')==1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')){
-			plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
-			boggedDamage =  (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
-			atl = Math.ceil((Math.sqrt((plagueDamagePerStack/2+boggedDamage)**2 - 2 * plagueDamagePerStack * (boggedDamage-1)) - (plagueDamagePerStack/2+boggedDamage)) / plagueDamagePerStack);
-			target = new Decimal(Math.ceil(isNaN(atl) ? target : atl/1000*(((game.portal.Agility.level) ? 1000 * Math.pow(1 - game.portal.Agility.modifier, game.portal.Agility.level) : 1000) + ((game.talents.hyperspeed2.purchased && (game.global.world <= Math.floor((game.global.highestLevelCleared + 1) * 0.5))) || (game.global.mapExtraBonus == "fa")) * -100 + (game.talents.hyperspeed.purchased) * -100)));
-		}
-
-		let dyTimer = getPageSetting("dyATGA2timer");
-		if (dBreedTimerEnabled !== dyTimer) {
-			if (dyTimer) {
-				enableDynamicTimer(target);
-			} else {
-				disableDynamicTimer();
-			}
-		}
-
-		if (dBreedTimerEnabled) {
-			if (!target.equals(queueCreatedTimer)) {
-				adjustDynamicTimerQueue(target);
-			}
-			updateQueueTimer();
-			target = getDynamicTime();
-		}
+		var target = getBreedTimer();
 
 		var now = new Date().getTime();
 		var thresh = new DecimalBreed(totalTime.mul(0.02));
@@ -120,6 +68,64 @@ function ATGA2() {
 				}
 			}
 	}
+}
+
+function getBreedTimer() {
+	var target;
+	if (getPageSetting('ATGA2timer') > 0)
+		target = new Decimal(getPageSetting('ATGA2timer'));
+
+	if (getPageSetting('zATGA2timer') > 0 && getPageSetting('ztATGA2timer') > 0 && game.global.world < getPageSetting('zATGA2timer'))
+		target = new Decimal(getPageSetting('ztATGA2timer'));
+	if (getPageSetting('ATGA2timerz') > 0 && getPageSetting('ATGA2timerzt') > 0 && game.global.world >= getPageSetting('ATGA2timerz'))
+		target = new Decimal(getPageSetting('ATGA2timerzt'));
+
+	if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && game.global.challengeActive != 'Electricity' && game.global.challengeActive != 'Toxicity' && game.global.challengeActive != 'Nom')
+		target = new Decimal(getPageSetting('cATGA2timer'));
+	if (game.global.runningChallengeSquared && getPageSetting('chATGA2timer') > 0 && (game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))
+		target = new Decimal(getPageSetting('chATGA2timer'));
+
+	if (getPageSetting('dATGA2timer') > 0 && game.global.challengeActive == "Daily")
+		target = new Decimal(getPageSetting('dATGA2timer'));
+	if (getPageSetting('dhATGA2timer') > 0 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined'))
+		target = new Decimal(getPageSetting('dhATGA2timer'));
+
+	if (game.global.challengeActive != "Daily" && getPageSetting('sATGA2timer') > 0 && isActiveSpireAT() == true)
+		target = new Decimal(getPageSetting('sATGA2timer'));
+	if (game.global.challengeActive == "Daily" && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
+		target = new Decimal(getPageSetting('dsATGA2timer'));
+
+	// Challanges
+	if ((game.global.challengeActive === "Electricity" || game.global.challengeActive === "Mapocalypse") && getPageSetting('ATGA2elec') > 0) {
+		target = new Decimal(getPageSetting('ATGA2elec'));
+	} else if (game.global.challengeActive === "Toxicity" && getPageSetting('ATGA2tox') > 0) {
+		target = new Decimal(getPageSetting('ATGA2tox'));
+	}
+
+	if ((getPageSetting('dATGA2Auto') == 2 || (getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')) {
+		plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
+		boggedDamage = (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
+		atl = Math.ceil((Math.sqrt((plagueDamagePerStack / 2 + boggedDamage) ** 2 - 2 * plagueDamagePerStack * (boggedDamage - 1)) - (plagueDamagePerStack / 2 + boggedDamage)) / plagueDamagePerStack);
+		target = new Decimal(Math.ceil(isNaN(atl) ? target : atl / 1000 * (((game.portal.Agility.level) ? 1000 * Math.pow(1 - game.portal.Agility.modifier, game.portal.Agility.level) : 1000) + ((game.talents.hyperspeed2.purchased && (game.global.world <= Math.floor((game.global.highestLevelCleared + 1) * 0.5))) || (game.global.mapExtraBonus == "fa")) * -100 + (game.talents.hyperspeed.purchased) * -100)));
+	}
+
+	let dyTimer = getPageSetting("dyATGA2timer");
+	if (dBreedTimerEnabled !== dyTimer) {
+		if (dyTimer) {
+			enableDynamicTimer(target);
+		} else {
+			disableDynamicTimer();
+		}
+	}
+
+	if (dBreedTimerEnabled) {
+		if (!target.equals(queueCreatedTimer)) {
+			adjustDynamicTimerQueue(target);
+		}
+		updateQueueTimer();
+		target = getDynamicTime();
+	}
+	return target;
 }
 
 var addbreedTimerInsideText;

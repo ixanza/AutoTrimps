@@ -127,7 +127,7 @@ function calcOurBlock(stance) {
     return block;
 }
 
-function calcOurDmg(minMaxAvg, incStance, incFlucts) {
+function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
     let number = getTrimpAttack(incStance);
     let fluctuation = .2;
     let maxFluct = -1;
@@ -299,9 +299,11 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     let max = number;
     let avg = number;
 
-    min *= (getCritMulti(false) * 0.8);
-    avg *= getCritMulti(false);
-    max *= (getCritMulti(false) * 1.2);
+    if (crit) {
+        min *= (getCritMulti(false) * 0.8);
+        avg *= getCritMulti(false);
+        max *= (getCritMulti(false) * 1.2);
+    }
 
     if (incFlucts) {
         if (minFluct > 1) minFluct = 1;
@@ -316,15 +318,6 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
     if (minMaxAvg == "min") return min + poisonDamage;
     else if (minMaxAvg == "max") return max + poisonDamage;
     else if (minMaxAvg == "avg") return avg + poisonDamage;
-}
-
-function calcDailyHealthMod(number) {
-    if (game.global.challengeActive == "Daily"){
-        if (typeof game.global.dailyChallenge.empower !== "undefined") {
-            number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks)
-        }
-    }
-    return number;
 }
 
 function calcSpire(cell, name, what) {
