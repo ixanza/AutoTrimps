@@ -3117,7 +3117,7 @@ const calculateZoneStats = (zone, stances, input) => {
 
     for (let stance of stances) {
         input.atk = input.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
-        let speed = simulate(input, zone, max_ticks);
+        let speed = simulate(input, zone);
         let value = speed * result.loot * (stance == 'S' ? 2 : 1);
         result[stance] = { speed, value };
 
