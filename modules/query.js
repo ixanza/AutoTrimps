@@ -89,11 +89,13 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     return Math.floor(enemyDamage);
 }
 
-function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false) {
+function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false, health = undefined) {
     // Use code directly stolen from game instead
     let enemyHealth;
     if (voidMap) map = true;
-    if (!map && game.global.spireActive && checkIfSpireWorld()) {
+    if (health) {
+        enemyHealth = health;
+    } else if (!map && game.global.spireActive && checkIfSpireWorld()) {
         enemyHealth = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'health');
     } else {
         enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);

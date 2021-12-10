@@ -2954,9 +2954,9 @@ const prepareInputs = () => {
     let zone = game.global.world;
     let attack = calcOurDmg("min", false, true, false, true);
     let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
-    let critChance = (getPerkLevel("Relentlessness") * (game.portal.Relentlessness.modifier * 100) + getHeirloomBonus("Shield", "critChance")) / 100;
-    let critDamage = (100 + getPerkLevel("Relentlessness") * (game.portal.Relentlessness.otherModifier * 100) + getHeirloomBonus("Shield", "critDamage")) / 100;
-    let enemyHealth = calcEnemyHealth(game.global.world, true, true, false);
+    let critChance = getPlayerCritChance();
+    let critDamage = getPlayerCritDamageMult();
+    let enemyHealth = getEnemyMaxHealth(1, 1, "", true, 1, true, false, true, 1);
     let coordinate = game.global.challengeActive === "Coordinate";
     let difficulty = 80 + (game.global.challengeActive === "Mapocalypse" ? 300 : 0);
     let fragments = game.resources.fragments.owned;
@@ -3019,12 +3019,12 @@ const prepareInputs = () => {
         bleed = 0.05;
     }
 
-    let breedTimer = getBreedTimer();
+    let breedTimer = Math.floor(getBreedTimer().toNumber());
 
     let death_stuff = {
         max_hp: calcOurHealth(false),
         block: calcOurBlock(false),
-        challenge_attack: calcBadGuyDmg({attack: 1}, undefined, false, "max", false),
+        challenge_attack: calcBadGuyDmg({attack:1}, undefined, true, "min", true),
         enemy_cd: enemyCd,
         breed_timer: breedTimer,
         weakness: weakness,
