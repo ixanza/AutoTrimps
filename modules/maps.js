@@ -3063,3 +3063,197 @@ const prepareInputs = () => {
         ...death_stuff
     }
 }
+
+let seed = 42;
+const rand_mult = 2 ** -31;
+function rng() {
+    seed ^= seed >> 11;
+    seed ^= seed << 8;
+    seed ^= seed >> 19;
+    return seed * rand_mult;
+}
+
+const calculateStats = (input) => {
+    let stats = [];
+    let stances = (input.zone < 70 ? 'X' : 'D') + (input.hze >= 181 && input.zone >= 60 ? 'S' : '');
+
+    let extra = 0;
+    if (input.hze >= 210)
+        while (extra < 10 && input.fragments > getMapCost(53.98 + 10 * extra, input.zone))
+            ++extra;
+    extra = extra || -input.reducer;
+
+    for (let zone = input.zone + extra; zone >= 6; --zone) {
+        if (input.coordinate) {
+            let coords = 1;
+            for (let z = 1; z < zone; ++z)
+                coords = Math.ceil(1.25 * coords);
+            input.challenge_health = coords;
+            input.challenge_attack = coords;
+        }
+        let tmp = getZoneStats(zone, stances, input);
+        if (tmp.value < 1 && zone >= input.zone)
+            continue;
+        if (stats.length && tmp.value < 0.804 * stats[0].value)
+            break;
+        stats.unshift(tmp);
+    }
+
+    return [stats, stances];
+}
+
+const getMapCost = (mods, level) => {
+    mods += level;
+    return mods * 1.14 ** mods * level * (1.03 + level / 50000) ** level / 42.75;
+}
+
+const getZoneStats = (zone, stances, input) => {
+    let result = {
+        zone: 'z' + zone,
+        value: 0,
+        stance: '',
+        loot: 100 * (zone < input.zone ? 0.8 ** (input.zone - input.reducer - zone) : 1.1 ** (zone - input.zone)),
+    };
+
+    for (let stance of stances) {
+        input.atk = input.attack * (stance == 'D' ? 4 : stance == 'X' ? 1 : 0.5);
+        let speed = simulate(input, zone, max_ticks);
+        let value = speed * result.loot * (stance == 'S' ? 2 : 1);
+        result[stance] = { speed, value };
+
+        if (value > result.value) {
+            result.value = value;
+            result.stance = stance;
+        }
+    }
+
+    return result;
+}
+
+const simulate = (input, zone, maxTicks = 36000) => {
+    let trimp_hp = input.max_hp;
+    let debuff_stacks = 0;
+    let titimp = 0;
+    let cell = 0;
+    let loot = 0;
+    let last_group_sent = 0;
+    let ticks = 0;
+    let plague_damage = 0;
+    let ok_damage = 0, ok_spread = 0;
+    let poison = 0, wind = 0, ice = 0;
+
+    let hp_array = [];
+    let atk_array = [];
+
+    for (let i = 0; i < input.size; ++i) {
+        let hp = 14.3 * Math.sqrt(zone) * 3.265 ** (zone / 2) - 12.1;
+        hp *= zone < 60 ? (3 + (3 / 110) * cell) : (5 + 0.08 * cell) * 1.1 ** (zone - 59);
+        if (input.magma)
+            hp *= Math.round(50 * 1.05 ** Math.floor((input.zone - 150) / 6)) / 10;
+
+        // hackish implementation of BM 2, TODO a better one
+        if (game.talents.bionic2.purchased && zone > input.zone)
+            hp /= 1.5;
+
+        hp_array.push(input.difficulty * input.challenge_health * hp);
+
+        let atk = 5.5 * Math.sqrt(zone) * 3.27 ** (zone / 2) - 1.1;
+        atk *= zone < 60 ? (3.1875 + 0.0595 * cell) : (4 + 0.09 * cell) * 1.15 ** (zone - 59);
+        if (input.magma)
+            atk *= Math.round(15 * 1.05 ** Math.floor((input.zone - 150) / 6)) / 10;
+        atk_array.push(input.difficulty * input.challenge_attack * atk);
+    }
+
+    function enemyHit(atk) {
+        let damage = atk * (0.8 + 0.4 * rng());
+        damage *= rng() < 0.25 ? input.enemy_cd : 1;
+        damage *= 0.366 ** (ice * input.ice);
+        trimp_hp -= Math.max(0, damage - input.block);
+        ++debuff_stacks;
+    }
+
+    while (ticks < maxTicks) {
+        let imp = rng();
+        let imp_stats = imp < input.import_chance ? [1, 1, false] : input.biome[Math.floor(rng() * input.biome.length)];
+        let atk = imp_stats[0] * atk_array[cell];
+        let hp = imp_stats[1] * hp_array[cell];
+        let enemy_max_hp = hp;
+        let fast = input.slow || (imp_stats[2] && !input.nom);
+
+        if (ok_spread !== 0) {
+            hp -= ok_damage;
+            --ok_spread;
+        }
+        hp = Math.min(hp, Math.max(enemy_max_hp * 0.05, hp - plague_damage));
+        plague_damage = 0;
+
+        let turns = 0;
+        while (hp >= 1 && ticks < maxTicks) {
+            ++turns;
+
+            // Fast enemy attack
+            if (fast)
+                enemyHit(atk);
+
+            // Trimp attack
+            if (trimp_hp >= 1) {
+                ok_spread = input.ok_spread;
+                let damage = input.atk * (1 + input.range * rng());
+                damage *= rng() < input.cc ? input.cd : 1;
+                damage *= titimp > ticks ? 2 : 1;
+                damage *= 2 - 0.366 ** (ice * input.ice);
+                damage *= 1 - input.weakness * Math.min(debuff_stacks, 9);
+                hp -= damage + poison * input.poison;
+                poison += damage;
+                ++ice;
+                if (hp >= 1)
+                    plague_damage += damage * input.plaguebringer;
+            }
+
+            // Bleeds
+            trimp_hp -= input.bleed * input.max_hp;
+            trimp_hp -= debuff_stacks * input.plague * input.max_hp;
+
+            // Slow enemy attack
+            if (!fast && hp >= 1 && trimp_hp >= 1)
+                enemyHit(atk);
+
+            // Trimp death
+            if (trimp_hp < 1) {
+                ticks += Math.ceil(turns * input.speed);
+                ticks = Math.max(ticks, last_group_sent + input.breed_timer);
+                last_group_sent = ticks;
+                trimp_hp = input.max_hp;
+                ticks += 1;
+                turns = 1;
+                debuff_stacks = 0;
+
+                if (input.nom)
+                    hp = Math.min(hp + 0.05 * enemy_max_hp, enemy_max_hp);
+            }
+        }
+
+        if (input.explosion && (input.explosion <= 15 || input.block >= input.max_hp))
+            trimp_hp -= Math.max(0, input.explosion * atk - input.block);
+
+        wind = Math.min(wind + turns, 200);
+        loot += 1 + wind * input.wind;
+        ok_damage = -hp * input.overkill;
+        ticks += +(turns > 0) + +(input.speed > 9) + Math.ceil(turns * input.speed);
+        if (input.titimp && imp < 0.03)
+            titimp = Math.min(Math.max(ticks, titimp) + 300, ticks + 450);
+
+        poison = Math.ceil(input.transfer * poison + plague_damage) + 1;
+        wind = Math.ceil(input.transfer * wind) + 1 + Math.ceil((turns - 1) * input.plaguebringer);
+        ice = Math.ceil(input.transfer * ice) + 1 + Math.ceil((turns - 1) * input.plaguebringer);
+
+        ++cell;
+        if (cell == input.size) {
+            cell = 0;
+            plague_damage = 0;
+            ok_damage = 0;
+        }
+    }
+
+    return loot * 10 / maxTicks;
+}
