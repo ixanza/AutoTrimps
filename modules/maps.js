@@ -3091,7 +3091,7 @@ const calculateStats = (input) => {
             input.challenge_health = coords;
             input.challenge_attack = coords;
         }
-        let tmp = getZoneStats(zone, stances, input);
+        let tmp = calculateZoneStats(zone, stances, input);
         if (tmp.value < 1 && zone >= input.zone)
             continue;
         if (stats.length && tmp.value < 0.804 * stats[0].value)
@@ -3107,7 +3107,7 @@ const getMapCost = (mods, level) => {
     return mods * 1.14 ** mods * level * (1.03 + level / 50000) ** level / 42.75;
 }
 
-const getZoneStats = (zone, stances, input) => {
+const calculateZoneStats = (zone, stances, input) => {
     let result = {
         zone: 'z' + zone,
         value: 0,
