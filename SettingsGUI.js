@@ -1729,8 +1729,8 @@ function updateCustomButtons() {
     !radonon ? turnOn("buywepsvoid"): turnOff("buywepsvoid");
     !radonon ? turnOn("VDisableFarm"): turnOff("VDisableFarm");
     !radonon ? turnOn("TStacks"): turnOff("TStacks");
-    game.global.highestLevelCleared > 600 ? turnOn("farmWonders") : turnOff("farmWonders");
-    game.global.highestLevelCleared > 600 ? turnOn("wondersAmount") : turnOff("wondersAmount");
+    game.global.highestLevelCleared > 600 && !radonon ? turnOn("farmWonders") : turnOff("farmWonders");
+    game.global.highestLevelCleared > 600 && !radonon ? turnOn("wondersAmount") : turnOff("wondersAmount");
 
     //RMaps
     radonon ? turnOn("RAutoMaps"): turnOff("RAutoMaps");

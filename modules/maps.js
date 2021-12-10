@@ -896,7 +896,7 @@ function RupdateAutoMapsStatus(get) {
     //Fail Safes
     if (getPageSetting('RAutoMaps') == 0) status = 'Off';
 
-    else if (Rshouldcastle) status = 'Frozen Castle';
+    else if (Rshouldcastle && game.global.totalVoidMaps <= 0) status = 'Frozen Castle';
     else if (contractVoid) status = 'Contract';
     else if (Rshouldshipfarm) status = 'Ship Farming';
     else if (Rshouldequipfarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
