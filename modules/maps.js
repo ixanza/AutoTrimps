@@ -420,7 +420,7 @@ function autoMap() {
                 }
             }
         }
-        if (getPageSetting("DynamicSiphonologyMethod") === 1) {
+        else if (getPageSetting("DynamicSiphonologyMethod") === 1) {
             siphlvl = getZoneToFarm().zone;
         }
     }
@@ -3071,7 +3071,7 @@ const prepareInputs = () => {
 
 const getZoneToFarm = () => {
     let input = prepareInputs();
-    let result = calculateStats(input);
+    let result = calculateStats(input)[0];
     let bestItem = {
         zone: input.zone,
         stance: "S"
