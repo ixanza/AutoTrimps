@@ -2971,7 +2971,7 @@ const prepareInputs = () => {
     let range = calcOurDmg("max", false, true, false, true) / attack;
     let mapReducer = game.talents.mapLoot.purchased;
     let mapSize = game.talents.mapLoot2.purchased ? 20 : 27;
-    let speed = 10 * 0.95 ** getPerkLevel("Agility") - game.talents.hyperspeed.purchased ? 1 : 0;
+    let speed = 10 * 0.95 ** getPerkLevel("Agility") - game.talents.hyperspeed.purchased;
     if (game.talents.hyperspeed2.purchased && zone <= Math.ceil((hze / 2))) {
         --speed;
     }
@@ -3048,7 +3048,7 @@ const prepareInputs = () => {
         hze: hze,
         import_chance: imps * 0.03,
         ok_spread: ok_spread,
-        overkill: overkill,
+        overkill: overkill * 0.005,
         plaguebringer: plagueModifier,
         range: range - 1,
         reducer: mapReducer,
