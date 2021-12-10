@@ -156,7 +156,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts, crit = true, map = false) {
     if (antiStacks > 0) {
         number *= ((antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
     }
-    if (game.global.mapBonus > 0 && (!needToVoid || !map)){
+    if (game.global.mapBonus > 0 && !needToVoid && !map){
         let mapBonus = game.global.mapBonus;
         if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
         number *= ((mapBonus * .2) + 1);
