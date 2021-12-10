@@ -2956,7 +2956,7 @@ const prepareInputs = () => {
     let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
     let critChance = getPlayerCritChance();
     let critDamage = getPlayerCritDamageMult();
-    let enemyHealth = getEnemyMaxHealth(1, 1, "", true, 1, true, false, true, 1);
+    let enemyHealth = getEnemyMaxHealth(1, 1, "", false, 1, true, false, true, 1);
     let coordinate = game.global.challengeActive === "Coordinate";
     let difficulty = 80 + (game.global.challengeActive === "Mapocalypse" ? 300 : 0);
     let fragments = game.resources.fragments.owned;
@@ -2993,7 +2993,7 @@ const prepareInputs = () => {
     let magma = mutations.Magma.active();
     if (game.global.challengeActive === "Daily") {
         if (game.global.dailyChallenge.crits !== undefined) {
-            enemyCd = 1 + (game.global.dailyChallenge.crits.strength / 100) * game.global.dailyChallenge.crits.stacks;
+            enemyCd = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
         }
         if (game.global.dailyChallenge.weakness !== undefined) {
             weakness = (game.global.dailyChallenge.weakness.strength / 100) * game.global.dailyChallenge.weakness.stacks
@@ -3043,7 +3043,7 @@ const prepareInputs = () => {
         cd: critDamage,
         challenge_health: enemyHealth,
         coordinate: coordinate,
-        difficulty: difficulty,
+        difficulty: difficulty / 100,
         fragments: fragments,
         hze: hze,
         import_chance: imps * 0.03,
