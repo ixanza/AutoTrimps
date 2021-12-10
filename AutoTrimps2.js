@@ -15,7 +15,6 @@ function initializeAutoTrimps() {
 }
 
 var changelogList = [];
-var needToVoid = !1;
 changelogList.push({date: "06/12/2021", version: "v4.6.0", description: "<b>v5.6.0</b> Hypothermia settings added. Calc updated. Heirlooms updated. Experience on portal added", isNew: true});
 changelogList.push({date: "15/05/2021", version: "v4.5.0", description: "<b>v5.5.0</b> Seperated Tribute and Time farm. Added automation for Pandemonium\, Alchemy and Spire Assault. Updated calcs. Added an option to calc frenzy. Credits to August for adding Staff swap and fixing a few bugs. ", isNew: true});
 changelogList.push({date: "15/09/2020", version: "v4.4.1", description: "<b>v5.4.1</b> Fixed things. Check your TF settings U2 people I added a toggle", isNew: false});
