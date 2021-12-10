@@ -2906,7 +2906,7 @@ function RautoMap() {
     }
 }
 
-/** ADVANCED ZONING LOGIC **/
+/** ZFARM/ADVANCED ZONING LOGIC **/
 const biomes = {
     all: [
         [0.8,  0.7,  true],
@@ -3064,13 +3064,19 @@ const prepareInputs = () => {
     }
 }
 
-let seed = 42;
-const rand_mult = 2 ** -31;
-function rng() {
-    seed ^= seed >> 11;
-    seed ^= seed << 8;
-    seed ^= seed >> 19;
-    return seed * rand_mult;
+const getZoneToFarm = () => {
+    let input = prepareInputs();
+    let result = calculateStats(input);
+    let bestItem = {
+        zone: input.zone,
+        stance: "S"
+    }
+    if (result.length > 0) {
+        let bestResult = result.reduce((acc, item) => (item.value > acc.value ? item : acc));
+        bestItem.zone = bestResult.zoneNum;
+        bestItem.stance = bestResult.stance;
+    }
+    return getZoneToFarm();
 }
 
 const calculateStats = (input) => {
@@ -3102,6 +3108,15 @@ const calculateStats = (input) => {
     return [stats, stances];
 }
 
+let seed = 42;
+const rand_mult = 2 ** -31;
+function rng() {
+    seed ^= seed >> 11;
+    seed ^= seed << 8;
+    seed ^= seed >> 19;
+    return seed * rand_mult;
+}
+
 const getMapCost = (mods, level) => {
     mods += level;
     return mods * 1.14 ** mods * level * (1.03 + level / 50000) ** level / 42.75;
@@ -3113,6 +3128,7 @@ const calculateZoneStats = (zone, stances, input) => {
         value: 0,
         stance: '',
         loot: 100 * (zone < input.zone ? 0.8 ** (input.zone - input.reducer - zone) : 1.1 ** (zone - input.zone)),
+        zoneNum: zone
     };
 
     for (let stance of stances) {
