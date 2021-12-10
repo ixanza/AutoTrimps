@@ -127,7 +127,8 @@ function calcOurBlock(stance) {
     return block;
 }
 
-function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
+function calcOurDmg(minMaxAvg, incStance, incFlucts, crit = true, map = false) {
+    if (needToVoid) map = true;
     let number = getTrimpAttack(incStance);
     let fluctuation = .2;
     let maxFluct = -1;
@@ -155,7 +156,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
     if (antiStacks > 0) {
         number *= ((antiStacks * getPerkLevel("Anticipation") * game.portal.Anticipation.modifier) + 1);
     }
-    if (game.global.mapBonus > 0 && !needToVoid){
+    if (game.global.mapBonus > 0 && (!needToVoid || !map)){
         let mapBonus = game.global.mapBonus;
         if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
         number *= ((mapBonus * .2) + 1);
@@ -183,7 +184,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
     if (game.goldenUpgrades.Battle.currentBonus > 0){
         number *= game.goldenUpgrades.Battle.currentBonus + 1;
     }
-    if (game.talents.voidPower.purchased && game.global.voidBuff){
+    if (needToVoid && game.talents.voidPower.purchased){
         number *= ((game.talents.voidPower.getTotalVP() / 100) + 1);
     }
     if (game.global.totalSquaredReward > 0){
@@ -205,10 +206,10 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
     if (game.talents.healthStrength.purchased && mutations.Healthy.active()){
         number *= ((0.15 * mutations.Healthy.cellCount()) + 1);
     }
-    if (game.global.voidBuff && game.talents.voidMastery.purchased){
+    if (needToVoid && game.talents.voidMastery.purchased){
         number *= 5;
     }
-    if (game.talents.scry.purchased && !needToVoid && isScryerBonusActive()){
+    if (game.talents.scry.purchased && !needToVoid && !map){
         let corruptedCells = game.global.gridArray.reduce((acc, item) => acc + (item.corrupted != null ? 1 : 0), 0);
         number *= (1 + 0.01 * corruptedCells);
     }
@@ -291,7 +292,7 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts, crit=true) {
         number *= Fluffy.getDamageModifier();
     }
     let poisonDamage = 0;
-    if (getPageSetting("addpoison") && getEmpowerment() == "Poison") {
+    if (getPageSetting("addpoison") && getEmpowerment() == "Poison" && !map) {
         poisonDamage += game.empowerments.Poison.getDamage()
     }
 

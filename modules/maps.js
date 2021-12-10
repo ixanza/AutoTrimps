@@ -2952,7 +2952,7 @@ const biomes = {
 
 const prepareInputs = () => {
     let zone = game.global.world;
-    let attack = calcOurDmg("min", false, true, false);
+    let attack = calcOurDmg("min", false, true, false, true);
     let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
     let critChance = (getPerkLevel("Relentlessness") * (game.portal.Relentlessness.modifier * 100) + getHeirloomBonus("Shield", "critChance")) / 100;
     let critDamage = (100 + getPerkLevel("Relentlessness") * (game.portal.Relentlessness.otherModifier * 100) + getHeirloomBonus("Shield", "critDamage")) / 100;
