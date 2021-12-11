@@ -2960,7 +2960,7 @@ const prepareInputs = () => {
     let attack = calcOurDmg("min", false, true, false, true);
     let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
     let critChance = getPlayerCritChance();
-    let critDamage = getPlayerCritDamageMult();
+    let critDamage = getPlayerCritDamageMult() - 1;
     let enemyHealth = getEnemyMaxHealth(1, 1, "", false, 1, true, false, true, 1);
     let coordinate = game.global.challengeActive === "Coordinate";
     let difficulty = 80 + (game.global.challengeActive === "Mapocalypse" ? 300 : 0);
@@ -3027,8 +3027,8 @@ const prepareInputs = () => {
     let breedTimer = Math.floor(getBreedTimer().toNumber());
 
     let death_stuff = {
-        max_hp: calcOurHealth(false),
-        block: calcOurBlock(false),
+        max_hp: calcOurHealth(true),
+        block: calcOurBlock(true),
         challenge_attack: calcBadGuyDmg({attack:1}, undefined, true, "min", true),
         enemy_cd: enemyCd,
         breed_timer: breedTimer,
