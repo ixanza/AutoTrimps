@@ -150,9 +150,17 @@ function mainLoop() {
             easterEggClicked();
         setTitle();
         mapCache = [];
+        strongestEnemyCache.map = {};
+        strongestEnemyCache.world = {};
+        strongestEnemyCache.void = {};
+        strongestEnemyCache.spire = {};
     }
     if (aWholeNewPortal) {
         disableDynamicTimer();
+        strongestEnemyCache.map = {};
+        strongestEnemyCache.world = {};
+        strongestEnemyCache.void = {};
+        strongestEnemyCache.spire = {};
     }
 
     //Logic for Universe 1

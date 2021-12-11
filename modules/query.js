@@ -51,11 +51,11 @@ function calculateEnemyScale(type, forMap = false, voidMap = false) {
  * @param voidMap
  * @returns {number}
  */
-function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false) {
+function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false, spire = false) {
     // Use code directly stolen from game instead
     let enemyDamage;
     if (voidMap) map = true;
-    if (!map && game.global.spireActive && checkIfSpireWorld()) {
+    if (spire) {
         enemyDamage = calcSpire(100, game.global.gridArray[99].name, 'attack');
     } else {
         enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty, scale, false);
@@ -101,13 +101,13 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     return Math.floor(enemyDamage);
 }
 
-function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false, health = undefined) {
+function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false, health = undefined, spire = false) {
     // Use code directly stolen from game instead
     let enemyHealth;
     if (voidMap) map = true;
     if (health) {
         enemyHealth = health;
-    } else if (!map && game.global.spireActive && checkIfSpireWorld()) {
+    } else if (spire) {
         enemyHealth = calcSpire(100, game.global.gridArray[99].name, 'health');
     } else {
         enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
@@ -220,6 +220,88 @@ const getCurrentGoals = () => {
         raidBW: doMaps,
         buyGoldenUpgrades: game.global.autoGolden === 0
     }
+}
+
+/** Get enemy for calculations **/
+let strongestEnemyCache = {
+    map: {},
+    void: {},
+    world: {},
+    spire: {}
+}
+
+const guessStrongestEnemy = (where = "world", what = "health") => {
+    let strongestEnemy = {
+        attack: -1,
+        health: -1,
+        level: -1,
+        maxHealth: -1,
+        name: "",
+        valid: false
+    };
+    // Check if we can find on cache
+    let mapItem = game.global.mapsOwnedArray.find(item => item.id === where);
+    let mapCache;
+    let isMap = where.includes("map");
+    if (isMap) {
+        if (mapItem.location === "Void") {
+            mapCache = strongestEnemyCache.void;
+        } else {
+            mapCache = strongestEnemyCache.map;
+        }
+        if (Object.prototype.hasOwnProperty.call(mapCache, what)) {
+            strongestEnemy = mapCache[what];
+        }
+    } else if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what)) {
+        strongestEnemy = strongestEnemyCache[where][what];
+    }
+    if (!strongestEnemy.valid) {
+        // Nothing on cache
+        if (isMap) {
+            // Maps are randomly generated on start so just assume last cell
+            let mapSize;
+            let enemyName;
+            let difficulty;
+            let isVoid = mapItem.location === "Void";
+            if (isVoid) {
+                mapSize = 100;
+                enemyName = "Cthulimp";
+                difficulty = game.global.world <= 59 ? 2.5 : 4.5;
+            } else {
+                mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
+                enemyName = "Snimp";
+                difficulty = 0.75;
+            }
+            if (game.global.challengeActive === "Mapocalypse") {
+                difficulty += 3;
+            }
+            strongestEnemy.attack = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
+            strongestEnemy.health = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
+            strongestEnemy.valid = true;
+            mapCache["attack"] = strongestEnemy;
+            mapCache["health"] = strongestEnemy;
+        } else {
+            // World is static so get highlights
+            let lastCorruptStrongCell = game.global.gridArray.filter(cell => cell.corrupted === "corruptStrong").reduce((a,b) => b, undefined);
+            let lastCorruptToughCell = game.global.gridArray.filter(cell => cell.corrupted === "corruptTough").reduce((a,b) => b, undefined);
+            let lastHealthyStrongCell = game.global.gridArray.filter(cell => cell.corrupted === "healthyStrong").reduce((a,b) => b, undefined);
+            let lastHealthyToughCell = game.global.gridArray.filter(cell => cell.corrupted === "healthyTough").reduce((a,b) => b, undefined);
+            let lastCell = game.global.gridArray.reduce((a,b) => b, undefined);
+            let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
+            if (what === "health") {
+                enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire"))
+                let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
+                strongestEnemy.health = enemy.health;
+            } else {
+                enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire"))
+                let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
+                strongestEnemy.attack = enemy.attack;
+            }
+            strongestEnemy.valid = true;
+            strongestEnemyCache[where][what] = strongestEnemy;
+        }
+    }
+    return strongestEnemy;
 }
 
 function getCurrentEnemy(a){a||(a=1);var b;return game.global.mapsActive||game.global.preMapsActive?game.global.mapsActive&&!game.global.preMapsActive&&('undefined'==typeof game.global.mapGridArray[game.global.lastClearedMapCell+a]?b=game.global.mapGridArray[game.global.gridArray.length-1]:b=game.global.mapGridArray[game.global.lastClearedMapCell+a]):'undefined'==typeof game.global.gridArray[game.global.lastClearedCell+a]?b=game.global.gridArray[game.global.gridArray.length-1]:b=game.global.gridArray[game.global.lastClearedCell+a],b}
