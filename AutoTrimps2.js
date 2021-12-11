@@ -121,8 +121,8 @@ var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
-var currentPortal = 0;
-var lastPortal = 0;
+var currentWorldPortal = 0;
+var lastWorldPortal = 0;
 var aWholeNewPortal = false;
 
 function mainLoop() {
@@ -383,9 +383,9 @@ function mainCleanup() {
             autoTrimpSettings["RAutoMaps"].value = 1;
         return true;
     }
-    lastPortal = currentPortal;
-    currentPortal = game.stats.totalPortals.valueTotal();
-    aWholeNewPortal = currentPortal != lastPortal;
+    lastWorldPortal = currentWorldPortal;
+    currentWorldPortal = game.stats.totalPortals.valueTotal();
+    aWholeNewPortal = currentWorldPortal != lastWorldPortal;
 }
 function throwErrorfromMain(){throw new Error("We have successfully read the thrown error message out of the main file")}
 
