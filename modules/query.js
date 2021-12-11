@@ -44,7 +44,7 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     let enemyDamage;
     if (voidMap) map = true;
     if (!map && game.global.spireActive && checkIfSpireWorld()) {
-        enemyDamage = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'attack');
+        enemyDamage = calcSpire(100, game.global.gridArray[99].name, 'attack');
     } else {
         enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty, scale, false);
     }
@@ -96,7 +96,7 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     if (health) {
         enemyHealth = health;
     } else if (!map && game.global.spireActive && checkIfSpireWorld()) {
-        enemyHealth = calcSpire(cellNumber, game.global.gridArray[cellNumber - 1].name, 'health');
+        enemyHealth = calcSpire(100, game.global.gridArray[99].name, 'health');
     } else {
         enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
     }
