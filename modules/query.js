@@ -255,38 +255,19 @@ let strongestEnemyCache = {
 }
 
 const guessStrongestEnemyStat = (where = "world", what = "health") => {
-    let strongestEnemy = {
-        attack: -1,
-        health: -1,
-        level: -1,
-        maxHealth: -1,
-        name: "",
-        valid: false
-    };
+    let value = null;
+    let isVoid = where === "void";
+    let isMap = where === "map" || isVoid;
     // Check if we can find on cache
-    let mapItem = game.global.mapsOwnedArray.find(item => item.id === where);
-    let mapCache;
-    let isMap = where.includes("map");
-    if (isMap) {
-        if (mapItem.location === "Void") {
-            mapCache = strongestEnemyCache.void;
-        } else {
-            mapCache = strongestEnemyCache.map;
-        }
-        if (Object.prototype.hasOwnProperty.call(mapCache, what)) {
-            strongestEnemy = mapCache[what];
-        }
-    } else if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what)) {
-        strongestEnemy = strongestEnemyCache[where][what];
-    }
-    if (!strongestEnemy.valid) {
+    if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what)) {
+        value = strongestEnemyCache[where][what];
+    } else {
         // Nothing on cache
         if (isMap) {
             // Maps are randomly generated on start so just assume last cell
             let mapSize;
             let enemyName;
             let difficulty;
-            let isVoid = mapItem.location === "Void";
             if (isVoid) {
                 mapSize = 100;
                 enemyName = "Cthulimp";
@@ -299,11 +280,12 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             if (game.global.challengeActive === "Mapocalypse") {
                 difficulty += 3;
             }
-            strongestEnemy.attack = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
-            strongestEnemy.health = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
-            strongestEnemy.valid = true;
-            mapCache["attack"] = strongestEnemy;
-            mapCache["health"] = strongestEnemy;
+            if (what === "attack") {
+                value = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
+            } else if (what === "health") {
+                value = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
+            }
+            strongestEnemyCache[where][what] = value;
         } else {
             // World is static so get highlights
             let lastCorruptStrongCell = game.global.gridArray.filter(cell => cell.corrupted === "corruptStrong").reduce((a,b) => b, undefined);
@@ -315,17 +297,16 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             if (what === "health") {
                 enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
-                strongestEnemy.health = enemy.health;
-            } else {
+                value = enemy.health;
+            } else if (what === "attack") {
                 enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
-                strongestEnemy.attack = enemy.attack;
+                value = enemy.attack;
             }
-            strongestEnemy.valid = true;
-            strongestEnemyCache[where][what] = strongestEnemy;
+            strongestEnemyCache[where][what] = value;
         }
     }
-    return strongestEnemy[what];
+    return value;
 }
 
 function getCurrentEnemy(a){a||(a=1);var b;return game.global.mapsActive||game.global.preMapsActive?game.global.mapsActive&&!game.global.preMapsActive&&('undefined'==typeof game.global.mapGridArray[game.global.lastClearedMapCell+a]?b=game.global.mapGridArray[game.global.gridArray.length-1]:b=game.global.mapGridArray[game.global.lastClearedMapCell+a]):'undefined'==typeof game.global.gridArray[game.global.lastClearedCell+a]?b=game.global.gridArray[game.global.gridArray.length-1]:b=game.global.gridArray[game.global.lastClearedCell+a],b}
