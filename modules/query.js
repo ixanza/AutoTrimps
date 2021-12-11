@@ -2,6 +2,18 @@ function getPerSecBeforeManual(a){var b=0,c=game.jobs[a].increase;if("custom"==c
 function checkJobPercentageCost(a,b){var c="food",d=game.jobs[a],e=d.cost[c],f=0;b||(b=game.global.buyAmt),f="undefined"==typeof e[1]?e*b:Math.floor(e[0]*Math.pow(e[1],d.owned)*((Math.pow(e[1],b)-1)/(e[1]-1)));var g;if(game.resources[c].owned<f){var h=getPsString(c,!0);return 0<h&&(g=calculateTimeToMax(null,h,f-game.resources[c].owned)),[!1,g]}return g=0<game.resources[c].owned?(100*(f/game.resources[c].owned)).toFixed(1):0,[!0,g]}
 function getScienceCostToUpgrade(a){var b=game.upgrades[a];return void 0!==b.cost.resources.science&&void 0!==b.cost.resources.science[0]?Math.floor(b.cost.resources.science[0]*Math.pow(b.cost.resources.science[1],b.done)):void 0!==b.cost.resources.science&&void 0==b.cost.resources.science[0]?b.cost.resources.science:0}
 
+function getMutationStatScale(mutationName, type) {
+    let result = 0;
+    switch (mutationName) {
+        case "Corruption":
+            result = type === "attack" ? 3 : 10;
+            break;
+        case "Healthy":
+            result = type === "attack" ? 5 : 14;
+    }
+    return result;
+}
+
 function calculateEnemyScale(type, forMap = false, voidMap = false) {
 	let maxScale = 1.0;
 	if (voidMap) forMap = true;
@@ -170,16 +182,39 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     return Math.floor(enemyHealth);
 }
 
-function getMutationStatScale(mutationName, type) {
-	let result = 0;
-	switch (mutationName) {
-		case "Corruption":
-			result = type === "attack" ? 3 : 10;
-			break;
-		case "Healthy":
-			result = type === "attack" ? 5 : 14;
-	}
-	return result;
+const getCurrentState = () => {
+    let currentMap = getCurrentMapObject();
+    return {
+        advancingWorld: !(this.doingMaps || this.selectingMaps),
+        doingMaps: game.global.mapsActive,
+        selectingMaps: game.global.preMapsActive,
+        doingVoids: this.doingMaps && currentMap?.location === "Void",
+        raidingMaps: currentMap?.level > game.global.world,
+        raidingBW: this.raidingMaps && currentMap?.location === "Bionic",
+        raidingPrestige: this.raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1]]?.prestige,
+        doingSpire: this.advancingWorld && game.global.spireActive && checkIfSpireWorld()
+    }
+}
+
+const getCurrentGoals = () => {
+    return {
+        buildBuildings: !game.global.autoStructureSetting.enabled,
+        buildStorage: !game.global.autoStorage,
+        hireJobs: !game.global.autoJobsSetting.enabled,
+        breedTrimps: game.global.GeneticistassistSetting === -1,
+        prestigeGear: game.global.autoPrestiges === 0,
+        upgradeGear: game.global.autoUpgrades === false,
+        doMaps: game.options.menu.mapAtZone.enabled === 0,
+        farmForSpire: this.doMaps,
+        farmMapBonus: this.doMaps,
+        farmForVoids: this.doMaps,
+        doPrestige: this.doMaps,
+        doVoids: this.doMaps,
+        doFarm: this.doMaps,
+        raidPrestige: this.doMaps,
+        raidBW: this.doMaps,
+        buyGoldenUpgrades: game.global.autoGolden === 0
+    }
 }
 
 function getCurrentEnemy(a){a||(a=1);var b;return game.global.mapsActive||game.global.preMapsActive?game.global.mapsActive&&!game.global.preMapsActive&&('undefined'==typeof game.global.mapGridArray[game.global.lastClearedMapCell+a]?b=game.global.mapGridArray[game.global.gridArray.length-1]:b=game.global.mapGridArray[game.global.lastClearedMapCell+a]):'undefined'==typeof game.global.gridArray[game.global.lastClearedCell+a]?b=game.global.gridArray[game.global.gridArray.length-1]:b=game.global.gridArray[game.global.lastClearedCell+a],b}
