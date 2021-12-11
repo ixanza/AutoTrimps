@@ -270,6 +270,7 @@ function autoMap() {
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
     }
+    let voidMapLevelSettingCell = getDoVoidCell();
     let toxCell = voidMapLevelSettingCell > 0 ? Math.min(98, voidMapLevelSettingCell - 2) : 98;
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
     if (game.global.challengeActive === "Toxicity" && !game.global.runningChallengeSquared && !shouldFarm && toxStacks > 0 && game.global.world === 165 && game.global.lastClearedCell > toxCell) {
