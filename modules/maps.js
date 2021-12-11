@@ -2912,7 +2912,7 @@ function RautoMap() {
 }
 
 /** ZFARM/ADVANCED ZONING LOGIC **/
-const biomes = {
+const mapBiomes = {
     all: [
         [0.8,  0.7,  true],
         [0.9,  1.3,  false],
@@ -2955,10 +2955,12 @@ const biomes = {
     ],
 };
 
+let mapCache = [];
+
 const prepareInputs = () => {
     let zone = game.global.world;
     let attack = calcOurDmg("min", false, true, false, true);
-    let biome = biomes.all.concat(biomes[autoTrimpSettings.mapselection.selected]);
+    let biome = mapBiomes.all.concat(mapBiomes[autoTrimpSettings.mapselection.selected]);
     let critChance = getPlayerCritChance();
     let critDamage = getPlayerCritDamageMult() - 1;
     let enemyHealth = getEnemyMaxHealth(1, 1, "", false, 1, true, false, true, 1);
@@ -3076,16 +3078,24 @@ const prepareInputs = () => {
 
 const getZoneToFarm = () => {
     let input = prepareInputs();
-    let result = calculateStats(input)[0];
+    let hash = md5(JSON.stringify(input));
+    let cacheItem =  mapCache.find(item => item.hash == hash);
     let bestItem = {
         zone: input.zone,
         stance: "S"
     }
-    if (result.length > 0) {
-        let bestResult = result.reduce((acc, item) => (item.value > acc.value ? item : acc));
-        bestItem.zone = bestResult.zoneNum;
-        bestItem.stance = bestResult.stance;
+    if (cacheItem) {
+        bestItem = cacheItem.result;
+    } else {
+        let result = calculateStats(input)[0];
+        if (result.length > 0) {
+            let bestResult = result.reduce((acc, item) => (item.value > acc.value ? item : acc));
+            bestItem.zone = bestResult.zoneNum;
+            bestItem.stance = bestResult.stance;
+            mapCache.push({hash: hash, result: bestItem})
+        }
     }
+
     return bestItem;
 }
 
