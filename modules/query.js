@@ -184,19 +184,24 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
 
 const getCurrentState = () => {
     let currentMap = getCurrentMapObject();
+    let doingMaps = game.global.mapsActive;
+    let selectingMaps = game.global.preMapsActive;
+    let raidingMaps = currentMap?.level > game.global.world;
+    let advancingWorld = !(doingMaps || selectingMaps);
     return {
-        advancingWorld: !(this.doingMaps || this.selectingMaps),
-        doingMaps: game.global.mapsActive,
-        selectingMaps: game.global.preMapsActive,
-        doingVoids: this.doingMaps && currentMap?.location === "Void",
-        raidingMaps: currentMap?.level > game.global.world,
-        raidingBW: this.raidingMaps && currentMap?.location === "Bionic",
-        raidingPrestige: this.raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1]]?.prestige,
-        doingSpire: this.advancingWorld && game.global.spireActive && checkIfSpireWorld()
+        advancingWorld: advancingWorld,
+        doingMaps: doingMaps,
+        selectingMaps: selectingMaps,
+        doingVoids: doingMaps && currentMap?.location === "Void",
+        raidingMaps: raidingMaps,
+        raidingBW: raidingMaps && currentMap?.location === "Bionic",
+        raidingPrestige: raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1]]?.prestige,
+        doingSpire: advancingWorld && game.global.spireActive && checkIfSpireWorld()
     }
 }
 
 const getCurrentGoals = () => {
+    let doMaps = game.options.menu.mapAtZone.enabled === 0;
     return {
         buildBuildings: !game.global.autoStructureSetting.enabled,
         buildStorage: !game.global.autoStorage,
@@ -204,15 +209,15 @@ const getCurrentGoals = () => {
         breedTrimps: game.global.GeneticistassistSetting === -1,
         prestigeGear: game.global.autoPrestiges === 0,
         upgradeGear: game.global.autoUpgrades === false,
-        doMaps: game.options.menu.mapAtZone.enabled === 0,
-        farmForSpire: this.doMaps,
-        farmMapBonus: this.doMaps,
-        farmForVoids: this.doMaps,
-        doPrestige: this.doMaps,
-        doVoids: this.doMaps,
-        doFarm: this.doMaps,
-        raidPrestige: this.doMaps,
-        raidBW: this.doMaps,
+        doMaps: doMaps,
+        farmForSpire: doMaps,
+        farmMapBonus: doMaps,
+        farmForVoids: doMaps,
+        doPrestige: doMaps,
+        doVoids: doMaps,
+        doFarm: doMaps,
+        raidPrestige: doMaps,
+        raidBW: doMaps,
         buyGoldenUpgrades: game.global.autoGolden === 0
     }
 }
