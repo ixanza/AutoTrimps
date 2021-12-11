@@ -76,17 +76,9 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
         enemyDamage *= 1.5;
     } else if (game.global.challengeActive == "Domination") {
         enemyDamage *= 2.5;
-    } else if (game.global.challengeActive == "Mayhem") {
-        let mayhemMult = game.challenges.Mayhem.getEnemyMult();
-        enemyDamage *= mayhemMult;
-    } else if (game.global.challengeActive == "Exterminate") {
-        let extMult = game.challenges.Exterminate.getSwarmMult();
-        enemyDamage *= extMult;
     } else if (game.global.challengeActive == "Alchemy") {
         let statMult = alchObj.getEnemyStats(map, voidMap) + 1;
         enemyDamage *= statMult;
-    } else if (game.global.challengeActive == "Storm" && !map) {
-        enemyDamage *= game.challenges.Storm.getAttackMult();
     }
     return Math.floor(enemyDamage);
 }
@@ -122,9 +114,6 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
         if (typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && map) {
             enemyHealth *= dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength);
         }
-        if (typeof game.global.dailyChallenge.empower !== 'undefined') {
-            if (!map) enemyHealth *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
-        }
     } else if (game.global.challengeActive == "Life") {
         enemyHealth *= 11;
     } else if (game.global.challengeActive == "Coordinate") {
@@ -137,36 +126,23 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
         enemyHealth *= map ? 2.35 : 1.17;
     } else if (game.global.challengeActive == "Unbalance") {
         enemyHealth *= (map) ? 2 : 3;
-    } else if (game.global.challengeActive == "Lead" && (game.challenges.Lead.stacks > 0)) {
-        enemyHealth *= (1 + (Math.min(game.challenges.Lead.stacks, 200) * 0.04));
     } else if (game.global.challengeActive == "Domination") {
         enemyHealth *= 7.5;
     } else if (game.global.challengeActive == "Quest") {
         enemyHealth *= game.challenges.Quest.getHealthMult();
     } else if (game.global.challengeActive == "Revenge" && worldNumber % 2 == 0) {
         enemyHealth *= 10;
-    } else if (game.global.challengeActive == "Mayhem") {
-        let mayhemMult = game.challenges.Mayhem.getEnemyMult();
-        enemyHealth *= mayhemMult;
     } else if (game.global.challengeActive == "Exterminate") {
         let extMult = game.challenges.Exterminate.getSwarmMult();
         enemyHealth *= extMult;
-    } else if (game.global.challengeActive == "Duel") {
-        if (game.challenges.Duel.enemyStacks < 20) enemyHealth *= game.challenges.Duel.healthMult;
     } else if (game.global.challengeActive == "Nurture") {
         if (map) enemyHealth *= 10;
         else enemyHealth *= 2;
-        enemyHealth *= game.buildings.Laboratory.getEnemyMult();
     } else if (game.global.challengeActive == "Alchemy") {
         let statMult = alchObj.getEnemyStats(map, voidMap) + 1;
         enemyHealth *= statMult;
-    } else if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !map)
-        || game.global.challengeActive == "Pandemonium")) {
-        if (cellNumber == 99 && !map) enemyHealth *= game.challenges[game.global.challengeActive].getBossMult();
-        else enemyHealth *= game.challenges.Pandemonium.getPandMult();
-    } else if (game.global.challengeActive == "Storm" && !map) {
-        enemyHealth *= game.challenges.Storm.getHealthMult();
     }
+
     return Math.floor(enemyHealth);
 }
 
@@ -255,7 +231,10 @@ let strongestEnemyCache = {
 }
 
 const guessStrongestEnemyStat = (where = "world", what = "health") => {
-    let value = null;
+    let value = {
+        stat: -1,
+        level: -1
+    };
     let isVoid = where === "void";
     let isMap = where === "map" || isVoid;
     // Check if we can find on cache
@@ -281,10 +260,11 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
                 difficulty += 3;
             }
             if (what === "attack") {
-                value = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
+                value.stat = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
             } else if (what === "health") {
-                value = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
+                value.stat = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
             }
+            value.level = mapSize;
             strongestEnemyCache[where][what] = value;
         } else {
             // World is static so get highlights
@@ -297,11 +277,13 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             if (what === "health") {
                 enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
-                value = enemy.health;
+                value.stat = enemy.health;
+                value.level = enemy.level;
             } else if (what === "attack") {
                 enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
-                value = enemy.attack;
+                value.stat = enemy.attack;
+                value.level = enemy.level;
             }
             strongestEnemyCache[where][what] = value;
         }

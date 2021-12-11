@@ -339,7 +339,18 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
         let isVoid = currentGoals.doVoids;
         let currentState = getCurrentState();
         let isSpire = currentState.doingSpire;
-        number = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "attack");
+        let strongestEnemy = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "attack");
+        number = strongestEnemy.stat;
+        // Dynamic stuff
+        if (game.global.challengeActive == "Mayhem") {
+            let mayhemMult = game.challenges.Mayhem.getEnemyMult();
+            number *= mayhemMult;
+        } else if (game.global.challengeActive == "Exterminate") {
+            let extMult = game.challenges.Exterminate.getSwarmMult();
+            number *= extMult;
+        } else if (game.global.challengeActive == "Storm" && !isVoid) {
+            number *= game.challenges.Storm.getAttackMult();
+        }
     } else {
         number = enemy.attack;
     }
@@ -419,7 +430,32 @@ function calcEnemyHealth() {
     let isVoid = currentGoals.doVoids;
     let currentState = getCurrentState();
     let isSpire = currentState.doingSpire;
-    return guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "health");
+
+    let strongestEnemy = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "health");
+    let enemyHealth = strongestEnemy.stat;
+    // Dynamic Stuff
+    if (game.global.challengeActive == "Daily") {
+        if (typeof game.global.dailyChallenge.empower !== 'undefined') {
+            if (!isVoid) enemyHealth *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+        }
+    } else if (game.global.challengeActive == "Lead" && (game.challenges.Lead.stacks > 0)) {
+        enemyHealth *= (1 + (Math.min(game.challenges.Lead.stacks, 200) * 0.04));
+    } else if (game.global.challengeActive == "Mayhem") {
+        let mayhemMult = game.challenges.Mayhem.getEnemyMult();
+        enemyHealth *= mayhemMult;
+    } else if (game.global.challengeActive == "Duel") {
+        if (game.challenges.Duel.enemyStacks < 20) enemyHealth *= game.challenges.Duel.healthMult;
+    } else if (game.global.challengeActive == "Nurture") {
+        enemyHealth *= game.buildings.Laboratory.getEnemyMult();
+    } else if (game.global.challengeActive == "Storm" && !isVoid) {
+        enemyHealth *= game.challenges.Storm.getHealthMult();
+    }
+    let cellNumber = enemyHealth.level;
+    if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !isVoid) || game.global.challengeActive == "Pandemonium")) {
+        if (cellNumber == 99 && !isVoid) enemyHealth *= game.challenges[game.global.challengeActive].getBossMult();
+        else enemyHealth *= game.challenges.Pandemonium.getPandMult();
+    }
+    return enemyHealth;
 }
 
 function calcHDratio(mapLevel) {
