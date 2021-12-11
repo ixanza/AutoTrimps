@@ -331,11 +331,19 @@ function calcSpire(cell, name, what) {
 	return getSpireStats(exitCell, enemy, what)
 }
 
-function calcBadGuyDmg(enemy, attack, daily, maxormin, disableFlucts) {
+function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
+    // Find enemy
     let number;
-    if (enemy) number = enemy.attack;
-    else if (game.global.spireActive) number = calcSpire(100, game.global.gridArray[99].name, 'attack');
-    else number = attack;
+    if (!enemy) {
+        let currentGoals = getCurrentGoals();
+        let isVoid = currentGoals.doVoids;
+        let currentState = getCurrentState();
+        let isSpire = currentState.doingSpire;
+        number = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "attack");
+    } else {
+        number = enemy.attack;
+    }
+    // Calculate
     let cell;
     if (game.global.mapsActive) {
         cell = game.global.mapGridArray[game.global.lastClearedMapCell + 1];
@@ -406,24 +414,16 @@ function calcBadGuyDmg(enemy, attack, daily, maxormin, disableFlucts) {
     } else return number;
 }
 
-function calcEnemyHealth(world, map, daily = true, voidMap =  false) {
-    world = !world ? game.global.world : world;
-    let difficulty = 1.0;
-    let enemyName = "Snimp";
-    if (voidMap) {
-        difficulty = game.global.mapsOwnedArray
-            .filter(item => item.location === "Void")
-            .map(item => item.difficulty)
-            .reduce((acc, item) => Number(item) > acc ? Number(item) : acc, 0)
-        enemyName = "Cthulimp";
-    }
-    return getEnemyMaxHealth(world, 50, enemyName, (getPageSetting("calcCorruption") ?? false), difficulty, map, voidMap, daily);
+function calcEnemyHealth() {
+    let currentGoals = getCurrentGoals();
+    let isVoid = currentGoals.doVoids;
+    let currentState = getCurrentState();
+    let isSpire = currentState.doingSpire;
+    return guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "health");
 }
 
-function calcHDratio(map) {
-    var ratio = 0;
-    var ourBaseDamage = calcOurDmg("avg", false, true);
-
+function calcHDratio(mapLevel) {
+    let ourBaseDamage = calcOurDmg("avg", false, true);
     //Shield
     highDamageShield();
     if (getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
@@ -436,12 +436,13 @@ function calcHDratio(map) {
         ourBaseDamage *= trimpAA;
 	ourBaseDamage *= getCritMulti(true);
     }
-    if (!map || map < 1) {
-        ratio = calcEnemyHealth() / ourBaseDamage;
+    let enemyHealth;
+    if (mapLevel) {
+        enemyHealth = getEnemyMaxHealth(mapLevel, game.talents.mapLoot2.purchased ? 20 : 25, "Snimp", true, 0.75, true, false, true);
+    } else {
+        enemyHealth = calcEnemyHealth();
     }
-    if (map || map >= 1)
-	ratio = calcEnemyHealth(map, true, true, needToVoid) / ourBaseDamage;
-    return ratio;
+    return enemyHealth / ourBaseDamage;
 }
 
 function calcCurrentStance() {

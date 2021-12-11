@@ -42,21 +42,13 @@ function calculateEnemyScale(type, forMap = false, voidMap = false) {
 
 /**
  * This is called in case we don't have cell instance to work with. Any calculation included in damage will not be here and vice versa.
- * @param worldNumber
- * @param cellNumber
- * @param enemyName
- * @param difficulty
- * @param scale
- * @param map
- * @param voidMap
- * @returns {number}
  */
-function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false, spire = false) {
+function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0, scale = false, map = false, voidMap = false, spire = false, mutation = "") {
+    if (voidMap) map = true;
     // Use code directly stolen from game instead
     let enemyDamage;
-    if (voidMap) map = true;
     if (spire) {
-        enemyDamage = calcSpire(100, game.global.gridArray[99].name, 'attack');
+        enemyDamage = calcSpire(cellNumber, enemyName, 'attack');
     } else {
         enemyDamage = RgetEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty, scale, false);
     }
@@ -64,10 +56,8 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     // Mutations
     if (scale) {
         enemyDamage *= calculateEnemyScale("attack", map, voidMap);
-        let grid = map ? game.global.mapGridArray : game.global.gridArray;
-        grid = grid.filter(item => item.corrupted).map(item => item.corrupted)
-        if (grid.includes("healthyStrong")) enemyDamage *= 2.5;
-        else if (grid.includes("corruptStrong")) enemyDamage *= 2;
+        if (mutation === "healthyStrong") enemyDamage *= 2.5;
+        else if (mutation === "corruptStrong") enemyDamage *= 2;
     }
     // Other Stuff
     if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
@@ -101,14 +91,14 @@ function getEnemyMaxAttack(worldNumber, cellNumber, enemyName, difficulty = 1.0,
     return Math.floor(enemyDamage);
 }
 
-function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false, health = undefined, spire = false) {
+function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", scale = false, difficulty = 1.0, map = false, voidMap = false, daily = false, health = undefined, spire = false, mutation = "") {
+    if (voidMap) map = true;
     // Use code directly stolen from game instead
     let enemyHealth;
-    if (voidMap) map = true;
     if (health) {
         enemyHealth = health;
     } else if (spire) {
-        enemyHealth = calcSpire(100, game.global.gridArray[99].name, 'health');
+        enemyHealth = calcSpire(cellNumber, enemyName, 'health');
     } else {
         enemyHealth = RgetEnemyMaxHealth(worldNumber, cellNumber, enemyName, false);
     }
@@ -116,10 +106,8 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     // Mutations
     if (scale) {
         enemyHealth *= calculateEnemyScale("health", map, voidMap);
-        let grid = map ? game.global.mapGridArray : game.global.gridArray;
-        grid = grid.filter(item => item.corrupted).map(item => item.corrupted)
-        if (grid.includes("healthyStrong")) enemyHealth *= 7.5;
-        else if (grid.includes("corruptTough")) enemyHealth *= 5;
+        if (mutation === "healthyStrong") enemyHealth *= 7.5;
+        else if (mutation === "corruptTough") enemyHealth *= 5;
     }
     // Other Stuff
     if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
@@ -182,6 +170,7 @@ function getEnemyMaxHealth(worldNumber, cellNumber = 30, enemyName = "Snimp", sc
     return Math.floor(enemyHealth);
 }
 
+/** State management **/
 const getCurrentState = () => {
     let currentMap = getCurrentMapObject();
     let doingMaps = game.global.mapsActive;
@@ -196,7 +185,7 @@ const getCurrentState = () => {
         raidingMaps: raidingMaps,
         raidingBW: raidingMaps && currentMap?.location === "Bionic",
         raidingPrestige: raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1]]?.prestige,
-        doingSpire: advancingWorld && game.global.spireActive && checkIfSpireWorld()
+        doingSpire: game.global.spireActive && checkIfSpireWorld()
     }
 }
 
@@ -214,12 +203,47 @@ const getCurrentGoals = () => {
         farmMapBonus: doMaps,
         farmForVoids: doMaps,
         doPrestige: doMaps,
-        doVoids: doMaps,
+        doVoids: doMaps && doVoidGoal(),
         doFarm: doMaps,
         raidPrestige: doMaps,
         raidBW: doMaps,
         buyGoldenUpgrades: game.global.autoGolden === 0
     }
+}
+
+const doVoidGoal = () => {
+    let voidMapLevelSettingCell = getDoVoidCell();
+    let voidMapLevelSetting = getDoVoidZone();
+    let voidMapLevelPlus = getDoVoidExtraZone();
+    return (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
+        (
+            (game.global.world == voidMapLevelSetting) ||
+            (voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting &&
+                (game.global.universe == 1 &&
+                    (
+                        (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") ||
+                        (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
+                    ) ||
+                    (
+                        (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") ||
+                        (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
+                    )
+                ) ||
+                (voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting && game.global.world <= (voidMapLevelSetting + voidMapLevelPlus) &&
+                    (game.global.universe == 1 &&
+                        (
+                            (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") ||
+                            (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
+                        ) ||
+                        (
+                            (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") ||
+                            (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
+                        )
+                    )
+                )
+            )
+        )
+    );
 }
 
 /** Get enemy for calculations **/
@@ -230,7 +254,7 @@ let strongestEnemyCache = {
     spire: {}
 }
 
-const guessStrongestEnemy = (where = "world", what = "health") => {
+const guessStrongestEnemyStat = (where = "world", what = "health") => {
     let strongestEnemy = {
         attack: -1,
         health: -1,
@@ -289,11 +313,11 @@ const guessStrongestEnemy = (where = "world", what = "health") => {
             let lastCell = game.global.gridArray.reduce((a,b) => b, undefined);
             let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
             if (what === "health") {
-                enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire"))
+                enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
                 strongestEnemy.health = enemy.health;
             } else {
-                enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire"))
+                enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire", enemy.corrupted))
                 let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
                 strongestEnemy.attack = enemy.attack;
             }
@@ -301,7 +325,7 @@ const guessStrongestEnemy = (where = "world", what = "health") => {
             strongestEnemyCache[where][what] = strongestEnemy;
         }
     }
-    return strongestEnemy;
+    return strongestEnemy[what];
 }
 
 function getCurrentEnemy(a){a||(a=1);var b;return game.global.mapsActive||game.global.preMapsActive?game.global.mapsActive&&!game.global.preMapsActive&&('undefined'==typeof game.global.mapGridArray[game.global.lastClearedMapCell+a]?b=game.global.mapGridArray[game.global.gridArray.length-1]:b=game.global.mapGridArray[game.global.lastClearedMapCell+a]):'undefined'==typeof game.global.gridArray[game.global.lastClearedCell+a]?b=game.global.gridArray[game.global.gridArray.length-1]:b=game.global.gridArray[game.global.lastClearedCell+a],b}

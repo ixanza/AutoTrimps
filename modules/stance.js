@@ -5,7 +5,7 @@ function autoStanceNew() {
     if (game.global.gridArray.length === 0) return;
     if (game.global.soldierHealth <= 0) return;
     if (!game.upgrades.Formations.done) return;
-	
+
     if(game.global.formation == 2 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) {
         setFormation('0');
     }
@@ -33,7 +33,7 @@ function autoStance() {
     var enemy = getCurrentEnemy();
     if (typeof enemy === 'undefined') return true;
     var enemyHealth = enemy.health;
-    var enemyDamage = calcBadGuyDmg(enemy,null,true,true);
+    var enemyDamage = calcBadGuyDmg(enemy, true);
     var critMulti = 1;
     const ignoreCrits = getPageSetting('IgnoreCrits');
     var isCrushed = false;
@@ -128,7 +128,7 @@ function autoStance() {
         var explosiveDamage = 1 + game.global.dailyChallenge['explosive'].strength;
         var playerDCritDmg = calcOurDmg("max",false,true) * 4;
         var playerXCritDmg = calcOurDmg("max",false,true);
-        explosionDmg = calcBadGuyDmg(enemy,null,true,true) * explosiveDamage;
+        explosionDmg = calcBadGuyDmg(enemy, true) * explosiveDamage;
         xExplosionOK = ((xHealth - missingHealth > explosionDmg) || (enemyHealth > playerXCritDmg));
         dExplosionOK = (newSquadRdy || (dHealth - missingHealth > explosionDmg) || (enemyHealth > playerDCritDmg));
     }
@@ -143,12 +143,12 @@ function autoStance() {
     var voidCritinXok = !isCritThing || oneshotFast || surviveX;
 
     if (!game.global.preMapsActive && game.global.soldierHealth > 0) {
-        
+
         if (game.upgrades.Dominance.done && surviveD && leadAttackOK && drainAttackOK && voidCritinDok && dExplosionOK) {
             setFormation(2);
 
         } else if (isCritThing && !voidCritinDok) {
-            
+
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
                 if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
                     setFormation(3);
@@ -198,7 +198,7 @@ function autoStanceCheck(enemyCrit) {
     var enemy = getCurrentEnemy();
     if (typeof enemy === 'undefined') return [true,true];
     var enemyHealth = enemy.health;
-    var enemyDamage = calcBadGuyDmg(enemy,null,true,true,true);
+    var enemyDamage = calcBadGuyDmg(enemy, true);
     var critMulti = 1;
     const ignoreCrits = getPageSetting('IgnoreCrits');
     var isCrushed = false;

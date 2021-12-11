@@ -38,7 +38,6 @@ function updateAutoMapsStatus(get) {
     var minSp = getPageSetting('MinutestoFarmBeforeSpire');
     let toxStacks = Math.max(0, Math.min(getPageSetting('TStacks') ?? 0, 1500));
     let praid = prestraidon ?? false;
-    let hdMap = needToVoid ? game.global.world + 1 : undefined;
 
     //Fail Safes
     if (getPageSetting('AutoMaps') == 0) status = 'Off';
@@ -68,9 +67,9 @@ function updateAutoMapsStatus(get) {
         status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
     }
     else if (shouldFarm && getPageSetting('TStacks') > 0 && game.global.world === 165 && toxStacks > game.challenges.Toxicity.stacks && game.global.challengeActive === "Toxicity") status = "Farming Toxicity Stacks";
-    else if (shouldFarm) status = 'Farming: ' + calcHDratio(hdMap).toFixed(4) + 'x';
+    else if (shouldFarm) status = 'Farming: ' + calcHDratio().toFixed(4) + 'x';
     else if (!enoughHealth && !enoughDamage) status = 'Want Health & Damage';
-    else if (!enoughDamage) status = 'Want ' + calcHDratio(hdMap).toFixed(4) + 'x &nbspmore damage';
+    else if (!enoughDamage) status = 'Want ' + calcHDratio().toFixed(4) + 'x &nbspmore damage';
     else if (!enoughHealth) status = 'Want more health';
     else if (enoughHealth && enoughDamage) status = 'Advancing';
 
@@ -132,6 +131,39 @@ function testMapSpecialModController() {
     }
 }
 
+const getDoVoidCell = () => {
+    let voidMapLevelSettingCell;
+    if (game.global.challengeActive != "Daily") {
+        voidMapLevelSettingCell = ((getPageSetting('voidscell') > 0) ? getPageSetting('voidscell') : 70);
+    }
+    if (game.global.challengeActive == "Daily") {
+        voidMapLevelSettingCell = ((getPageSetting('dvoidscell') > 0) ? getPageSetting('dvoidscell') : 70);
+    }
+    return voidMapLevelSettingCell;
+}
+
+const getDoVoidZone = () => {
+    let voidMapLevelSetting = 0;
+    if (game.global.challengeActive != "Daily" && getPageSetting('VoidMaps') > 0) {
+        voidMapLevelSetting = getPageSetting('VoidMaps');
+    }
+    if (game.global.challengeActive == "Daily" && getPageSetting('DailyVoidMod') >= 1) {
+        voidMapLevelSetting = getPageSetting('DailyVoidMod');
+    }
+    return voidMapLevelSetting;
+}
+
+const getDoVoidExtraZone = () => {
+    let voidMapLevelPlus = 0;
+    if (getPageSetting('RunNewVoidsUntilNew') != 0 && game.global.challengeActive != "Daily") {
+        voidMapLevelPlus = getPageSetting('RunNewVoidsUntilNew');
+    }
+    if (getPageSetting('dRunNewVoidsUntilNew') != 0 && game.global.challengeActive == "Daily") {
+        voidMapLevelPlus = getPageSetting('dRunNewVoidsUntilNew');
+    }
+    return voidMapLevelPlus;
+}
+
 function autoMap() {
 
     //Failsafes
@@ -167,58 +199,11 @@ function autoMap() {
     var challSQ = game.global.runningChallengeSquared;
     var extraMapLevels = getPageSetting('AdvMapSpecialModifier') ? getExtraMapLevels() : 0;
 
-    //Void Vars
-    var voidMapLevelSetting = 0;
-    var voidMapLevelSettingCell;
-    var voidMapLevelPlus = 0;
-    if (game.global.challengeActive != "Daily") {
-        voidMapLevelSettingCell = ((getPageSetting('voidscell') > 0) ? getPageSetting('voidscell') : 70);
-    }
-    if (game.global.challengeActive == "Daily") {
-        voidMapLevelSettingCell = ((getPageSetting('dvoidscell') > 0) ? getPageSetting('dvoidscell') : 70);
-    }
-    if (game.global.challengeActive != "Daily" && getPageSetting('VoidMaps') > 0) {
-        voidMapLevelSetting = getPageSetting('VoidMaps');
-    }
-    if (game.global.challengeActive == "Daily" && getPageSetting('DailyVoidMod') >= 1) {
-        voidMapLevelSetting = getPageSetting('DailyVoidMod');
-    }
-    if (getPageSetting('RunNewVoidsUntilNew') != 0 && game.global.challengeActive != "Daily") {
-        voidMapLevelPlus = getPageSetting('RunNewVoidsUntilNew');
-    }
-    if (getPageSetting('dRunNewVoidsUntilNew') != 0 && game.global.challengeActive == "Daily") {
-        voidMapLevelPlus = getPageSetting('dRunNewVoidsUntilNew');
-    }
+    // Goals
+    let goals = getCurrentGoals();
 
-    needToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
-        (
-            (game.global.world == voidMapLevelSetting) ||
-            (voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting &&
-                (game.global.universe == 1 &&
-                    (
-                        (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") ||
-                        (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
-                    ) ||
-                    (
-                        (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") ||
-                        (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
-                    )
-                ) ||
-                (voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting && game.global.world <= (voidMapLevelSetting + voidMapLevelPlus) &&
-                    (game.global.universe == 1 &&
-                        (
-                            (getPageSetting('runnewvoidspoison') == false && game.global.challengeActive != "Daily") ||
-                            (getPageSetting('drunnewvoidspoison') == false && game.global.challengeActive == "Daily")
-                        ) ||
-                        (
-                            (getPageSetting('runnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive != "Daily") ||
-                            (getPageSetting('drunnewvoidspoison') == true && getEmpowerment() == 'Poison' && game.global.challengeActive == "Daily")
-                        )
-                    )
-                )
-            )
-        )
-    );
+    //Void Vars
+    needToVoid = goals.doVoids;
 
     var voidArrayDoneS = [];
     if (game.global.challengeActive != "Daily" && getPageSetting('onlystackedvoids') == true) {
@@ -272,26 +257,15 @@ function autoMap() {
     }
 
     //Calc
-    var difficulty = 1.0;
-    let enemyName = 'Snimp';
-    let hdMap = undefined;
-    if (needToVoid) {
-        difficulty = game.global.mapsOwnedArray
-            .filter(item => item.location === "Void")
-            .map(item => item.difficulty)
-            .reduce((acc, item) => Number(item) > acc ? Number(item) : acc, 0)
-        enemyName = "Cthulimp";
-        hdMap = game.global.world + 1;
-    }
     var ourBaseDamage = calcOurDmg("avg", false, true);
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, enemyName, difficulty, getPageSetting("calcCorruption") ?? false, needToVoid, needToVoid), true, true);
-    var enemyHealth = calcEnemyHealth(game.global.world + 1, needToVoid, true, needToVoid);
+    var enemyDamage = calcBadGuyDmg(null, true);
+    var enemyHealth = calcEnemyHealth();
 
     if (getPageSetting('DisableFarm') > 0) {
         if (needToVoid && getPageSetting('VDisableFarm') > 0) {
-            shouldFarm = (calcHDratio(hdMap) >= getPageSetting('VDisableFarm'));
+            shouldFarm = (calcHDratio() >= getPageSetting('VDisableFarm'));
         } else {
-            shouldFarm = (calcHDratio(hdMap) >= getPageSetting('DisableFarm'));
+            shouldFarm = (calcHDratio() >= getPageSetting('DisableFarm'));
         }
         if (game.options.menu.repeatUntil.enabled == 1 && shouldFarm)
             toggleSetting('repeatUntil');
@@ -411,7 +385,7 @@ function autoMap() {
     if (getPageSetting('DynamicSiphonology') || shouldFarmLowerZone) {
         if (getPageSetting("DynamicSiphonologyMethod") === 0) {
             for (siphlvl; siphlvl < maxlvl; siphlvl++) {
-                var maphp = getEnemyMaxHealth(siphlvl, 30, enemyName, true, 1.1, true, false, true);
+                var maphp = getEnemyMaxHealth(siphlvl, game.talents.mapLoot2.purchased ? 20 : 25, "Snimp", true, 0.75, true, false, true);
                 var mapdmg = ourBaseDamage2;
                 if (game.upgrades.Dominance.done)
                     mapdmg *= 4;
@@ -3031,7 +3005,7 @@ const prepareInputs = () => {
     let death_stuff = {
         max_hp: calcOurHealth(true),
         block: calcOurBlock(true),
-        challenge_attack: calcBadGuyDmg({attack:1}, undefined, true, "min", true),
+        challenge_attack: calcBadGuyDmg({attack: 1}, true, "min", false),
         enemy_cd: enemyCd,
         breed_timer: breedTimer,
         weakness: weakness,
