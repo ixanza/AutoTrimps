@@ -3079,11 +3079,12 @@ const calculateStats = (input) => {
     let stances = !wantToScry ? (input.zone < 70 ? 'X' : 'D') : 'S';
 
     let extra = 0;
+    /*
     if (input.hze >= 210)
         while (extra < 10 && input.fragments > getMapCost(53.98 + 10 * extra, input.zone))
             ++extra;
     extra = extra || -input.reducer;
-
+     */
     for (let zone = input.zone + extra; zone >= 6 && (input.minZone === undefined || zone >= input.minZone); --zone) {
         if (input.coordinate) {
             let coords = 1;
