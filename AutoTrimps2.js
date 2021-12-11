@@ -146,6 +146,7 @@ function mainLoop() {
         if (getPageSetting('AutoEggs'))
             easterEggClicked();
         setTitle();
+        disableDynamicTimer();
     }
 
     //Logic for Universe 1
