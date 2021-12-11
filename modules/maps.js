@@ -3118,15 +3118,6 @@ const calculateStats = (input) => {
     return [stats, stances];
 }
 
-let seed = 42;
-const rand_mult = 2 ** -31;
-function rng() {
-    seed ^= seed >> 11;
-    seed ^= seed << 8;
-    seed ^= seed >> 19;
-    return seed * rand_mult;
-}
-
 const getMapCost = (mods, level) => {
     mods += level;
     return mods * 1.14 ** mods * level * (1.03 + level / 50000) ** level / 42.75;
@@ -3191,16 +3182,16 @@ const simulate = (input, zone, maxTicks = 36000) => {
     }
 
     function enemyHit(atk) {
-        let damage = atk * (0.8 + 0.4 * rng());
-        damage *= rng() < 0.25 ? input.enemy_cd : 1;
+        let damage = atk * (0.8 + 0.4 * generateFloat());
+        damage *= generateFloat() < 0.25 ? input.enemy_cd : 1;
         damage *= 0.366 ** (ice * input.ice);
         trimp_hp -= Math.max(0, damage - input.block);
         ++debuff_stacks;
     }
 
     while (ticks < maxTicks) {
-        let imp = rng();
-        let imp_stats = imp < input.import_chance ? [1, 1, false] : input.biome[Math.floor(rng() * input.biome.length)];
+        let imp = generateFloat();
+        let imp_stats = imp < input.import_chance ? [1, 1, false] : input.biome[Math.floor(generateFloat() * input.biome.length)];
         let atk = imp_stats[0] * atk_array[cell];
         let hp = imp_stats[1] * hp_array[cell];
         let enemy_max_hp = hp;
@@ -3224,8 +3215,8 @@ const simulate = (input, zone, maxTicks = 36000) => {
             // Trimp attack
             if (trimp_hp >= 1) {
                 ok_spread = input.ok_spread;
-                let damage = input.atk * (1 + input.range * rng());
-                damage *= rng() < input.cc ? input.cd : 1;
+                let damage = input.atk * (1 + input.range * generateFloat());
+                damage *= generateFloat() < input.cc ? input.cd : 1;
                 damage *= titimp > ticks ? 2 : 1;
                 damage *= 2 - 0.366 ** (ice * input.ice);
                 damage *= 1 - input.weakness * Math.min(debuff_stacks, 9);
