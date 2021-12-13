@@ -400,7 +400,8 @@ function autoMap() {
             let zone = game.global.world;
             let reducer = game.talents.mapLoot.purchased;
 
-            let overkill = Fluffy.isRewardActive("overkiller");
+            let overkill = (getPerkLevel("Overkill") > 0 ? 1 : 0);
+            overkill += Fluffy.isRewardActive("overkiller");
             if (game.talents.overkill.purchased) overkill++;
             if (getEmpowerment() == "Ice"){
                 if (game.empowerments.Ice.getLevel() >= 50) overkill++;
@@ -420,7 +421,23 @@ function autoMap() {
             let bestLoot = 0;
             for (let i = siphlvl; i < maxlvl; i++) {
                 let enemyHealth = getEnemyMaxHealth(i, getMapMinMax("size", 0)[0], "Snimp", true, getMapMinMax("difficulty", 0)[0], true, false, true);
-                let killCount = Math.min(ourDmg / enemyHealth, overkill);
+
+                let ourDmgPerHit = ourDmg;
+                let killCount = 0;
+                for (let j = 0 ; j <= overkill ; j++) {
+                    let factor = ourDmgPerHit / enemyHealth;
+                    if (factor > 1) {
+                        // We can do dmg to next enemy
+                        killCount++;
+                        ourDmgPerHit -= enemyHealth;
+                        ourDmgPerHit *= (getPerkLevel("Overkill") * 0.005);
+                    } else {
+                        // We can't kill next enemy anymore
+                        killCount += factor;
+                        break;
+                    }
+                }
+
                 let loot = (100 * (i < zone ? 0.8 ** (zone - reducer - i) : 1.1 ** (i - zone))) * killCount;
                 if (bestLoot < loot) {
                     bestLvl = i;
