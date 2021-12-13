@@ -394,9 +394,31 @@ function autoMap() {
                     break;
                 }
             }
-        }
-        else if (getPageSetting("DynamicSiphonologyMethod") === 1) {
+        } else if (getPageSetting("DynamicSiphonologyMethod") === 1) {
             siphlvl = getZoneToFarm().zone;
+        } else if (getPageSetting("DynamicSiphonologyMethod") === 2) {
+            let zone = game.global.world;
+            let reducer = game.talents.mapLoot.purchased;
+            let overkill = 1 + (fluffy_ability >= 13) + (fluffy_ability >= 10) + game.talents.overkill.purchased ? 1 : 0;
+            let ourDmg = calcOurDmg("min", false, true, true, true);
+            if (game.global.highestLevelCleared >= 180 &&
+                game.global.world <= 60 &&
+                getPageSetting('UseScryerStance') == true &&
+                getPageSetting('ScryerUseinMaps2') == 1) {
+                ourDmg /= 2;
+            }
+            let bestLvl = siphlvl;
+            let bestLoot = 0;
+            for (let i = siphlvl; i < maxlvl; i++) {
+                let enemyHealth = getEnemyMaxHealth(i, game.talents.mapLoot2.purchased ? 20 : 25, "Snimp", true, 0.75, true, false, true);
+                let killCount = Math.min(ourDmg / enemyHealth, overkill);
+                let loot = (100 * (i < zone ? 0.8 ** (zone - reducer - i) : 1.1 ** (i - zone))) * killCount;
+                if (bestLoot < loot) {
+                    bestLvl = i;
+                    bestLoot = loot;
+                }
+            }
+            siphlvl = bestLvl;
         }
     }
     var obj = {};
