@@ -181,6 +181,7 @@ const getCurrentGoals = () => {
         doPrestige: doMaps,
         doVoids: doMaps && doVoidGoal(),
         doFarm: doMaps,
+        doAchievement: doMaps && doAchievementGoal(),
         raidPrestige: doMaps,
         raidBW: doMaps,
         buyGoldenUpgrades: game.global.autoGolden === 0
@@ -220,6 +221,11 @@ const doVoidGoal = () => {
             )
         )
     );
+}
+
+function doAchievementGoal() {
+    let achievements = ["wallTimed", "angerTimed", "blockTimed", "doomTimed", "starTimed", "prisonTimed", "bionicTimed"];
+    return achievements.some(possibleToGetTimedAchievement);
 }
 
 /** Get enemy for calculations **/

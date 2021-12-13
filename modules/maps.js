@@ -200,10 +200,10 @@ function autoMap() {
     var extraMapLevels = getPageSetting('AdvMapSpecialModifier') ? getExtraMapLevels() : 0;
 
     // Goals
-    let goals = getCurrentGoals();
+    let currentGoals = getCurrentGoals();
 
     //Void Vars
-    needToVoid = goals.doVoids;
+    needToVoid = currentGoals.doVoids;
 
     var voidArrayDoneS = [];
     if (game.global.challengeActive != "Daily" && getPageSetting('onlystackedvoids') == true) {
@@ -637,6 +637,9 @@ function autoMap() {
                     debug("Got perma-stuck on cell " + (game.global.lastClearedCell + 2) + " during scryer stance. Are your scryer settings correct? Entering map to farm to fix it.");
                 }
                 mapsClicked();
+            }
+            if (currentGoals.doAchievement) {
+                forceAbandonTrimps();
             }
         }
     } else if (game.global.preMapsActive) {
