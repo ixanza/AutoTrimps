@@ -6,6 +6,8 @@ function highdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==
 function lowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('lowdmg'))return loom;}
 function dhighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('dhighdmg'))return loom;}
 function dlowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('dlowdmg'))return loom;}
+function rhighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rshighdmg'))return loom;}
+function rlowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rslowdmg'))return loom;}
 
 function getHeirloomEff(name, type) {
   if (type == "staff") {
@@ -208,6 +210,14 @@ function dlowHeirloom() {
         equipHeirloom();
 	}
 }
+function rlowHeirloom() {
+    let loom = rlowdmgshield();
+    if (loom != undefined && game.global.ShieldEquipped.name != getPageSetting('Rslowdmg')) {
+        selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+        equipHeirloom();
+    }
+}
+
 function highHeirloom() {
 	if (highdmgshield() != undefined && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
         selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
@@ -219,6 +229,13 @@ function dhighHeirloom() {
         selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
         equipHeirloom();
 	}
+}
+function rhighHeirloom() {
+    let loom = rhighdmgshield();
+    if (loom != undefined && game.global.ShieldEquipped.name != getPageSetting('Rshighdmg')) {
+        selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+        equipHeirloom();
+    }
 }
 
 //Nu
@@ -240,7 +257,7 @@ function calcLoomNuInfinity(slot) {
 	var heirloom = getSelectedHeirloom();
 	if (Math.ceil(getModUpgradeCost(heirloom, slot, 1)) != "Infinity") {
 		return true;
-	} else { 
+	} else {
 		return false;
 	}
 }
@@ -248,7 +265,7 @@ function calcLoomNuInfinity(slot) {
 function calcAutoNuRatio(slot) {
 	nuloom();
 	var heirloom = getSelectedHeirloom();
-	
+
 	//Shield
 	if (heirloom.mods[slot][0] == "critChance")
 		return 100;
@@ -276,7 +293,7 @@ function calcAutoNuRatio(slot) {
 		return 50;
 	else if (heirloom.mods[slot][0] == "gammaBurst")
 		return 25;
-	
+
 	//Staff
 	else if (heirloom.mods[slot][0] == "FluffyExp")
 		return 100;
@@ -340,7 +357,7 @@ function nuRatio() {
     slot5r = (slot6 != 0 && calcLoomNuInfinity(5)) ? ((slot6 / total)*100) : 1;
 
     //Find Player ratio
-    if (getPageSetting('autonu') == true && getPageSetting('rationu') == 0 && getPageSetting('heirloomnu') != undefined) { 
+    if (getPageSetting('autonu') == true && getPageSetting('rationu') == 0 && getPageSetting('heirloomnu') != undefined) {
 	slot1spend = (getPageSetting('slot1nu') > 0 && calcLoomNuInfinity(0)) ? getPageSetting('slot1nu') : 0;
 	slot2spend = (getPageSetting('slot2nu') > 0 && calcLoomNuInfinity(1)) ? getPageSetting('slot2nu') : 0;
 	slot3spend = (getPageSetting('slot3nu') > 0 && calcLoomNuInfinity(2)) ? getPageSetting('slot3nu') : 0;
@@ -348,8 +365,8 @@ function nuRatio() {
 	slot5spend = (getPageSetting('slot5nu') > 0 && calcLoomNuInfinity(4)) ? getPageSetting('slot5nu') : 0;
 	slot5spend = (getPageSetting('slot6nu') > 0 && calcLoomNuInfinity(5)) ? getPageSetting('slot6nu') : 0;
 	}
-	
-    if (getPageSetting('autonu') == true && getPageSetting('rationu') == 1 && getPageSetting('heirloomnu') != undefined) { 
+
+    if (getPageSetting('autonu') == true && getPageSetting('rationu') == 1 && getPageSetting('heirloomnu') != undefined) {
 	slot1spend = (calcLoomNuInfinity(0)) ? calcAutoNuRatio(0) : 0;
 	slot2spend = (calcLoomNuInfinity(1)) ? calcAutoNuRatio(1) : 0;
 	slot3spend = (calcLoomNuInfinity(2)) ? calcAutoNuRatio(2) : 0;
@@ -477,7 +494,7 @@ function Rhstributestaffequip() {
 }
 
 function Rheirloomswap() {
-	
+
 	//Swapping Shields
 	if (getPageSetting('Rhsshield') != false) {
 		if (getPageSetting('Rhsz') > 0 && game.global.world < getPageSetting('Rhsz')) {

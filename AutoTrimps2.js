@@ -241,6 +241,7 @@ function mainLoop() {
         if (getPageSetting('spireshitbuy') == true && (isActiveSpireAT() || disActiveSpireAT())) buyshitspire();
 
         //Raiding
+        switchHeirloomsForRaiding();
         if ((getPageSetting('PraidHarder') == true && getPageSetting('Praidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('dPraidHarder') == true && getPageSetting('dPraidingzone').length > 0 && game.global.challengeActive == "Daily")) PraidHarder();
         else {
             if (getPageSetting('Praidingzone').length && game.global.challengeActive != "Daily") Praiding();

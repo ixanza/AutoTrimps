@@ -4099,18 +4099,32 @@ function hypofragmin(number) {
 function hypofrag() {
 	var cost = 0;
 	if (Rshouldhypofarm) {
-		
+
 	    var hypofarmzone = getPageSetting('Rhypofarmzone');
 	    var hypofarmlevel = getPageSetting('Rhypofarmlevel');
 
             var hypofarmlevelindex = hypofarmzone.indexOf(game.global.world);
             var hypolevelzones = hypofarmlevel[hypofarmlevelindex];
-		
+
 	    if (getPageSetting('Rhypofarmfrag') == true) {
 		cost = hypofragmin(hypolevelzones);
 	    }
 
 	    if (game.resources.fragments.owned >= cost) return true;
 	    else return false;
+	}
+}
+
+let doingRaids = false;
+const switchHeirloomsForRaiding = () => {
+	let state = getCurrentState();
+	let raidingMaps = state.raidingMaps;
+	if (raidingMaps !== doingRaids) {
+		if (raidingMaps === true) {
+			rhighHeirloom();
+		} else {
+			rlowHeirloom();
+		}
+		doingRaids = raidingMaps;
 	}
 }
