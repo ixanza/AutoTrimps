@@ -285,10 +285,10 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
                 lastCorruptToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Corruption").reduce((a,b) => b, undefined));
                 lastHealthyStrongCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
                 lastHealthyToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
-                lastCorruptStrongCell.corrupted = "none";
-                lastCorruptToughCell.corrupted = "none";
-                lastHealthyStrongCell.corrupted = "none";
-                lastHealthyToughCell.corrupted = "none";
+                lastCorruptStrongCell?.corrupted = "none";
+                lastCorruptToughCell?.corrupted = "none";
+                lastHealthyStrongCell?.corrupted = "none";
+                lastHealthyToughCell?.corrupted = "none";
             }
             let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
             if (enemies.length > 0) {
