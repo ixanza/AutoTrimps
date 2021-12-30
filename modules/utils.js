@@ -159,5 +159,9 @@ const possibleToGetTimedAchievement = (achievement) => {
 }
 
 const cloneObject = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
+    if (obj != null) {
+        return JSON.parse(JSON.stringify(obj));
+    } else {
+        return obj;
+    }
 }
