@@ -282,13 +282,16 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             // If fluffy removed special abilities, get last corrupt and healthy and remove special abilities
             if (where === "spire" && Fluffy.isRewardActive("eliminator")) {
                 lastCorruptStrongCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Corruption").reduce((a,b) => b, undefined));
-                lastCorruptToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Corruption").reduce((a,b) => b, undefined));
+                if (lastCorruptStrongCell) {
+                    lastCorruptStrongCell.corrupted = "none"
+                }
+                lastCorruptToughCell = lastCorruptStrongCell;
+
                 lastHealthyStrongCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
-                lastHealthyToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
-                lastCorruptStrongCell?.corrupted = "none";
-                lastCorruptToughCell?.corrupted = "none";
-                lastHealthyStrongCell?.corrupted = "none";
-                lastHealthyToughCell?.corrupted = "none";
+                if (lastHealthyStrongCell) {
+                    lastHealthyStrongCell.corrupted = "none"
+                }
+                lastHealthyToughCell = lastHealthyStrongCell;
             }
             let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
             if (enemies.length > 0) {
