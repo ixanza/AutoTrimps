@@ -279,6 +279,17 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             let lastHealthyStrongCell = game.global.gridArray.filter(cell => cell.corrupted === "healthyStrong").reduce((a,b) => b, undefined);
             let lastHealthyToughCell = game.global.gridArray.filter(cell => cell.corrupted === "healthyTough").reduce((a,b) => b, undefined);
             let lastCell = game.global.gridArray.reduce((a,b) => b, undefined);
+            // If fluffy removed special abilities, get last corrupt and healthy and remove special abilities
+            if (where === "spire" && Fluffy.isRewardActive("eliminator")) {
+                lastCorruptStrongCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Corruption").reduce((a,b) => b, undefined));
+                lastCorruptToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Corruption").reduce((a,b) => b, undefined));
+                lastHealthyStrongCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
+                lastHealthyToughCell = cloneObject(game.global.gridArray.filter(cell => cell.mutation === "Healthy").reduce((a,b) => b, undefined));
+                lastCorruptStrongCell.corrupted = "none";
+                lastCorruptToughCell.corrupted = "none";
+                lastHealthyStrongCell.corrupted = "none";
+                lastHealthyToughCell.corrupted = "none";
+            }
             let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
             if (what === "health") {
                 enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
