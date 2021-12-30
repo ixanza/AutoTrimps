@@ -291,18 +291,20 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
                 lastHealthyToughCell.corrupted = "none";
             }
             let enemies = [lastCorruptStrongCell, lastCorruptToughCell, lastHealthyStrongCell, lastHealthyToughCell, lastCell].filter(item => item !== undefined).map(item => JSON.parse(JSON.stringify(item)));
-            if (what === "health") {
-                enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
-                let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
-                value.stat = enemy.health;
-                value.level = enemy.level;
-            } else if (what === "attack") {
-                enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire", enemy.corrupted))
-                let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
-                value.stat = enemy.attack;
-                value.level = enemy.level;
+            if (enemies.length > 0) {
+                if (what === "health") {
+                    enemies.filter(enemy => enemy.health === -1).forEach(enemy => enemy.health = getEnemyMaxHealth(game.global.world, enemy.level, enemy.name, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", 1.0, false, false, true, undefined, where === "spire", enemy.corrupted))
+                    let enemy = enemies.reduce((acc, item) => item.health > acc.health ? item : acc);
+                    value.stat = enemy.health;
+                    value.level = enemy.level;
+                } else if (what === "attack") {
+                    enemies.filter(enemy => enemy.attack === -1).forEach(enemy => enemy.attack = getEnemyMaxAttack(game.global.world, enemy.level, enemy.name, 1.0, enemy.mutation === "Corruption" || enemy.mutation === "Healthy", false, false, where === "spire", enemy.corrupted))
+                    let enemy = enemies.reduce((acc, item) => item.attack > acc.attack ? item : acc);
+                    value.stat = enemy.attack;
+                    value.level = enemy.level;
+                }
+                strongestEnemyCache[where][what] = value;
             }
-            strongestEnemyCache[where][what] = value;
         }
     }
     return value;
