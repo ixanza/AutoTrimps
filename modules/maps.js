@@ -332,6 +332,10 @@ function autoMap() {
             restartVoidMap = true;
         }
     }
+    // Repeat for items
+    if (needPrestige && game.options.menu.repeatUntil.enabled !== 2) {
+        toggleSetting('repeatUntil');
+    }
 
     //Prestige
     if (shouldFarm && !needPrestige) {
