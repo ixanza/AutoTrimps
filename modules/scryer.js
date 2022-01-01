@@ -96,7 +96,7 @@ if (useoverkill && game.portal.Overkill.level > 0 && getPageSetting('UseScryerSt
     var ovklHDratio = getCurrentEnemy(1).maxHealth / ovkldmg;
     if (ovklHDratio < 2) {
         if (oktoswitch)
-            setFormation(4);
+            setFormation(scry);
             return;
         }
     }
