@@ -733,6 +733,15 @@ function autoMap() {
                 if (needPrestige && !enoughDamage) decrement.push('diff');
                 if (shouldFarm) decrement.push('size');
             }
+            // Perfect Sliders
+            let perfect = document.getElementById('advPerfectCheckbox');
+            if (perfect != null && perfect.offsetParent === null) {
+                swapNiceCheckbox(perfect);
+                checkPerfectChecked();
+                if (updateMapCost(true) > game.resources.fragments.owned) {
+                    swapNiceCheckbox(perfect);
+                }
+            }
             while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
                 lootAdvMapsRange.value -= 1;
             }
