@@ -236,15 +236,29 @@ let strongestEnemyCache = {
     spire: {}
 }
 
+const isNewMap = (where, what, map) => {
+    if (where !== "map" || map === undefined) {
+        return false;
+    }
+    let currentStrongestMapEnemy = strongestEnemyCache[where][what];
+    if (currentStrongestMapEnemy !== null) {
+        let enemyId = currentStrongestMapEnemy.id;
+        let mapId = map.id;
+        return enemyId !== mapId;
+    }
+    return true;
+}
+
 const guessStrongestEnemyStat = (where = "world", what = "health") => {
     let value = {
         stat: -1,
-        level: -1
+        level: -1,
+        id: "0"
     };
     let isVoid = where === "void";
     let isMap = where === "map" || isVoid;
     // Check if we can find on cache
-    if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what)) {
+    if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what) && !isNewMap(where, what, getCurrentMapObject())) {
         value = strongestEnemyCache[where][what];
     } else {
         // Nothing on cache
@@ -253,22 +267,25 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
             let mapSize;
             let enemyName;
             let difficulty;
+            let mapLevel = game.global.world;
             if (isVoid) {
                 mapSize = 100;
                 enemyName = "Cthulimp";
-                difficulty = game.global.world <= 59 ? 2.5 : 4.5;
+                difficulty = mapLevel <= 59 ? 2.5 : 4.5;
             } else {
                 mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
                 enemyName = "Snimp";
                 difficulty = 0.75;
+                mapLevel = getCurrentMapObject().level;
+                value.id = getCurrentMapObject().id;
             }
             if (game.global.challengeActive === "Mapocalypse") {
                 difficulty += 3;
             }
             if (what === "attack") {
-                value.stat = getEnemyMaxAttack(game.global.world, mapSize, enemyName, difficulty, true, isMap, isVoid);
+                value.stat = getEnemyMaxAttack(mapLevel, mapSize, enemyName, difficulty, true, isMap, isVoid);
             } else if (what === "health") {
-                value.stat = getEnemyMaxHealth(game.global.world, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
+                value.stat = getEnemyMaxHealth(mapLevel, mapSize, enemyName, true, difficulty, isMap, isVoid, true);
             }
             value.level = mapSize;
             strongestEnemyCache[where][what] = value;

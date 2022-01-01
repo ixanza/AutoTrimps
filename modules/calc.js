@@ -334,12 +334,13 @@ function calcSpire(cell, name, what) {
 function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
     // Find enemy
     let number;
+    let currentGoals = getCurrentGoals();
+    let isVoid = currentGoals.doVoids;
+    let currentState = getCurrentState();
+    let isSpire = currentState.doingSpire;
+    let isRaiding = currentState.raidingMaps;
     if (!enemy) {
-        let currentGoals = getCurrentGoals();
-        let isVoid = currentGoals.doVoids;
-        let currentState = getCurrentState();
-        let isSpire = currentState.doingSpire;
-        let strongestEnemy = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "attack");
+        let strongestEnemy = guessStrongestEnemyStat(isRaiding ? "map" : isVoid ? "void" : isSpire ? "spire" : "world", "attack");
         number = strongestEnemy.stat;
         // Dynamic stuff
         if (game.global.challengeActive == "Mayhem") {
@@ -389,13 +390,13 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
             if (typeof game.global.dailyChallenge.badStrength !== 'undefined') {
                 number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
             }
-            if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && needToVoid) {
+            if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (isVoid || isRaiding)) {
                 number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
             }
             if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined') {
                 number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
             }
-            if (typeof game.global.dailyChallenge.empower !== 'undefined' && !needToVoid) {
+            if (typeof game.global.dailyChallenge.empower !== 'undefined' && !(isVoid || isRaiding)) {
                 number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
             }
         }
@@ -414,7 +415,7 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
     if (getEmpowerment() == "Ice") {
         number *= game.empowerments.Ice.getCombatModifier();
     }
-    if (game.global.world >= getObsidianStart() && !needToVoid) number = Infinity;
+    if (game.global.world >= getObsidianStart() && !(isVoid || isRaiding)) number = Infinity;
     if (!disableFlucts) {
         if (minFluct > 1) minFluct = 1;
         if (maxFluct == -1) maxFluct = fluctuation;
@@ -430,8 +431,9 @@ function calcEnemyHealth() {
     let isVoid = currentGoals.doVoids;
     let currentState = getCurrentState();
     let isSpire = currentState.doingSpire;
+    let isRaiding = currentState.raidingMaps;
 
-    let strongestEnemy = guessStrongestEnemyStat(isVoid ? "void" : isSpire ? "spire" : "world", "health");
+    let strongestEnemy = guessStrongestEnemyStat(isRaiding ? "map" : isVoid ? "void" : isSpire ? "spire" : "world", "health");
     let enemyHealth = strongestEnemy.stat;
     // Dynamic Stuff
     if (game.global.challengeActive == "Daily") {
@@ -447,11 +449,11 @@ function calcEnemyHealth() {
         if (game.challenges.Duel.enemyStacks < 20) enemyHealth *= game.challenges.Duel.healthMult;
     } else if (game.global.challengeActive == "Nurture") {
         enemyHealth *= game.buildings.Laboratory.getEnemyMult();
-    } else if (game.global.challengeActive == "Storm" && !isVoid) {
+    } else if (game.global.challengeActive == "Storm" && !(isVoid || isRaiding)) {
         enemyHealth *= game.challenges.Storm.getHealthMult();
     }
     let cellNumber = enemyHealth.level;
-    if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !isVoid) || game.global.challengeActive == "Pandemonium")) {
+    if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !(isVoid || isRaiding)) || game.global.challengeActive == "Pandemonium")) {
         if (cellNumber == 99 && !isVoid) enemyHealth *= game.challenges[game.global.challengeActive].getBossMult();
         else enemyHealth *= game.challenges.Pandemonium.getPandMult();
     }
