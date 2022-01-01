@@ -258,7 +258,8 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
     let isVoid = where === "void";
     let isMap = where === "map" || isVoid;
     // Check if we can find on cache
-    if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what) && !isNewMap(where, what, getCurrentMapObject())) {
+    let map = getCurrentMapObject();
+    if (Object.prototype.hasOwnProperty.call(strongestEnemyCache[where], what) && !isNewMap(where, what, map)) {
         value = strongestEnemyCache[where][what];
     } else {
         // Nothing on cache
@@ -273,11 +274,11 @@ const guessStrongestEnemyStat = (where = "world", what = "health") => {
                 enemyName = "Cthulimp";
                 difficulty = mapLevel <= 59 ? 2.5 : 4.5;
             } else {
-                mapSize = game.talents.mapLoot2.purchased ? 20 : 25;
-                enemyName = "Snimp";
-                difficulty = 0.75;
-                mapLevel = getCurrentMapObject().level;
-                value.id = getCurrentMapObject().id;
+                mapSize = map.size;
+                enemyName = game.global.mapGridArray[game.global.mapGridArray.length - 1].name;
+                difficulty = map.difficulty;
+                mapLevel = map.level;
+                value.id = map.id;
             }
             if (game.global.challengeActive === "Mapocalypse") {
                 difficulty += 3;
