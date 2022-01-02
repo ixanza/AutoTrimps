@@ -735,7 +735,7 @@ function autoMap() {
             }
             // Perfect Sliders
             let perfect = document.getElementById('advPerfectCheckbox');
-            if (perfect != null && perfect.offsetParent === null) {
+            if (perfect != null && perfect.offsetParent !== null) {
                 swapNiceCheckbox(perfect);
                 checkPerfectChecked();
                 if (updateMapCost(true) > game.resources.fragments.owned) {
