@@ -402,7 +402,6 @@ function autoMap() {
             siphlvl = getZoneToFarm().zone;
         } else if (getPageSetting("DynamicSiphonologyMethod") === 2) {
             let zone = game.global.world;
-            let reducer = game.talents.mapLoot.purchased;
 
             let overkill = (getPerkLevel("Overkill") > 0 ? 1 : 0);
             overkill += Fluffy.isRewardActive("overkiller");
@@ -442,10 +441,22 @@ function autoMap() {
                     }
                 }
 
-                let loot = (100 * (i < zone ? 0.8 ** (zone - reducer - i) : 1.1 ** (i - zone))) * killCount;
-                if (bestLoot < loot) {
+                let mapLoot = 100;
+                if (i > zone) {
+                    mapLoot *= Math.pow(1.1, (i - zone))
+                } else {
+                    let compare = zone;
+                    if (game.talents.mapLoot.purchased) {
+                        compare--;
+                    }
+                    if (i < compare) {
+                        mapLoot *= Math.pow(0.8, (compare - i))
+                    }
+                }
+
+                if (bestLoot < mapLoot) {
                     bestLvl = i;
-                    bestLoot = loot;
+                    bestLoot = mapLoot;
                 }
             }
             siphlvl = bestLvl;
@@ -740,6 +751,7 @@ function autoMap() {
                 checkPerfectChecked();
                 if (updateMapCost(true) > game.resources.fragments.owned) {
                     swapNiceCheckbox(perfect);
+                    checkPerfectChecked();
                 }
             }
             while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
