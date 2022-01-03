@@ -795,6 +795,7 @@ function initializeAllSettings() {
     createSetting('Rhypofarmlevel', 'HF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world, 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Challenges');
     createSetting('Rhypofarmfrag', 'HF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for HF. ', 'boolean', 'false', null, 'Challenges');
     createSetting('Rhypocastle', 'Frozen Castle', 'What zone you wish you run frozen castle on to complete the challenge. Will run castle after voids so make sure thats set up right. ', 'value', '-1', null, 'Challenges');
+    createSetting('Rhypovoids', 'After Voids', 'Only run Frozen castle after all voids have been completed. ', 'boolean', 'true', null, 'Challenges');
     createSetting('Rhypostorage', 'Storage', 'Turn this on to disable buying sheds unless you need more wood for your HF: Bonfire target price. Essentially this means you wont get accidently bonfires but you may lose out on smithies and shield prestiges. ', 'boolean', 'false', null, 'Challenges');
 
 
@@ -1939,6 +1940,7 @@ function updateCustomButtons() {
     radonon && getPageSetting('Rhypoon') == true ? turnOn("Rhypofarmlevel") : turnOff("Rhypofarmlevel");
     radonon && getPageSetting('Rhypoon') == true ? turnOn("Rhypofarmfrag") : turnOff("Rhypofarmfrag");
     radonon && getPageSetting('Rhypoon') == true ? turnOn("Rhypocastle") : turnOff("Rhypocastle");
+    radonon && getPageSetting('Rhypoon') == true ? turnOn("Rhypovoids") : turnOff("Rhypovoids");
     radonon && getPageSetting('Rhypoon') == true ? turnOn("Rhypostorage") : turnOff("Rhypostorage");
 
     //Hide Challenges
@@ -2019,6 +2021,7 @@ function updateCustomButtons() {
             turnOff("Rhypofarmlevel");
             turnOff("Rhypofarmfrag");
             turnOff("Rhypocastle");
+            turnOff("Rhypovoids");
             turnOff("Rhypostorage");
     }
 

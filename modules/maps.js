@@ -1726,9 +1726,15 @@ function RautoMap() {
                     selectedMap = theMap.id;
                     break;
                 }
-                if (game.global.challengeActive == "Hypothermia" && getPageSetting('Rhypocastle') > 0 && theMap.name == 'Frozen Castle' && game.global.world >= getPageSetting('Rhypocastle') && game.global.totalVoidMaps <= 0) {
+                if (game.global.challengeActive == "Hypothermia" && getPageSetting('Rhypocastle') > 0 && theMap.name == 'Frozen Castle' && game.global.world >= getPageSetting('Rhypocastle')) {
+		    if (getPageSetting('Rhypovoids') == true && game.global.totalVoidMaps <= 0) {
                     selectedMap = theMap.id;
                     break;
+		    }
+                    if (getPageSetting('Rhypovoids') == false) {
+                    selectedMap = theMap.id;
+                    break;
+		    }
                 }
 		if (game.global.challengeActive != "Hypothermia" && getPageSetting('Rfrozencastle') != -1 && theMap.name == 'Frozen Castle' && game.global.world >= getPageSetting('Rfrozencastle')[0] && ((game.global.lastClearedCell + 1) >= getPageSetting('Rfrozencastle')[1])) {
                     selectedMap = theMap.id;
