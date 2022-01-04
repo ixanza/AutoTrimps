@@ -160,7 +160,7 @@ const getCurrentState = () => {
         doingVoids: doingMaps && currentMap?.location === "Void",
         raidingMaps: raidingMaps,
         raidingBW: raidingMaps && currentMap?.location === "Bionic",
-        raidingPrestige: raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1]]?.prestige,
+        raidingPrestige: raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1].special]?.prestige,
         doingSpire: game.global.spireActive && checkIfSpireWorld()
     }
 }
