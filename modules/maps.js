@@ -462,6 +462,7 @@ function autoMap() {
                         mapLoot *= Math.pow(0.8, (compare - i))
                     }
                 }
+                mapLoot *= killCount;
 
                 if (bestLoot < mapLoot) {
                     bestLvl = i;
