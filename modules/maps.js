@@ -424,13 +424,12 @@ function autoMap() {
             let bestLoot = 0;
             for (let i = siphlvl; i < maxlvl; i++) {
                 let enemyHealth = getEnemyMaxHealth(i, getMapMinMax("size", 0)[0], "Snimp", true, getMapMinMax("difficulty", 0)[0], true, false, true);
-
-                let ourDmgPerHit = ourDmg;
                 let killCount = 0;
                 let hitCount = 1000;
                 // Assume we hit more than once
                 for (let currentHit = 0 ; currentHit < hitCount ; currentHit++) {
                     let currentEnemyHealth = (1 - killCount % 1) * enemyHealth
+                    let ourDmgPerHit = ourDmg;
                     for (let j = 0 ; j <= overkill ; j++) {
                         let factor = ourDmgPerHit / currentEnemyHealth;
                         if (factor > 1) {
