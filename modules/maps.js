@@ -430,13 +430,19 @@ function autoMap() {
                 let hitCount = 1000;
                 // Assume we hit more than once
                 for (let currentHit = 0 ; currentHit < hitCount ; currentHit++) {
+                    let currentEnemyHealth = (1 - killCount % 1) * enemyHealth
                     for (let j = 0 ; j <= overkill ; j++) {
-                        let factor = ourDmgPerHit / enemyHealth;
+                        let factor = ourDmgPerHit / currentEnemyHealth;
                         if (factor > 1) {
                             // We can do dmg to next enemy
-                            killCount++;
-                            ourDmgPerHit -= enemyHealth;
+                            if (killCount % 1 === 0) {
+                                killCount++;
+                            } else {
+                                killCount = Math.ceil(killCount);
+                            }
+                            ourDmgPerHit -= currentEnemyHealth;
                             ourDmgPerHit *= (getPerkLevel("Overkill") * 0.005);
+                            currentEnemyHealth = enemyHealth;
                         } else {
                             // We can't kill next enemy anymore
                             killCount += factor;
