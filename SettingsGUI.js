@@ -611,6 +611,8 @@ function initializeAllSettings() {
     createSetting('PreSpireNurseries', 'Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.', 'value', -1, null, 'Spire');
     createSetting('spireshitbuy', 'Buy Gear in Spire', 'Will buy Weapons and Armor in Spire regardless of your H:D ratio. Respects your max gear level and ignore spires setting. ', 'boolean', false, null, 'Spire');
     createSetting('SkipSpires', 'Skip Spires', 'Will disregard your H:D ratio after Farm Before Spire is done (if set). Useful to die in spires if farming takes too long', 'boolean', false, null, 'Spire');
+    createSetting('Sshighdmg', 'Spire Shield: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use during raiding. ', 'textValue', 'undefined', null, 'Raiding');
+    createSetting('Sslowdmg', 'Spire Shield: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use after spire. ', 'textValue', 'undefined', null, 'Raiding');
 
 
     //Raiding
@@ -1776,6 +1778,8 @@ function updateCustomButtons() {
     !radonon ? turnOn("PreSpireNurseries"): turnOff("PreSpireNurseries");
     !radonon ? turnOn("spireshitbuy"): turnOff("spireshitbuy");
     !radonon ? turnOn("SkipSpires"): turnOff("SkipSpires");
+    !radonon ? turnOn("Sshighdmg") : turnOff("Sshighdmg");
+    !radonon ? turnOn("Sslowdmg") : turnOff("Sshighdmg");
 
 
 
@@ -1793,6 +1797,8 @@ function updateCustomButtons() {
     !radonon && getPageSetting('BWraid')==true ? turnOn("bwraidcell"): turnOff("bwraidcell");
     !radonon && getPageSetting('BWraid')==true ? turnOn("BWraidingz"): turnOff("BWraidingz");
     !radonon && getPageSetting('BWraid')==true ? turnOn("BWraidingmax"): turnOff("BWraidingmax");
+    !radonon ? turnOn("Rshighdmg") : turnOff("Rshighdmg");
+    !radonon ? turnOn("Rslowdmg") : turnOff("Rshighdmg");
 
 
     //RRaiding

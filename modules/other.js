@@ -4115,7 +4115,21 @@ function hypofrag() {
 	}
 }
 
+let doingSpire = false;
 let doingRaids = false;
+
+const switchHeirloomsForSpire = () => {
+	let state = getCurrentState();
+	let spire = state.doingSpire;
+	if (spire !== doingSpire && getPageSetting("IgnoreSpiresUntil") <= game.global.world) {
+		if (spire === true) {
+			shighHeirloom();
+		} else {
+			slowHeirloom();
+		}
+		doingSpire = spire;
+	}
+}
 const switchHeirloomsForRaiding = () => {
 	let state = getCurrentState();
 	let raidingMaps = state.raidingMaps;
