@@ -4143,3 +4143,10 @@ const switchHeirloomsForRaiding = () => {
 		doingRaids = raidingMaps;
 	}
 }
+const switchHeirloomsAfterVoid = () => {
+	let currentGoals = getCurrentGoals();
+	let doVoids = currentGoals.doVoids;
+	if (doVoids) {
+		wchighHeirloom();
+	}
+}

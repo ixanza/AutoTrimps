@@ -10,6 +10,8 @@ function rhighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name=
 function rlowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rslowdmg'))return loom;}
 function shighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Sshighdmg'))return loom;}
 function slowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Sslowdmg'))return loom;}
+function wchighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('WCshighdmg'))return loom;}
+function wclowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('WCslowdmg'))return loom;}
 
 function getHeirloomEff(name, type) {
   if (type == "staff") {
@@ -226,6 +228,13 @@ function slowHeirloom() {
         equipHeirloom();
     }
 }
+function wclowHeirloom() {
+    let loom = wclowdmgshield();
+    if (loom != undefined && game.global.ShieldEquipped.name != getPageSetting('WCslowdmg')) {
+        selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+        equipHeirloom();
+    }
+}
 
 function highHeirloom() {
 	if (highdmgshield() != undefined && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
@@ -250,6 +259,14 @@ function rhighHeirloom() {
 function shighHeirloom() {
     let loom = shighdmgshield();
     if (loom != undefined && game.global.ShieldEquipped.name != getPageSetting('Sshighdmg')) {
+        selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+        equipHeirloom();
+    }
+}
+
+function wchighHeirloom() {
+    let loom = wchighdmgshield();
+    if (loom != undefined && game.global.ShieldEquipped.name != getPageSetting('WCshighdmg')) {
         selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
         equipHeirloom();
     }

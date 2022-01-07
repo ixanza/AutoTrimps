@@ -880,6 +880,8 @@ function initializeAllSettings() {
     //Heirloom
     createSetting('highdmg', 'WS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally. ', 'textValue', 'undefined', null, 'Heirlooms');
     createSetting('lowdmg', 'WS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking. ', 'textValue', 'undefined', null, 'Heirlooms');
+    createSetting('WCshighdmg', 'Voids: High Damage', '<b>DAMAGE SHIELD</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use after started running voids for first time. ', 'textValue', 'undefined', null, 'Heirlooms');
+    createSetting('WCslowdmg', 'WMDC Shield', '<b>WMDC SHIELD</b><br><br>Enter the name of your WMDC heirloom. This is the heirloom that you will use at the beginning of every portal ', 'textValue', 'undefined', null, 'Heirlooms');
 
     //Heirloom Swapping
     document.getElementById('lowdmg').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -2141,6 +2143,8 @@ function updateCustomButtons() {
 
 	//Heirloom Swapping
 	radonon ? turnOn('Rhs') : turnOff('Rhs');
+    !radonon ? turnOn("WCshighdmg"): turnOff("WCshighdmg");
+    !radonon ? turnOn("WCslowdmg"): turnOff("WCslowdmg");
 	var hson = (getPageSetting('Rhs') == true);
 
 	//Shields

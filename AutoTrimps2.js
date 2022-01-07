@@ -149,23 +149,26 @@ function mainLoop() {
         if (getPageSetting('AutoEggs'))
             easterEggClicked();
         setTitle();
-        mapCache = [];
-        strongestEnemyCache.map = {};
-        strongestEnemyCache.world = {};
-        strongestEnemyCache.void = {};
-        strongestEnemyCache.spire = {};
-    }
-    if (aWholeNewPortal) {
-        disableDynamicTimer();
-        strongestEnemyCache.map = {};
-        strongestEnemyCache.world = {};
-        strongestEnemyCache.void = {};
-        strongestEnemyCache.spire = {};
+
     }
 
     //Logic for Universe 1
     if (game.global.universe == 1){
-
+        if (aWholeNewWorld) {
+            mapCache = [];
+            strongestEnemyCache.map = {};
+            strongestEnemyCache.world = {};
+            strongestEnemyCache.void = {};
+            strongestEnemyCache.spire = {};
+        }
+        if (aWholeNewPortal) {
+            disableDynamicTimer();
+            strongestEnemyCache.map = {};
+            strongestEnemyCache.world = {};
+            strongestEnemyCache.void = {};
+            strongestEnemyCache.spire = {};
+            wclowHeirloom();
+        }
         //Offline Progress
         if (!usingRealTimeOffline) {
             setScienceNeeded();
@@ -186,6 +189,7 @@ function mainLoop() {
         if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
         if (getPageSetting('autoenlight') && game.global.world > 229 && game.global.uberNature == false) autoEnlight();
         if (getPageSetting('BuyUpgradesNew') != 0) buyUpgrades();
+        switchHeirloomsAfterVoid();
 
         //Buildings
         if (getPageSetting('BuyBuildingsNew') === 0 && getPageSetting('hidebuildings') == true) buyBuildings();
