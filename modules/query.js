@@ -192,6 +192,7 @@ const doVoidGoal = () => {
     let voidMapLevelSettingCell = getDoVoidCell();
     let voidMapLevelSetting = getDoVoidZone();
     let voidMapLevelPlus = getDoVoidExtraZone();
+    let voidMapSquareChallenge = !(getPageSetting('novmsc2') == true && game.global.runningChallengeSquared);
     return (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
         (
             (game.global.world == voidMapLevelSetting) ||
@@ -219,7 +220,7 @@ const doVoidGoal = () => {
                     )
                 )
             )
-        )
+        ) && voidMapSquareChallenge
     );
 }
 
