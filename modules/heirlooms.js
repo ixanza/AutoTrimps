@@ -86,9 +86,9 @@ const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
         if (loomMod != null) {
             let steps;
             if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
-                steps = loomMod.steps[rarity];
+                steps = loomMod.steps;
             } else {
-                steps = game.heirlooms.defaultSteps[rarity];
+                steps = game.heirlooms.defaultSteps;
             }
             if (Array.isArray(steps) && steps.length > rarity) {
                 return steps[rarity] !== -1;
