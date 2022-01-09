@@ -15,90 +15,64 @@ function wclowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name=
 
 function getHeirloomEff(name, type) {
   if (type == "staff") {
-    if (getPageSetting('slot1modst') == name) return 5;
-    else if (getPageSetting('slot2modst') == name) return 5;
+    if (getPageSetting('slot1modst') == name) return 7;
+    else if (getPageSetting('slot2modst') == name) return 6;
     else if (getPageSetting('slot3modst') == name) return 5;
-    else if (getPageSetting('slot4modst') == name) return 5;
-    else if (getPageSetting('slot5modst') == name) return 5;
-    else if (getPageSetting('slot6modst') == name) return 5;
-    else if (getPageSetting('slot7modst') == name) return 5;
+    else if (getPageSetting('slot4modst') == name) return 4;
+    else if (getPageSetting('slot5modst') == name) return 3;
+    else if (getPageSetting('slot6modst') == name) return 2;
+    else if (getPageSetting('slot7modst') == name) return 1;
 	else return 0;
   }
   else if (type == "shield") {
-    if (getPageSetting('slot1modsh') == name) return 5;
-    else if (getPageSetting('slot2modsh') == name) return 5;
+    if (getPageSetting('slot1modsh') == name) return 7;
+    else if (getPageSetting('slot2modsh') == name) return 6;
     else if (getPageSetting('slot3modsh') == name) return 5;
-    else if (getPageSetting('slot4modsh') == name) return 5;
-    else if (getPageSetting('slot5modsh') == name) return 5;
-    else if (getPageSetting('slot6modsh') == name) return 5;
-    else if (getPageSetting('slot7modsh') == name) return 5;
+    else if (getPageSetting('slot4modsh') == name) return 4;
+    else if (getPageSetting('slot5modsh') == name) return 3;
+    else if (getPageSetting('slot6modsh') == name) return 2;
+    else if (getPageSetting('slot7modsh') == name) return 1;
 	else return 0;
   }
   else if (type == "core") {
-    if (getPageSetting('slot1modcr') == name) return 5;
-    else if (getPageSetting('slot2modcr') == name) return 5;
-    else if (getPageSetting('slot3modcr') == name) return 5;
-    else if (getPageSetting('slot4modcr') == name) return 5;
+    if (getPageSetting('slot1modcr') == name) return 4;
+    else if (getPageSetting('slot2modcr') == name) return 3;
+    else if (getPageSetting('slot3modcr') == name) return 2;
+    else if (getPageSetting('slot4modcr') == name) return 1;
 	else return 0;
   }
 }
 
 function evaluateHeirloomMods2(loom, location) {
+    let eff = [];
 
-  var index = loom;
-  var eff = 0;
-  var name;
-  var type;
-  var rarity;
-  var raretokeep = getPageSetting('raretokeep');
-	if (raretokeep == 'Any' || raretokeep == 'Common') raretokeep = 0;
-	else if (raretokeep == 'Uncommon') raretokeep = 1;
-	else if (raretokeep == 'Rare') raretokeep = 2;
-	else if (raretokeep == 'Epic') raretokeep = 3;
-	else if (raretokeep == 'Legendary') raretokeep = 4;
-	else if (raretokeep == 'Magnificent') raretokeep = 5;
-	else if (raretokeep == 'Ethereal') raretokeep = 6;
-	else if (raretokeep == 'Magmatic') raretokeep = 7;
-	else if (raretokeep == 'Plagued') raretokeep = 8;
-	else if (raretokeep == 'Radiating') raretokeep = 9;
-        else if (raretokeep == 'Hazardous') raretokeep = 10;
-	else if (raretokeep == 'Enigmatic') raretokeep = 11;
+    if (location.includes('Equipped')) {
+        loom = game.global[location];
+    } else {
+        loom = game.global[location][loom];
+    }
 
-  if (location.includes('Equipped'))
-    loom = game.global[location];
-  else
-    loom = game.global[location][loom];
-
-  for (var m in loom.mods) {
-    name = loom.mods[m][0];
-    type = loom.type;
-    rarity = loom.rarity;
-    if (type == "Shield") {
-      eff += getHeirloomEff(name, "shield");
-    }
-    if (type == "Staff") {
-      eff += getHeirloomEff(name, "staff");
-    }
-    if (type == "Core") {
-      eff += getHeirloomEff(name, "core");
-    }
-    if (name == "empty" && type == "Shield") {
-        eff *= 4;
-    }
-    if (name == "empty" && type == "Staff") {
-        eff *= 4;
-    }
-    if (name == "empty" && type == "Core") {
-        eff *= 4;
-    }
+    let raretokeep = Math.max(0, game.heirlooms.rarityNames.indexOf(getPageSetting('raretokeep')));
+    let rarity = loom.rarity;
     if (rarity >= raretokeep) {
-       eff *= 100;
+        let type = loom.type;
+        for (let mod of loom.mods) {
+            let name = mod[0];
+            if (name === "empty") {
+                let maxPossibleMod = type === "core" ? 4 : 7;
+                while (maxPossibleMod > 0) {
+                    if (!eff.includes(maxPossibleMod)) {
+                        break;
+                    }
+                    maxPossibleMod--;
+                }
+                eff.push(maxPossibleMod);
+            } else {
+                eff.push(getHeirloomEff(name, type.toLowerCase()));
+            }
+        }
     }
-    else if (rarity < raretokeep) {
-       eff /= 100;
-    }
-  }
-  return eff;
+    return eff.reduce((a, b) => a + b, 0);
 }
 
 var worth3 = {'Shield': [], 'Staff': [], 'Core': []};
