@@ -43,6 +43,22 @@ function getHeirloomEff(name, type) {
   }
 }
 
+const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
+    let suffix = type === "Staff" ? "st" : type === "Shield" ? "sh" : "cr";
+    let limit = type === "Core" ? 8 : 5;
+    let desiredMod = getPageSetting(`slot${(limit - maxPossibleMod)}mod${suffix}`);
+    if (desiredMod !== "empty") {
+        let loomMod = game.heirlooms[type][desiredMod]
+        if (loomMod !== null) {
+            let steps = loomMod.steps;
+            if (steps.length > rarity) {
+                return steps[rarity] !== -1;
+            }
+        }
+    }
+    return true;
+}
+
 function evaluateHeirloomMods2(loom, location) {
     let eff = [];
 
@@ -61,7 +77,7 @@ function evaluateHeirloomMods2(loom, location) {
             if (name === "empty") {
                 let maxPossibleMod = type === "core" ? 4 : 7;
                 while (maxPossibleMod > 0) {
-                    if (!eff.includes(maxPossibleMod)) {
+                    if (!eff.includes(maxPossibleMod) && possibleToGetMaxMod(maxPossibleMod, rarity, type)) {
                         break;
                     }
                     maxPossibleMod--;
