@@ -47,7 +47,7 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
     let name = mod[0];
     let coeff = 0.5;
     if (name !== "empty") {
-        let loomMod = game.heirlooms[type][desiredMod];
+        let loomMod = game.heirlooms[type][name];
         if (loomMod !== null) {
             let steps = loomMod.steps;
             let min = steps[0];
