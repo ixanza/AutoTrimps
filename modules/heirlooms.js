@@ -51,7 +51,7 @@ const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
         let loomMod = game.heirlooms[type][desiredMod]
         if (loomMod !== null) {
             let steps = loomMod.steps;
-            if (steps.length > rarity) {
+            if (Array.isArray(steps) && steps.length > rarity) {
                 return steps[rarity] !== -1;
             }
         }
