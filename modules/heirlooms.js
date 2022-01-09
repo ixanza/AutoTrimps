@@ -74,7 +74,7 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
 
 const getDesiredModIndex = (heirloom, desiredMod) => {
     let keys = Object.keys(heirloom).map(key => key.toUpperCase());
-    return keys.indexOf(desiredMod.toUpperCase());
+    return Object.keys(heirloom)[keys.indexOf(desiredMod.toUpperCase())];
 }
 
 const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
