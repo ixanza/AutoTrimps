@@ -53,8 +53,8 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
     let name = mod[0];
     let coeff = 0.5;
     if (name !== "empty") {
-        let loomMod = game.heirlooms[type][name];
-        if (loomMod !== null) {
+        let loomMod = game.heirlooms[type][getDesiredModIndex(game.heirlooms[type], desiredMod)];
+        if (loomMod != null) {
             let steps;
             if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
                 steps = loomMod.steps[rarity];
@@ -72,13 +72,18 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
     return modVal * (1 + coeff);
 }
 
+const getDesiredModIndex = (heirloom, desiredMod) => {
+    let keys = Object.keys(heirloom).map(key => key.toLowerCase());
+    return keys.indexOf(desiredMod.toUpperCase());
+}
+
 const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
     let suffix = type === "Staff" ? "st" : type === "Shield" ? "sh" : "cr";
     let limit = type === "Core" ? 5 : 8;
     let desiredMod = getPageSetting(`slot${(limit - maxPossibleMod)}mod${suffix}`);
     if (desiredMod !== "empty") {
-        let loomMod = game.heirlooms[type][desiredMod]
-        if (loomMod !== null) {
+        let loomMod = game.heirlooms[type][getDesiredModIndex(game.heirlooms[type], desiredMod)];
+        if (loomMod != null) {
             let steps;
             if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
                 steps = loomMod.steps[rarity];
