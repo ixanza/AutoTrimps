@@ -43,6 +43,12 @@ function getHeirloomEff(name, type) {
   }
 }
 
+const rarityModScale = {};
+
+const evaluateRarityScale = (name) => {
+
+}
+
 const evaluateModValue = (modVal, type, rarity, mod) => {
     let name = mod[0];
     let coeff = 0.5;
