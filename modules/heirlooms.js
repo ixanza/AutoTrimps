@@ -55,7 +55,12 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
     if (name !== "empty") {
         let loomMod = game.heirlooms[type][name];
         if (loomMod !== null) {
-            let steps = loomMod.steps[rarity];
+            let steps;
+            if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
+                steps = loomMod.steps[rarity];
+            } else {
+                steps = game.heirlooms.defaultSteps[rarity];
+            }
             let min = steps[0];
             let max = steps[1];
             let step = steps[2];
@@ -74,7 +79,12 @@ const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
     if (desiredMod !== "empty") {
         let loomMod = game.heirlooms[type][desiredMod]
         if (loomMod !== null) {
-            let steps = loomMod.steps;
+            let steps;
+            if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
+                steps = loomMod.steps[rarity];
+            } else {
+                steps = game.heirlooms.defaultSteps[rarity];
+            }
             if (Array.isArray(steps) && steps.length > rarity) {
                 return steps[rarity] !== -1;
             }
