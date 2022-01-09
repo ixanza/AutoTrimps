@@ -118,7 +118,7 @@ function evaluateHeirloomMods2(loom, location) {
     return eff.reduce((a, b) => a + b, 0);
 }
 
-const sortHeirlooms = (a, b) => {
+const sortHeirloomsEfficiency = (a, b) => {
     if (b.rarity !== a.rarity) {
         return b.rarity - a.rarity;
     }
@@ -133,9 +133,9 @@ function worthOfHeirlooms3(){
         var data = {'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods2(index, 'heirloomsExtra')};
         worth3[theLoom.type].push(data);
     }
-    worth3['Shield'].sort(sortHeirlooms);
-    worth3['Staff'].sort(sortHeirlooms);
-    worth3['Core'].sort(sortHeirlooms);
+    worth3['Shield'].sort(sortHeirloomsEfficiency);
+    worth3['Staff'].sort(sortHeirloomsEfficiency);
+    worth3['Core'].sort(sortHeirloomsEfficiency);
 }
 
 function autoheirlooms3() {
