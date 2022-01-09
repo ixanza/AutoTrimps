@@ -74,7 +74,7 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
 
 const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
     let suffix = type === "Staff" ? "st" : type === "Shield" ? "sh" : "cr";
-    let limit = type === "Core" ? 8 : 5;
+    let limit = type === "Core" ? 5 : 8;
     let desiredMod = getPageSetting(`slot${(limit - maxPossibleMod)}mod${suffix}`);
     if (desiredMod !== "empty") {
         let loomMod = game.heirlooms[type][desiredMod]
