@@ -43,6 +43,24 @@ function getHeirloomEff(name, type) {
   }
 }
 
+const evaluateModValue = (modVal, type, rarity, mod) => {
+    let name = mod[0];
+    let coeff = 0.5;
+    if (name !== "empty") {
+        let loomMod = game.heirlooms[type][desiredMod];
+        if (loomMod !== null) {
+            let steps = loomMod.steps;
+            let min = steps[0];
+            let max = steps[1];
+            let step = steps[2];
+            let range = (max - min) / step;
+            let modVal = mod[2];
+            coeff = (range - modVal) / range;
+        }
+    }
+    return modVal * (1 + coeff);
+}
+
 const possibleToGetMaxMod = (maxPossibleMod, rarity, type) => {
     let suffix = type === "Staff" ? "st" : type === "Shield" ? "sh" : "cr";
     let limit = type === "Core" ? 8 : 5;
@@ -74,6 +92,7 @@ function evaluateHeirloomMods2(loom, location) {
         let type = loom.type;
         for (let mod of loom.mods) {
             let name = mod[0];
+            let modVal = 0;
             if (name === "empty") {
                 let maxPossibleMod = type === "core" ? 4 : 7;
                 while (maxPossibleMod > 0) {
@@ -82,10 +101,12 @@ function evaluateHeirloomMods2(loom, location) {
                     }
                     maxPossibleMod--;
                 }
-                eff.push(maxPossibleMod);
+                modVal = maxPossibleMod;
             } else {
-                eff.push(getHeirloomEff(name, type.toLowerCase()));
+                modVal = getHeirloomEff(name, type.toLowerCase());
             }
+            modVal = evaluateModValue(modVal, type, rarity, mod);
+            eff.push(modVal);
         }
     }
     return eff.reduce((a, b) => a + b, 0);
