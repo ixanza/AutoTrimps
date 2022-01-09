@@ -53,7 +53,7 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
     let name = mod[0];
     let coeff = 0.5;
     if (name !== "empty") {
-        let loomMod = game.heirlooms[type][getDesiredModIndex(game.heirlooms[type], desiredMod)];
+        let loomMod = game.heirlooms[type][getDesiredModIndex(game.heirlooms[type], name)];
         if (loomMod != null) {
             let steps;
             if (Object.prototype.hasOwnProperty.call(loomMod, "steps")) {
