@@ -66,7 +66,7 @@ const evaluateModValue = (modVal, type, rarity, mod) => {
             let min = steps[0];
             let max = steps[1];
             let step = steps[2];
-            let range = (max - min) / step;
+            let range = Math.floor((max - min) / step);
             let modVal = mod[2];
             coeff = (range - modVal) / range;
         }
