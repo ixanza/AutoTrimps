@@ -152,7 +152,7 @@ function worthOfHeirlooms3(){
     worth3 = {'Shield': [], 'Staff': [], 'Core': []};
     for (var index in game.global.heirloomsExtra) {
         var theLoom = game.global.heirloomsExtra[index];
-        var data = {'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods2(index, 'heirloomsExtra')};
+        var data = {'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods2(index, 'heirloomsExtra'), 'name': theLoom.name};
         worth3[theLoom.type].push(data);
     }
     worth3['Shield'].sort(sortHeirloomsEfficiency);
