@@ -13,34 +13,36 @@ function slowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==
 function wchighdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('WCshighdmg'))return loom;}
 function wclowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('WCslowdmg'))return loom;}
 
-function getHeirloomEff(name, type) {
-  if (type == "staff") {
-    if (getPageSetting('slot1modst') == name) return 7;
-    else if (getPageSetting('slot2modst') == name) return 6;
-    else if (getPageSetting('slot3modst') == name) return 5;
-    else if (getPageSetting('slot4modst') == name) return 4;
-    else if (getPageSetting('slot5modst') == name) return 3;
-    else if (getPageSetting('slot6modst') == name) return 2;
-    else if (getPageSetting('slot7modst') == name) return 1;
-	else return 0;
-  }
-  else if (type == "shield") {
-    if (getPageSetting('slot1modsh') == name) return 7;
-    else if (getPageSetting('slot2modsh') == name) return 6;
-    else if (getPageSetting('slot3modsh') == name) return 5;
-    else if (getPageSetting('slot4modsh') == name) return 4;
-    else if (getPageSetting('slot5modsh') == name) return 3;
-    else if (getPageSetting('slot6modsh') == name) return 2;
-    else if (getPageSetting('slot7modsh') == name) return 1;
-	else return 0;
-  }
-  else if (type == "core") {
-    if (getPageSetting('slot1modcr') == name) return 4;
-    else if (getPageSetting('slot2modcr') == name) return 3;
-    else if (getPageSetting('slot3modcr') == name) return 2;
-    else if (getPageSetting('slot4modcr') == name) return 1;
-	else return 0;
-  }
+const equalModValue = 10;
+
+function getHeirloomEff(name, type, equalValue = false) {
+    if (type == "staff") {
+        if (getPageSetting('slot1modst') == name) return equalValue && equalModValue || 7;
+        else if (getPageSetting('slot2modst') == name) return equalValue && equalModValue || 6;
+        else if (getPageSetting('slot3modst') == name) return equalValue && equalModValue || 5;
+        else if (getPageSetting('slot4modst') == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot5modst') == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot6modst') == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot7modst') == name) return equalValue && equalModValue || 1;
+        else return 0;
+    }
+    else if (type == "shield") {
+        if (getPageSetting('slot1modsh') == name) return equalValue && equalModValue || 7;
+        else if (getPageSetting('slot2modsh') == name) return equalValue && equalModValue || 6;
+        else if (getPageSetting('slot3modsh') == name) return equalValue && equalModValue || 5;
+        else if (getPageSetting('slot4modsh') == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot5modsh') == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot6modsh') == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot7modsh') == name) return equalValue && equalModValue || 1;
+        else return 0;
+    }
+    else if (type == "core") {
+        if (getPageSetting('slot1modcr') == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot2modcr') == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot3modcr') == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot4modcr') == name) return equalValue && equalModValue || 1;
+        else return 0;
+    }
 }
 
 const rarityModScale = {};
@@ -110,6 +112,7 @@ function evaluateHeirloomMods2(loom, location) {
     let raretokeep = Math.max(0, game.heirlooms.rarityNames.indexOf(getPageSetting('raretokeep')));
     let rarity = loom.rarity;
     if (rarity >= raretokeep) {
+        const equalValue = getPageSetting("hvalues") === 1;
         let type = loom.type;
         for (let mod of loom.mods) {
             let name = mod[0];
@@ -117,14 +120,18 @@ function evaluateHeirloomMods2(loom, location) {
             if (name === "empty") {
                 let maxPossibleMod = type === "core" ? 4 : 7;
                 while (maxPossibleMod > 0) {
-                    if (!eff.includes(maxPossibleMod) && possibleToGetMaxMod(maxPossibleMod, rarity, type)) {
+                    if ((!eff.includes(maxPossibleMod) || equalValue) && possibleToGetMaxMod(maxPossibleMod, rarity, type)) {
                         break;
                     }
                     maxPossibleMod--;
                 }
-                modVal = maxPossibleMod;
+                if (equalValue && maxPossibleMod > 0) {
+                    modVal = equalModValue;
+                } else {
+                    modVal = maxPossibleMod;
+                }
             } else {
-                modVal = getHeirloomEff(name, type.toLowerCase());
+                modVal = getHeirloomEff(name, type.toLowerCase(), equalValue);
             }
             modVal = evaluateModValue(modVal, type, rarity, mod);
             eff.push(modVal);
