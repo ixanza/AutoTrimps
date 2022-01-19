@@ -408,6 +408,9 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
             if (!needToVoid) number *= game.challenges.Pandemonium.getBossMult();
             else number *= game.challenges.Pandemonium.getPandMult();
         }
+        if (game.global.challengeActive == "Experience") {
+            number *= game.challenges.Experience.getEnemyMult();
+        }
     }
     if (game.global.usingShriek) {
         number *= game.mapUnlocks.roboTrimp.getShriekValue();
@@ -451,6 +454,8 @@ function calcEnemyHealth() {
         enemyHealth *= game.buildings.Laboratory.getEnemyMult();
     } else if (game.global.challengeActive == "Storm" && !(isVoid || isRaiding)) {
         enemyHealth *= game.challenges.Storm.getHealthMult();
+    } else if (game.global.challengeActive == "Experience") {
+        enemyHealth *= game.challenges.Experience.getEnemyMult();
     }
     let cellNumber = enemyHealth.level;
     if (((game.global.challengeActive == "Mayhem" && cellNumber == 99 && !(isVoid || isRaiding)) || game.global.challengeActive == "Pandemonium")) {
