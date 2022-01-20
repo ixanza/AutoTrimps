@@ -16,33 +16,35 @@ function wclowdmgshield(){for(loom of game.global.heirloomsCarried)if(loom.name=
 const equalModValue = 10;
 
 function getHeirloomEff(name, type, equalValue = false) {
+    name = name.toUpperCase();
     if (type == "staff") {
-        if (getPageSetting('slot1modst') == name) return equalValue && equalModValue || 7;
-        else if (getPageSetting('slot2modst') == name) return equalValue && equalModValue || 6;
-        else if (getPageSetting('slot3modst') == name) return equalValue && equalModValue || 5;
-        else if (getPageSetting('slot4modst') == name) return equalValue && equalModValue || 4;
-        else if (getPageSetting('slot5modst') == name) return equalValue && equalModValue || 3;
-        else if (getPageSetting('slot6modst') == name) return equalValue && equalModValue || 2;
-        else if (getPageSetting('slot7modst') == name) return equalValue && equalModValue || 1;
+        if (getPageSetting('slot1modst').toUpperCase() == name) return equalValue && equalModValue || 7;
+        else if (getPageSetting('slot2modst').toUpperCase() == name) return equalValue && equalModValue || 6;
+        else if (getPageSetting('slot3modst').toUpperCase() == name) return equalValue && equalModValue || 5;
+        else if (getPageSetting('slot4modst').toUpperCase() == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot5modst').toUpperCase() == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot6modst').toUpperCase() == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot7modst').toUpperCase() == name) return equalValue && equalModValue || 1;
         else return 0;
     }
     else if (type == "shield") {
-        if (getPageSetting('slot1modsh') == name) return equalValue && equalModValue || 7;
-        else if (getPageSetting('slot2modsh') == name) return equalValue && equalModValue || 6;
-        else if (getPageSetting('slot3modsh') == name) return equalValue && equalModValue || 5;
-        else if (getPageSetting('slot4modsh') == name) return equalValue && equalModValue || 4;
-        else if (getPageSetting('slot5modsh') == name) return equalValue && equalModValue || 3;
-        else if (getPageSetting('slot6modsh') == name) return equalValue && equalModValue || 2;
-        else if (getPageSetting('slot7modsh') == name) return equalValue && equalModValue || 1;
+        if (getPageSetting('slot1modsh').toUpperCase() == name) return equalValue && equalModValue || 7;
+        else if (getPageSetting('slot2modsh').toUpperCase() == name) return equalValue && equalModValue || 6;
+        else if (getPageSetting('slot3modsh').toUpperCase() == name) return equalValue && equalModValue || 5;
+        else if (getPageSetting('slot4modsh').toUpperCase() == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot5modsh').toUpperCase() == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot6modsh').toUpperCase() == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot7modsh').toUpperCase() == name) return equalValue && equalModValue || 1;
         else return 0;
     }
     else if (type == "core") {
-        if (getPageSetting('slot1modcr') == name) return equalValue && equalModValue || 4;
-        else if (getPageSetting('slot2modcr') == name) return equalValue && equalModValue || 3;
-        else if (getPageSetting('slot3modcr') == name) return equalValue && equalModValue || 2;
-        else if (getPageSetting('slot4modcr') == name) return equalValue && equalModValue || 1;
+        if (getPageSetting('slot1modcr').toUpperCase() == name) return equalValue && equalModValue || 4;
+        else if (getPageSetting('slot2modcr').toUpperCase() == name) return equalValue && equalModValue || 3;
+        else if (getPageSetting('slot3modcr').toUpperCase() == name) return equalValue && equalModValue || 2;
+        else if (getPageSetting('slot4modcr').toUpperCase() == name) return equalValue && equalModValue || 1;
         else return 0;
     }
+    return 0;
 }
 
 const rarityModScale = {};
