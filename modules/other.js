@@ -1496,6 +1496,9 @@ function BWraiding() {
   if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && bwraided && !failbwraid) {
     autoTrimpSettings["AutoMaps"].value = 1;
     debug("Turning AutoMaps back on");
+    bwraided = false;
+    failbwraid = false;
+    bwraidon = false;
   }
 
   if (!isBWRaidZ) {
@@ -1781,6 +1784,36 @@ function dailyBWraiding() {
 	    dbwraidon = false;
             }
  }
+
+const finishExperience = () => {
+    if (game.global.challengeActive === "Experience") {
+        let zoneTarget = getPageSetting("finishExperience");
+        if (!isNaN(zoneTarget)) {
+            zoneTarget = Number(zoneTarget);
+            if (zoneTarget > 0) {
+                zoneTarget = Math.max(zone, 601);
+                if (game.global.world >= zoneTarget) {
+                    let bionicMaps = game.global.mapsOwnedArray.filter(item => item.location == 'Bionic' && item.level > 605);
+                    if (Array.isArray(bionicMaps) && bionicMaps.length > 0) {
+                        let lowestBionic = bionicMaps.reduce((acc, item) => acc.level > item.level ? item : acc);
+                        if (game.global.currentMapId !== lowestBionic.id) {
+                            // Go to map screen
+                            mapsClicked(true);
+                            // Recycle current map if it exist
+                            if (game.global.currentMapId) {
+                                recycleMap();
+                            }
+                            // Run it
+                            selectMap(lowestBionic.id);
+                            // Switch raiding heirlooms
+                            switchHeirloomsForRaiding();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 function trimpcide() {
 if (game.portal.Anticipation.level > 0) {
