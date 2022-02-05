@@ -1806,6 +1806,10 @@ const finishExperience = () => {
                             // Run it
                             selectMap(lowestBionic.id);
                             runMap();
+                            // Adjust map settings
+                            if (game.global.repeatMap == true) {
+                                repeatClicked();
+                            }
                         }
                     }
                 }
