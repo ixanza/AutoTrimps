@@ -1791,7 +1791,7 @@ const finishExperience = () => {
         if (!isNaN(zoneTarget)) {
             zoneTarget = Number(zoneTarget);
             if (zoneTarget > 0) {
-                zoneTarget = Math.max(zone, 601);
+                zoneTarget = Math.max(zoneTarget, 601);
                 if (game.global.world >= zoneTarget) {
                     let bionicMaps = game.global.mapsOwnedArray.filter(item => item.location == 'Bionic' && item.level > 605);
                     if (Array.isArray(bionicMaps) && bionicMaps.length > 0) {
