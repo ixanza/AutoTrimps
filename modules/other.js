@@ -1793,7 +1793,7 @@ const finishExperience = () => {
             if (zoneTarget > 0) {
                 zoneTarget = Math.max(zoneTarget, 601);
                 if (game.global.world >= zoneTarget) {
-                    let bionicMaps = game.global.mapsOwnedArray.filter(item => item.location == 'Bionic' && item.level > 605);
+                    let bionicMaps = game.global.mapsOwnedArray.filter(item => item.location == 'Bionic' && item.level >= 605);
                     if (Array.isArray(bionicMaps) && bionicMaps.length > 0) {
                         let lowestBionic = bionicMaps.reduce((acc, item) => acc.level > item.level ? item : acc);
                         if (game.global.currentMapId !== lowestBionic.id) {
@@ -1805,8 +1805,7 @@ const finishExperience = () => {
                             }
                             // Run it
                             selectMap(lowestBionic.id);
-                            // Switch raiding heirlooms
-                            switchHeirloomsForRaiding();
+                            runMap();
                         }
                     }
                 }
