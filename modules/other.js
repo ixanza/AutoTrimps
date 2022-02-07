@@ -1496,9 +1496,16 @@ function BWraiding() {
   if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && bwraided && !failbwraid) {
     autoTrimpSettings["AutoMaps"].value = 1;
     debug("Turning AutoMaps back on");
-    bwraided = false;
-    failbwraid = false;
-    bwraidon = false;
+  }
+  // Failsafe
+  if (bwRaided && !failbwraid && getCurrentMapObject() != null) {
+      let map = getCurrentMapObject();
+      if (map.location === "Bionic" && map.level > targetBW) {
+        mapsClicked(true);
+        recycleMap();
+        autoTrimpSettings["AutoMaps"].value = 1;
+        debug("Turning AutoMaps back on");
+      }
   }
 
   if (!isBWRaidZ) {
