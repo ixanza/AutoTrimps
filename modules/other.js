@@ -1498,7 +1498,7 @@ function BWraiding() {
     debug("Turning AutoMaps back on");
   }
   // Failsafe
-  if (bwRaided && !failbwraid && getCurrentMapObject() != null) {
+  if (bwraided && !failbwraid && getCurrentMapObject() != null) {
       let map = getCurrentMapObject();
       if (map.location === "Bionic" && map.level > targetBW) {
         mapsClicked(true);
