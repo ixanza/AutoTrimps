@@ -84,7 +84,7 @@ function updateAutoMapsStatus(get) {
     var hiderStatus = 'He/hr: ' + getPercent.toFixed(3) + '%<br>&nbsp;&nbsp;&nbsp;He: ' + lifetime.toFixed(3) + '%';
 
     // State base status for off so we can see shit
-    if (status === "Off") {
+    if (getPageSetting('AutoMaps') == 0 || currentState.mazRunning) {
         let text = "";
         if (currentState.advancingWorld) {
             text = "Advancing";
