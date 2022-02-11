@@ -153,6 +153,7 @@ const getCurrentState = () => {
     let selectingMaps = game.global.preMapsActive;
     let raidingMaps = currentMap?.level > game.global.world;
     let advancingWorld = !(doingMaps || selectingMaps);
+    let mazRunning = game.options.menu.mapAtZone.enabled === 1 && checkMapAtZoneWorld() !== false;
     return {
         advancingWorld: advancingWorld,
         doingMaps: doingMaps,
@@ -161,7 +162,8 @@ const getCurrentState = () => {
         raidingMaps: raidingMaps,
         raidingBW: raidingMaps && currentMap?.location === "Bionic",
         raidingPrestige: raidingMaps && game.mapUnlocks[game.global.mapGridArray[game.global.mapGridArray.length - 1].special]?.prestige,
-        doingSpire: game.global.spireActive && checkIfSpireWorld()
+        doingSpire: game.global.spireActive && checkIfSpireWorld(),
+        mazRunning: mazRunning
     }
 }
 

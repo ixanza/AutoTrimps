@@ -336,7 +336,6 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
     let number;
     let currentGoals = getCurrentGoals();
     let isVoid = currentGoals.doVoids;
-    let currentState = getCurrentState();
     let isSpire = currentState.doingSpire;
     let isRaiding = currentState.raidingMaps;
     if (!enemy) {
@@ -432,7 +431,6 @@ function calcBadGuyDmg(enemy, daily, maxormin, disableFlucts) {
 function calcEnemyHealth() {
     let currentGoals = getCurrentGoals();
     let isVoid = currentGoals.doVoids;
-    let currentState = getCurrentState();
     let isSpire = currentState.doingSpire;
     let isRaiding = currentState.raidingMaps;
 

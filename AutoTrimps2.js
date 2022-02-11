@@ -125,6 +125,7 @@ var lastRadonZone = 0;
 var currentWorldPortal = 0;
 var lastWorldPortal = 0;
 var aWholeNewPortal = false;
+let currentState = {};
 
 function mainLoop() {
     if (ATrunning == false) return;
@@ -175,6 +176,7 @@ function mainLoop() {
             setScienceNeeded();
             autoLevelEquipment();
         }
+        currentState = getCurrentState();
 
         //Core
         if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
@@ -249,7 +251,7 @@ function mainLoop() {
         //Raiding
         switchHeirloomsForRaiding();
         //Don't fuck with maz
-        if (!mapAtZoneRunning) {
+        if (!currentState.mazRunning) {
             finishExperience();
             if ((getPageSetting('PraidHarder') == true && getPageSetting('Praidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('dPraidHarder') == true && getPageSetting('dPraidingzone').length > 0 && game.global.challengeActive == "Daily")) PraidHarder();
             else {

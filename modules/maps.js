@@ -31,7 +31,6 @@ var doMaxMapBonus = !1;
 var vanillaMapatZone = !1;
 var shouldFarmWonder = false;
 var additionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
-let mapAtZoneRunning = false;
 
 function updateAutoMapsStatus(get) {
 
@@ -41,7 +40,7 @@ function updateAutoMapsStatus(get) {
     let praid = prestraidon ?? false;
 
     //Fail Safes
-    if (mapAtZoneRunning) status = "Map At Zone";
+    if (currentState.mazRunning) status = "Map At Zone";
     else if (getPageSetting('AutoMaps') == 0) status = 'Off';
     else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
 
@@ -182,21 +181,12 @@ function autoMap() {
     }
 
     // Play nice with maz
-    if (game.options.menu.mapAtZone.enabled === 0) {
-        mapAtZoneRunning = false;
-    } else {
-        if (checkMapAtZoneWorld() === false) {
-            // Map at zone not running
-            mapAtZoneRunning = false;
-        } else {
-            // Map at zone running so disable auto map logic
-            mapAtZoneRunning = true;
-            enemyDamage = true;
-            enemyHealth = true;
-            shouldFarm = false;
-            updateAutoMapsStatus();
-            return;
-        }
+    if (currentState.mazRunning) {
+        enemyDamage = true;
+        enemyHealth = true;
+        shouldFarm = false;
+        updateAutoMapsStatus();
+        return;
     }
 
     //WS

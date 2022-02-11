@@ -4162,8 +4162,7 @@ let doingSpire = false;
 let doingRaids = false;
 
 const switchHeirloomsForSpire = () => {
-	let state = getCurrentState();
-	let spire = state.doingSpire;
+	let spire = currentState.doingSpire;
 	let ignoreSpires = !isNaN(getPageSetting("IgnoreSpiresUntil")) ? Math.max(Number(getPageSetting("IgnoreSpiresUntil")), 200) : 200;
 	if (spire !== doingSpire && ignoreSpires <= game.global.world) {
 		if (spire === true) {
@@ -4175,8 +4174,7 @@ const switchHeirloomsForSpire = () => {
 	}
 }
 const switchHeirloomsForRaiding = () => {
-	let state = getCurrentState();
-	let raidingMaps = state.raidingMaps;
+	let raidingMaps = currentState.raidingMaps;
 	if (raidingMaps !== doingRaids) {
 		if (raidingMaps === true) {
 			rhighHeirloom();
