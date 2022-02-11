@@ -54,6 +54,7 @@
 	.at-afk-zone, .at-afk-helium, .at-afk-status
 	{
 		font-size: 20pt;
+		text-align: center;
 	}
 
 	.at-afk-overlay-disable-btn
