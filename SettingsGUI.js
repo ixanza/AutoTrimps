@@ -1051,8 +1051,6 @@ function initializeAllSettings() {
     createSetting('Export550', '550+ AT Settings', 'Gives you an AT settings String that you can use to import. Use if you are z550+ ', 'infoclick', 'Export550', null, 'Import Export');
     createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 
-    //Achivements
-    createSetting('AcUnbalanced', 'Unbalanced', 'Try to obtain unbalanced achievement', 'boolean', false, null, 'Achievements');
     settingsProfileMakeGUI();
 }
 
@@ -2195,9 +2193,6 @@ function updateCustomButtons() {
     (keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
     (keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
     (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
-
-    // Achievements
-    (game.global.challengeActive === "Balance" && getAchievement("Underbalanced").finished === false) ? turnOn("AcUnbalanced") : turnOff("AcUnbalanced")
 
     //Dropdowns
     document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;
