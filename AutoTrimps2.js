@@ -248,19 +248,22 @@ function mainLoop() {
 
         //Raiding
         switchHeirloomsForRaiding();
-        finishExperience();
-        if ((getPageSetting('PraidHarder') == true && getPageSetting('Praidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('dPraidHarder') == true && getPageSetting('dPraidingzone').length > 0 && game.global.challengeActive == "Daily")) PraidHarder();
-        else {
-            if (getPageSetting('Praidingzone').length && game.global.challengeActive != "Daily") Praiding();
-            if (getPageSetting('dPraidingzone').length && game.global.challengeActive == "Daily") dailyPraiding();
+        //Don't fuck with maz
+        if (!mapAtZoneRunning) {
+            finishExperience();
+            if ((getPageSetting('PraidHarder') == true && getPageSetting('Praidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('dPraidHarder') == true && getPageSetting('dPraidingzone').length > 0 && game.global.challengeActive == "Daily")) PraidHarder();
+            else {
+                if (getPageSetting('Praidingzone').length && game.global.challengeActive != "Daily") Praiding();
+                if (getPageSetting('dPraidingzone').length && game.global.challengeActive == "Daily") dailyPraiding();
+            }
+            if (((getPageSetting('BWraid') && game.global.challengeActive != "Daily") || (getPageSetting('Dailybwraid') && game.global.challengeActive == "Daily"))) {
+                BWraiding();
+            }
+            if ((getPageSetting('BWraid') == true || getPageSetting('DailyBWraid') == true) && bwraidon) buyWeps();
+            if (game.global.mapsActive && getPageSetting('game.global.universe == 1 && BWraid') == true && game.global.world == getPageSetting('BWraidingz') && getCurrentMapObject().level <= getPageSetting('BWraidingmax')) buyWeps();
         }
-        if (((getPageSetting('BWraid') && game.global.challengeActive != "Daily") || (getPageSetting('Dailybwraid') && game.global.challengeActive == "Daily"))) {
-            BWraiding();
-        }
-        if ((getPageSetting('BWraid') == true || getPageSetting('DailyBWraid') == true) && bwraidon) buyWeps();
-        if (game.global.mapsActive && getPageSetting('game.global.universe == 1 && BWraid') == true && game.global.world == getPageSetting('BWraidingz') && getCurrentMapObject().level <= getPageSetting('BWraidingmax')) buyWeps();
 
-            //Golden
+        //Golden
         var agu = getPageSetting('AutoGoldenUpgrades');
         var dagu = getPageSetting('dAutoGoldenUpgrades');
         var cagu = getPageSetting('cAutoGoldenUpgrades');
