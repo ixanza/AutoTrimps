@@ -1488,7 +1488,7 @@ function updateCustomButtons() {
     !radonon && (heHr || autoTrimpSettings.AutoPortal.selected == "Custom") ? turnOn("HeliumHourChallenge") : turnOff("HeliumHourChallenge");
     !radonon && (heHr) ? turnOn("HeHrDontPortalBefore") : turnOff("HeHrDontPortalBefore");
     !radonon && (heHr) ? turnOn("HeliumHrBuffer") : turnOff("HeliumHrBuffer");
-    !radonon && ((autoTrimpSettings.AutoPortal.selected == "Experience") || (heHr && getPageSetting("HeliumHourChallenge") === 'Experience')) ? turnOn('finishExperience') : turnOff('finishExperience')
+    !radonon && ((autoTrimpSettings.AutoPortal.selected == "Experience") || (heHr && getPageSetting("HeliumHourChallenge") === 'Experience') || (getPageSetting('AutoPortalDaily') > 0 && getPageSetting("dHeliumHourChallenge") === "Experience")) ? turnOn('finishExperience') : turnOff('finishExperience')
 
 
     //RCore

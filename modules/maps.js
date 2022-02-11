@@ -659,14 +659,6 @@ function autoMap() {
         shouldDoMaps = false;
     }
 
-    // Challenges
-    if (getPageSetting("AcUnbalanced") && game.global.challengeActive === "Unbalance" && !game.global.runningChallengeSquared && game.challenges.Unbalance.balanceStacks >= 90) {
-        enoughDamage = false;
-        enoughHealth = false;
-        shouldFarm = true;
-        shouldDoMaps = true;
-    }
-
     //Automaps
     if (shouldDoMaps || doVoids || needPrestige) {
         if (selectedMap == "world") {
