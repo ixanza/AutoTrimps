@@ -88,8 +88,6 @@ function updateAutoMapsStatus(get) {
         let text = "";
         if (currentState.advancingWorld) {
             text = "Advancing";
-        } else if (currentState.doingMaps) {
-            text = "Running Map";
         } else if (currentState.selectingMaps) {
             text = "Selecting Map";
         } else if (currentState.doingVoids) {
@@ -101,6 +99,8 @@ function updateAutoMapsStatus(get) {
             text = "Prestige Raiding";
         } else if (currentState.raidingMaps) {
             text = "Raiding Maps";
+        } else if (currentState.doingMaps) {
+            text = "Running Map";
         }
         if (text) {
             status += statusWrapper(text);
