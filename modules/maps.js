@@ -32,6 +32,7 @@ var vanillaMapatZone = !1;
 var shouldFarmWonder = false;
 var additionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 
+const statusWrapper = (text) => `<br><p style="color:red;margin-top:0.2vh">${text}</p>`
 function updateAutoMapsStatus(get) {
 
     var status;
@@ -81,6 +82,30 @@ function updateAutoMapsStatus(get) {
     var getPercent = (game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned))) * 100;
     var lifetime = (game.resources.helium.owned / (game.global.totalHeliumEarned - game.resources.helium.owned)) * 100;
     var hiderStatus = 'He/hr: ' + getPercent.toFixed(3) + '%<br>&nbsp;&nbsp;&nbsp;He: ' + lifetime.toFixed(3) + '%';
+
+    // State base status for off so we can see shit
+    if (status === "Off") {
+        let text = "";
+        if (currentState.advancingWorld) {
+            text = "Advancing";
+        } else if (currentState.doingMaps) {
+            text = "Running Map";
+        } else if (currentState.selectingMaps) {
+            text = "Selecting Map";
+        } else if (currentState.doingVoids) {
+            let stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
+            text = 'Running Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
+        } else if (currentState.raidingBW) {
+            text = "BW Raiding";
+        } else if (currentState.raidingPrestige) {
+            text = "Prestige Raiding";
+        } else if (currentState.raidingMaps) {
+            text = "Raiding Maps";
+        }
+        if (text) {
+            status += statusWrapper(text);
+        }
+    }
 
     if (get) {
         return [status, getPercent, lifetime];
