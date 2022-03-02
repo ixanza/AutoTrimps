@@ -13,6 +13,20 @@ if (game.global.uberNature == "Wind" && getEmpowerment() != "Wind") {
 
     }
 
+// Force wind
+let windFormationZone = 0;
+try {
+    windFormationZone = Number(getPageSetting("forceWindF"));
+    if (game.global.world > 60 && windFormationZone >= game.global.world && !game.global.runningChallengeSquared) {
+        if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive) {
+            setFormation(5);
+            return;
+        }
+    }
+} catch (e) {
+
+}
+
 //Never
 var never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.highestLevelCleared < 180;
     never_scry = never_scry || game.global.world <= 60;
