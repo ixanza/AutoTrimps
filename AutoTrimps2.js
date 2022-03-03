@@ -1,4 +1,4 @@
-var ATversion='Orkun v6.0.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://ixanza.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
+var ATversion='Xanza v6.0.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://ixanza.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
 function ATscriptLoad(a,b){null==b&&debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');var c=document.createElement('script');null==a&&(a=''),c.src=basepath+a+b+'.js',c.id=b+'_MODULE',document.head.appendChild(c)}
 function ATscriptUnload(a){var b=document.getElementById(a+"_MODULE");b&&(document.head.removeChild(b),debug("Removing "+a+"_MODULE","other"))}
 ATscriptLoad(modulepath, 'utils');
@@ -7,11 +7,11 @@ function initializeAutoTrimps() {
     loadPageVariables();
     ATscriptLoad('','SettingsGUI');
     ATscriptLoad('','Graphs');
-    ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'heirlooms','gather', 'stance', 'breedtimer','fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'ab'];
+    ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'ab'];
     for (var m in ATmoduleList) {
         ATscriptLoad(modulepath, ATmoduleList[m]);
     }
-    debug('AutoTrimps - Xanza Fork Loaded!', '*spinner3');
+    debug('AutoTrimps - Orkun Fork Loaded!', '*spinner3');
 }
 
 var changelogList = [];
@@ -37,7 +37,7 @@ function printChangelog() {
     }
     var footer =
         '<b>ZӘK Fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the dev: <b>Xanza#2396</b> @ <a target="#" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>Talk with the dev: <b>Pormos#2008</b> @ <a target="#" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
         <br>See <a target="#" href="https://github.com/ixanza/AutoTrimps/blob/gh-pages/README.md">ReadMe</a> Or check <a target="#" href="https://github.com/ixanza/AutoTrimps/commits/gh-pages" target="#">the commit history</a> (if you want).'
     ,   action = 'cancelTooltip()'
     ,   title = 'Script Update Notice<br>' + ATversion
@@ -172,13 +172,15 @@ function mainLoop() {
             wclowHeirloom();
         }
         //Offline Progress
-        // if (!usingRealTimeOffline) {
-        //     setScienceNeeded();
-        //     autoLevelEquipment();
-        // }
+        if (!usingRealTimeOffline) {
+            setScienceNeeded();
+            autoLevelEquipment();
+        }
         currentState = getCurrentState();
 
         //Core
+        if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
+        if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
         if (getPageSetting('ManualGather2') == 1) manualLabor2();
         if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
         if (getPageSetting('ManualGather2') == 2) autogather3();
@@ -189,24 +191,25 @@ function mainLoop() {
         if (getPageSetting('spendmagmite') == 2 && !magmiteSpenderChanged) autoMagmiteSpender();
         if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
         if (getPageSetting('autoenlight') && game.global.world > 229 && game.global.uberNature == false) autoEnlight();
+        if (getPageSetting('BuyUpgradesNew') != 0) buyUpgrades();
         switchHeirloomsAfterVoid();
 
         //Buildings
-        // if (getPageSetting('BuyBuildingsNew') === 0 && getPageSetting('hidebuildings') == true) buyBuildings();
-        // else if (getPageSetting('BuyBuildingsNew') == 1) {
-        //     buyBuildings();
-        //     buyStorage();
-        // }
-        // else if (getPageSetting('BuyBuildingsNew') == 2) buyBuildings();
-        // else if (getPageSetting('BuyBuildingsNew') == 3) buyStorage();
-        // if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
+        if (getPageSetting('BuyBuildingsNew') === 0 && getPageSetting('hidebuildings') == true) buyBuildings();
+        else if (getPageSetting('BuyBuildingsNew') == 1) {
+            buyBuildings();
+            buyStorage();
+        }
+        else if (getPageSetting('BuyBuildingsNew') == 2) buyBuildings();
+        else if (getPageSetting('BuyBuildingsNew') == 3) buyStorage();
+        if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
 
-        // //Jobs
-        // if (getPageSetting('BuyJobsNew') == 1) {
-        //     workerRatios();
-        //     buyJobs();
-        // }
-        // else if (getPageSetting('BuyJobsNew') == 2) buyJobs();
+        //Jobs
+        if (getPageSetting('BuyJobsNew') == 1) {
+            workerRatios();
+            buyJobs();
+        }
+        else if (getPageSetting('BuyJobsNew') == 2) buyJobs();
 
         //Portal
         if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();
@@ -226,8 +229,8 @@ function mainLoop() {
         if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
         if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
         var forcePrecZ = (getPageSetting('ForcePresZ') < 0) || (game.global.world < getPageSetting('ForcePresZ'));
-        //if (getPageSetting('DynamicPrestige2') > 0 && forcePrecZ) prestigeChanging2();
-        //else autoTrimpSettings.Prestige.selected = document.getElementById('Prestige').value;
+        if (getPageSetting('DynamicPrestige2') > 0 && forcePrecZ) prestigeChanging2();
+        else autoTrimpSettings.Prestige.selected = document.getElementById('Prestige').value;
         if (game.global.world > 5 && game.global.challengeActive == "Daily" && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
         if (getPageSetting('buywepsvoid') == true && ((getPageSetting('VoidMaps') == game.global.world && game.global.challengeActive != "Daily") || (getPageSetting('DailyVoidMod') == game.global.world && game.global.challengeActive == "Daily")) && game.global.mapsActive && getCurrentMapObject().location == "Void") buyWeps();
         if ((getPageSetting('darmormagic') > 0 && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) || (getPageSetting('carmormagic') > 0 && (game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))) armormagic();
