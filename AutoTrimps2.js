@@ -172,10 +172,10 @@ function mainLoop() {
             wclowHeirloom();
         }
         //Offline Progress
-        if (!usingRealTimeOffline) {
-            setScienceNeeded();
-            autoLevelEquipment();
-        }
+        // if (!usingRealTimeOffline) {
+        //     setScienceNeeded();
+        //     autoLevelEquipment();
+        // }
         currentState = getCurrentState();
 
         //Core
