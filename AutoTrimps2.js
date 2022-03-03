@@ -1,4 +1,4 @@
-var ATversion='Orkun v6.0.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://orkunkocyigit.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
+var ATversion='Orkun v6.0.0',atscript=document.getElementById('AutoTrimps-script'),basepath='https://ixanza.github.io/AutoTrimps/',modulepath='modules/';null!==atscript&&(basepath=atscript.src.replace(/AutoTrimps2\.js$/,''));
 function ATscriptLoad(a,b){null==b&&debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');var c=document.createElement('script');null==a&&(a=''),c.src=basepath+a+b+'.js',c.id=b+'_MODULE',document.head.appendChild(c)}
 function ATscriptUnload(a){var b=document.getElementById(a+"_MODULE");b&&(document.head.removeChild(b),debug("Removing "+a+"_MODULE","other"))}
 ATscriptLoad(modulepath, 'utils');
@@ -11,7 +11,7 @@ function initializeAutoTrimps() {
     for (var m in ATmoduleList) {
         ATscriptLoad(modulepath, ATmoduleList[m]);
     }
-    debug('AutoTrimps - Orkun Fork Loaded!', '*spinner3');
+    debug('AutoTrimps - Xanza Fork Loaded!', '*spinner3');
 }
 
 var changelogList = [];
@@ -37,8 +37,8 @@ function printChangelog() {
     }
     var footer =
         '<b>ZӘK Fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the dev: <b>Pormos#2008</b> @ <a target="#" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
-        <br>See <a target="#" href="https://github.com/OrkunKocyigit/AutoTrimps/blob/gh-pages/README.md">ReadMe</a> Or check <a target="#" href="https://github.com/OrkunKocyigit/AutoTrimps/commits/gh-pages" target="#">the commit history</a> (if you want).'
+        <br>Talk with the dev: <b>Xanza#2396</b> @ <a target="#" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>See <a target="#" href="https://github.com/ixanza/AutoTrimps/blob/gh-pages/README.md">ReadMe</a> Or check <a target="#" href="https://github.com/ixanza/AutoTrimps/commits/gh-pages" target="#">the commit history</a> (if you want).'
     ,   action = 'cancelTooltip()'
     ,   title = 'Script Update Notice<br>' + ATversion
     ,   acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue."
